@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Create Task</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #f7f8fb;
+        --panel: #ffffff;
+        --ink: #0f172a;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --primary: #3b82f6;
+        --chip: #eef2ff;
+        --good: #10b981;
+        --bad: #ef4444;
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* Layout (reuse from task.html) */
+      .layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+      .side {
+        background: #fff;
+        border-right: 1px solid var(--line);
+        padding: 22px 16px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        margin-bottom: 18px;
+      }
+      .brand .logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #4f46e5, #22d3ee);
+      }
+      .nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        color: #334155;
+      }
+      .nav a.active {
+        background: #eef2ff;
+        color: #111827;
+        font-weight: 600;
+      }
+      .nav h4 {
+        margin: 18px 10px 8px;
+        font-size: 12px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+
+      .content {
+        padding: 26px 26px 40px;
+      }
+      .topbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+      .breadcrumbs {
+        font-size: 13px;
+        color: #94a3b8;
+      }
+      .breadcrumbs b {
+        color: #111827;
+      }
+      .title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .title h1 {
+        margin: 4px 0 0;
+        font-size: 24px;
+      }
+      .btn {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 12px;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      .btn.primary {
+        background: var(--primary);
+        border-color: transparent;
+        color: #fff;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--chip);
+        color: #3730a3;
+        border-radius: 999px;
+        padding: 4px 8px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      .panel-body {
+        padding: 14px;
+      }
+
+      /* Form */
+      form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .row-1 {
+        grid-column: 1 / -1;
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 6px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--ink);
+      }
+      textarea {
+        min-height: 96px;
+        resize: vertical;
+      }
+      .actions {
+        grid-column: 1/-1;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 10px;
+      }
+      .hint {
+        font-size: 12px;
+        color: #94a3b8;
+      }
+      .link-row {
+        display: flex;
+        gap: 10px;
+      }
+      .link-row input[type="text"] {
+        flex: 1;
+      }
+      .sep {
+        height: 1px;
+        background: var(--line);
+        grid-column: 1/-1;
+        margin: 4px 0;
+      }
+
+      /* Toast */
+      .toast {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        color: #fff;
+        box-shadow: var(--shadow);
+        display: none;
+      }
+      .toast.ok {
+        background: var(--good);
+      }
+      .toast.err {
+        background: var(--bad);
+      }
+
+      /* Dialog */
+      dialog {
+        border: 0;
+        border-radius: 16px;
+        padding: 18px 16px;
+        box-shadow: var(--shadow);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="side">
+        <div class="brand">
+          <div class="logo"></div>
+          <span>Allout</span>
+        </div>
+        <nav class="nav">
+          <a href="index.html"><span>Overview</span></a>
+          <a href="#"><span>Analytics</span></a>
+          <a href="#"><span>Mailbox</span></a>
+          <h4>Tasks</h4>
+          <a href="task.html"><span>Task List</span></a>
+          <a class="active" href="task-new.html"><span>Create Task</span></a>
+        </nav>
+      </aside>
+
+      <!-- Main -->
+      <main class="content">
+        <div class="topbar">
+          <div>
+            <div class="breadcrumbs">Tasks / <b>Create</b></div>
+            <div class="title">
+              <h1>➕ Create Task <span class="chip" id="env">Draft</span></h1>
+            </div>
+          </div>
+          <div class="toolbar">
+            <a class="btn" href="task.html">← Back to Task List</a>
+          </div>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <b>New Task</b>
+            <span class="hint">Điền thông tin và lưu lại</span>
+          </div>
+          <div class="panel-body">
+            <form id="form">
+              <div class="row-1">
+                <label for="name">Task name *</label>
+                <input
+                  id="name"
+                  required
+                  placeholder="VD: Thiết kế UI Task Board" />
+              </div>
+
+              <div>
+                <label for="category">Category *</label>
+                <div style="display: flex; gap: 8px; align-items: stretch">
+                  <select id="category" required></select>
+                  <button
+                    id="btnAddCat"
+                    type="button"
+                    class="btn"
+                    title="Add new category">
+                    + New
+                  </button>
+                </div>
+                <div class="hint">Chọn hoặc tạo mới nhanh.</div>
+              </div>
+
+              <div>
+                <label for="date">Date</label>
+                <input id="date" type="date" />
+              </div>
+
+              <div>
+                <label for="price">Price</label>
+                <input id="price" type="number" step="0.01" placeholder="0" />
+              </div>
+
+              <div>
+                <label for="assign">Assign to</label>
+                <select id="assign">
+                  <option value="The One" selected>The One</option>
+                  <option value="Piecesi">Piecesi</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="charged">Charged?</label>
+                <select id="charged">
+                  <option value="false" selected>Unpaid</option>
+                  <option value="true">Completed</option>
+                </select>
+              </div>
+
+              <div class="row-1">
+                <label for="link">Link</label>
+                <div class="link-row">
+                  <input id="link" type="text" placeholder="https://…" />
+                  <a
+                    id="openLink"
+                    class="btn"
+                    href="#"
+                    target="_blank"
+                    rel="noopener"
+                    >Open</a
+                  >
+                </div>
+                <div class="hint">Dán URL nếu có; nút Open sẽ mở tab mới.</div>
+              </div>
+
+              <div class="row-1">
+                <label for="note">Note</label>
+                <textarea id="note" placeholder="Ghi chú thêm…"></textarea>
+              </div>
+
+              <div class="sep"></div>
+              <div class="actions">
+                <button type="reset" class="btn">Reset</button>
+                <button id="submit" type="submit" class="btn primary">
+                  Save Task
+                </button>
+              </div>
+            </form>
+            <div class="hint" style="margin-top: 8px">
+              Lưu ý: Nếu bạn bật RLS và có cột <code>owner_id</code>, cần đăng
+              nhập Supabase và dùng JWT thay vì anon key.
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Dialog Add Category -->
+    <dialog id="dlgCat">
+      <h3 style="margin: 0 0 10px">New Category</h3>
+      <label for="catName" class="small muted">Name</label>
+      <input id="catName" placeholder="VD: Work" />
+      <div
+        style="
+          display: flex;
+          gap: 8px;
+          justify-content: flex-end;
+          margin-top: 10px;
+        ">
+        <button id="catCancel" class="btn">Cancel</button>
+        <button id="catSave" class="btn primary">Save</button>
+      </div>
+    </dialog>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      // ====== CONFIG ======
+      const PROJECT_URL = "https://zuitnapveubnhjumvdnt.supabase.co";
+      const ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aXRuYXB2ZXVibmhqdW12ZG50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMTcwMjEsImV4cCI6MjA3NTY5MzAyMX0.rjhf7gSNaATuKCuVBYBgVA8wmUisSyTcM25Qeexj5Gg"; // thay bằng key thực tế
+      const BASE = `${PROJECT_URL}/rest/v1`;
+      const HEADERS = {
+        apikey: ANON_KEY,
+        Authorization: `Bearer ${ANON_KEY}`,
+        "Content-Type": "application/json",
+      };
+
+      const els = {
+        form: document.getElementById("form"),
+        name: document.getElementById("name"),
+        category: document.getElementById("category"),
+        date: document.getElementById("date"),
+        price: document.getElementById("price"),
+        assign: document.getElementById("assign"),
+        charged: document.getElementById("charged"),
+        link: document.getElementById("link"),
+        openLink: document.getElementById("openLink"),
+        note: document.getElementById("note"),
+        submit: document.getElementById("submit"),
+        toast: document.getElementById("toast"),
+        dlgCat: document.getElementById("dlgCat"),
+        catName: document.getElementById("catName"),
+        catSave: document.getElementById("catSave"),
+        catCancel: document.getElementById("catCancel"),
+      };
+
+      // Defaults
+      (function setDefaults() {
+        const now = new Date();
+        const pad = (n) => String(n).padStart(2, "0");
+        els.date.value = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
+          now.getDate()
+        )}`;
+        const v = els.link.value.trim();
+        els.openLink.href = v && /^https?:\/\//i.test(v) ? v : "#";
+      })();
+
+      // Init
+      loadCategories();
+      els.link.addEventListener("input", () => {
+        const v = els.link.value.trim();
+        els.openLink.href = v && /^https?:\/\//i.test(v) ? v : "#";
+      });
+
+      els.form.addEventListener("submit", onSubmit);
+      document.getElementById("btnAddCat").addEventListener("click", () => {
+        els.catName.value = "";
+        els.dlgCat.showModal();
+        setTimeout(() => els.catName.focus(), 50);
+      });
+      els.catCancel.addEventListener("click", () => els.dlgCat.close());
+      els.catSave.addEventListener("click", createCategory);
+
+      async function loadCategories() {
+        try {
+          const url = new URL(`${BASE}/category`);
+          url.searchParams.set("select", "id,name");
+          url.searchParams.set("order", "name.asc");
+          const res = await fetch(url, {
+            headers: { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` },
+          });
+          if (!res.ok) throw new Error("load category: " + res.status);
+          const cats = await res.json();
+          els.category.innerHTML = cats
+            .map(
+              (c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`
+            )
+            .join("");
+        } catch (e) {
+          notify("Không tải được category: " + e.message, true);
+        }
+      }
+
+      async function createCategory() {
+        const name = els.catName.value.trim();
+        if (!name) return notify("Nhập tên category", true);
+        try {
+          const res = await fetch(`${BASE}/category`, {
+            method: "POST",
+            headers: { ...HEADERS, Prefer: "return=representation" },
+            body: JSON.stringify({ name }),
+          });
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || "HTTP " + res.status);
+          }
+          const [row] = await res.json();
+          els.dlgCat.close();
+          await loadCategories();
+          els.category.value = row.id;
+          notify("Đã tạo category");
+        } catch (err) {
+          notify("Lỗi tạo category: " + err.message, true);
+        }
+      }
+
+      async function onSubmit(e) {
+        e.preventDefault();
+        els.submit.disabled = true;
+        els.submit.textContent = "Saving…";
+        try {
+          const body = {
+            name: els.name.value.trim(),
+            link: els.link.value.trim() || null,
+            category_id: els.category.value || null,
+            date: els.date.value || null,
+            price: els.price.value ? Number(els.price.value) : null,
+            is_charged: els.charged.value === "true",
+            assign_to: els.assign.value || null,
+            note: els.note.value.trim() || null,
+          };
+          if (!body.name) throw new Error("Thiếu tên task");
+          if (body.link && !/^https?:\/\//i.test(body.link))
+            throw new Error("Link phải bắt đầu bằng http(s)");
+
+          const res = await fetch(`${BASE}/task`, {
+            method: "POST",
+            headers: { ...HEADERS, Prefer: "return=representation" },
+            body: JSON.stringify(body),
+          });
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || "HTTP " + res.status);
+          }
+          const out = await res.json();
+          notify("Đã lưu task ✔️");
+          els.form.reset();
+          const now = new Date();
+          const pad = (n) => String(n).padStart(2, "0");
+          els.date.value = `${now.getFullYear()}-${pad(
+            now.getMonth() + 1
+          )}-${pad(now.getDate())}`;
+          els.assign.value = "The One";
+        } catch (err) {
+          notify("Lỗi lưu: " + err.message, true);
+        } finally {
+          els.submit.disabled = false;
+          els.submit.textContent = "Save Task";
+        }
+      }
+
+      function notify(msg, isErr = false) {
+        els.toast.textContent = msg;
+        els.toast.className = "toast " + (isErr ? "err" : "ok");
+        els.toast.style.display = "block";
+        clearTimeout(window.__t);
+        window.__t = setTimeout(() => (els.toast.style.display = "none"), 3000);
+      }
+      function escapeHtml(s) {
+        return String(s ?? "").replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }[m])
+        );
+      }
+    </script>
+  </body>
+</html>

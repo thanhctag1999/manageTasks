@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard · Overview</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #f7f8fb;
+        --panel: #fff;
+        --ink: #0f172a;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --primary: #3b82f6;
+        --good: #10b981;
+        --warn: #f59e0b;
+        --bad: #ef4444;
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+      .side {
+        background: #fff;
+        border-right: 1px solid var(--line);
+        padding: 22px 16px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        margin-bottom: 18px;
+      }
+      .brand .logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #4f46e5, #22d3ee);
+      }
+      .nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        color: #334155;
+      }
+      .nav a.active {
+        background: #eef2ff;
+        color: #111827;
+        font-weight: 600;
+      }
+      .nav h4 {
+        margin: 18px 10px 8px;
+        font-size: 12px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+
+      .content {
+        padding: 26px 26px 40px;
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 18px;
+        align-items: start;
+      }
+      .topbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+      .breadcrumbs {
+        font-size: 13px;
+        color: #94a3b8;
+      }
+      .breadcrumbs b {
+        color: #111827;
+      }
+      .title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .title h1 {
+        margin: 4px 0 0;
+        font-size: 24px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .search {
+        min-width: 280px;
+        flex: 1;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+      }
+      .btn {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 12px;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      .btn.primary {
+        background: var(--primary);
+        border-color: transparent;
+        color: #fff;
+      }
+
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px;
+      }
+      .filters select {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 10px;
+        padding: 8px 10px;
+        min-width: 160px;
+      }
+      .filters .grow {
+        flex: 1;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      .panel-body {
+        padding: 14px;
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+      }
+      .tabs button {
+        border: 0;
+        background: #f8fafc;
+        color: #334155;
+        padding: 8px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .tabs button.active {
+        background: #e0e7ff;
+        color: #111827;
+      }
+
+      .kpi {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .kcard {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 12px;
+      }
+      .kname {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .kval {
+        font-size: 22px;
+        font-weight: 800;
+      }
+      .kdelta {
+        font-size: 12px;
+        color: #16a34a;
+      }
+
+      .chart {
+        width: 100%;
+        height: 220px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fafafa;
+      }
+
+      .table-wrap {
+        width: 100%;
+        overflow: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      thead th {
+        position: sticky;
+        top: 0;
+        background: #f8fafc;
+        text-align: left;
+        padding: 12px;
+        font-size: 12px;
+        color: #64748b;
+        border-bottom: 1px solid var(--line);
+      }
+      tbody td {
+        padding: 12px;
+        border-bottom: 1px dashed #e5e7eb;
+        font-size: 14px;
+        color: #111827;
+        vertical-align: top;
+      }
+      tbody tr:hover {
+        background: #f9fafb;
+      }
+      .money {
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .state {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+      }
+      .ok {
+        background: rgba(16, 185, 129, 0.12);
+        color: #059669;
+      }
+      .no {
+        background: rgba(239, 68, 68, 0.12);
+        color: #dc2626;
+      }
+      .muted {
+        color: #64748b;
+      }
+      .state.btnlike {
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.06s ease;
+      }
+      .state.btnlike:active {
+        transform: scale(0.97);
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .card .hd {
+        padding: 14px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .card .bd {
+        padding: 14px;
+      }
+
+      @media (max-width: 1100px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ===== Loader overlay ===== */
+      .loader {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: saturate(1.2) blur(2px);
+        z-index: 999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+      .loader.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .loader .box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px 18px;
+        box-shadow: var(--shadow);
+      }
+      .loader .txt {
+        font-size: 12px;
+        color: #475569;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .loader .ring {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 3px solid #e5e7eb;
+        border-top-color: var(--primary);
+        animation: spin 1s linear infinite;
+      }
+
+      /* ===== Skeleton ===== */
+      .skel {
+        position: relative;
+        overflow: hidden;
+        background: #eef2f7;
+        border-radius: 10px;
+      }
+      .skel::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.55) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        transform: translateX(-100%);
+        animation: shimmer 1.2s infinite;
+      }
+      @keyframes shimmer {
+        to {
+          transform: translateX(100%);
+        }
+      }
+
+      /* ===== Animations ===== */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes pop {
+        from {
+          opacity: 0;
+          transform: scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .anim {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      .anim.in {
+        animation: fadeUp 0.35s ease var(--d, 0ms) both;
+      }
+      .chart-anim {
+        opacity: 0;
+        transform: scale(0.98);
+      }
+      .chart-anim.in {
+        animation: pop 0.35s ease 0.05s both;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="side">
+        <div class="brand">
+          <div class="logo"></div>
+          <span>Allout</span>
+        </div>
+        <nav class="nav">
+          <a class="active" href="index.html"><span>Dashboard</span></a>
+          <a href="#"><span>Analytics</span></a>
+          <a href="#"><span>Mailbox</span></a>
+          <h4>Tasks</h4>
+          <a href="task.html"><span>Task List</span></a>
+          <a href="task-new.html"><span>Create Task</span></a>
+        </nav>
+      </aside>
+
+      <!-- Main + Right -->
+      <main class="content">
+        <div>
+          <div class="topbar">
+            <div>
+              <div class="breadcrumbs">Projects / <b>Dashboard</b></div>
+              <div class="title">
+                <h1>Good Morning, <span id="who">The One</span></h1>
+              </div>
+            </div>
+            <div class="toolbar">
+              <input id="q" class="search" placeholder="Search tasks…" />
+              <a class="btn primary" href="task-new.html">+ Add Task</a>
+            </div>
+          </div>
+
+          <!-- FILTER BAR -->
+          <div class="filters" id="filters">
+            <select id="f_month">
+              <option value="">All months</option>
+            </select>
+            <select id="f_assign">
+              <option value="">All assignees</option>
+            </select>
+            <select id="f_category">
+              <option value="">All categories</option>
+            </select>
+            <select id="f_status">
+              <option value="">All status</option>
+              <option value="charged">Charged</option>
+              <option value="Unpaid">Unpaid</option>
+            </select>
+            <button id="f_reset" class="btn">Reset</button>
+          </div>
+
+          <!-- KPIs -->
+          <section class="kpi" aria-live="polite" style="margin-top: 12px">
+            <div class="kcard anim">
+              <div class="kname">Total tasks</div>
+              <div class="kval" id="k_total">0</div>
+              <div class="kdelta" id="k_total_delta">—</div>
+            </div>
+            <div class="kcard anim">
+              <div class="kname">Completed</div>
+              <div class="kval" id="k_done">0</div>
+              <div class="kdelta" id="k_done_delta">—</div>
+            </div>
+            <div class="kcard anim">
+              <div class="kname">Unpaid</div>
+              <div class="kval" id="k_pending">0</div>
+              <div class="kdelta">This period</div>
+            </div>
+            <div class="kcard anim">
+              <div class="kname">Revenue</div>
+              <div class="kval" id="k_rev">₫0</div>
+              <div class="kdelta" id="k_rev_delta">—</div>
+            </div>
+          </section>
+
+          <!-- Report -->
+          <section class="panel" style="margin-top: 12px">
+            <div class="panel-head">
+              <div>
+                <b>Your tasks report</b>
+                <div class="muted" style="font-size: 12px">
+                  Revenue vs Tasks
+                </div>
+              </div>
+              <div class="tabs" id="rangeTabs">
+                <button data-range="7d" class="active">7d</button>
+                <button data-range="30d">30d</button>
+                <button data-range="90d">90d</button>
+                <button data-range="YTD">YTD</button>
+              </div>
+            </div>
+            <div
+              class="panel-body"
+              style="
+                display: grid;
+                grid-template-columns: 300px 1fr;
+                gap: 16px;
+                align-items: center;
+              ">
+              <div>
+                <div style="font-size: 36px; font-weight: 800" id="bigRevenue">
+                  ₫0
+                </div>
+                <div class="muted" id="bigRevenueNote" style="margin-top: 6px">
+                  vs prev. period
+                </div>
+              </div>
+              <svg
+                id="lineChart"
+                class="chart chart-anim"
+                viewBox="0 0 700 220"
+                preserveAspectRatio="none"></svg>
+            </div>
+          </section>
+
+          <!-- Table -->
+          <section class="panel" style="margin-top: 12px">
+            <div class="panel-head">
+              <b>Last transactions</b>
+              <div>
+                <button class="btn" id="btnCSV">Export CSV</button>
+                <span class="muted" id="status" style="margin-left: 10px"
+                  >Loading…</span
+                >
+              </div>
+            </div>
+            <div class="panel-body table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Item</th>
+                    <th>Date</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <!-- Right column -->
+        <aside>
+          <section class="card">
+            <div class="hd"><b>Analytics!</b></div>
+            <div class="bd">
+              Some categories are doing the best.
+              <div
+                id="topCats"
+                style="display: grid; gap: 8px; margin-top: 10px"></div>
+            </div>
+          </section>
+          <section class="card" style="margin-top: 12px">
+            <div class="hd">
+              <b>Today</b
+              ><span
+                class="muted"
+                id="todayStr"
+                style="margin-left: 8px"></span>
+            </div>
+            <div class="bd" id="agenda"></div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <!-- Loader overlay -->
+    <div id="loading" class="loader" aria-live="polite" aria-busy="true">
+      <div class="box">
+        <div class="ring"></div>
+        <div class="txt">Loading data…</div>
+      </div>
+    </div>
+
+    <script>
+      // ====== CONFIG ======
+      const PROJECT_URL = "https://zuitnapveubnhjumvdnt.supabase.co";
+      const ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aXRuYXB2ZXVibmhqdW12ZG50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMTcwMjEsImV4cCI6MjA3NTY5MzAyMX0.rjhf7gSNaATuKCuVBYBgVA8wmUisSyTcM25Qeexj5Gg";
+      const BASE = `${PROJECT_URL}/rest/v1`;
+      const HEADERS = { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` };
+
+      let ROWS = [];
+      let RANGE = "7d";
+
+      // ===== Loader / Anim helper =====
+      function setLoading(on) {
+        const L = document.getElementById("loading");
+        if (!L) return;
+        if (on) {
+          showTableSkeleton();
+        }
+        L.classList.toggle("show", !!on);
+        setStatus(on ? "Loading…" : "Ready");
+      }
+      function showTableSkeleton() {
+        const tb = document.getElementById("tbody");
+        if (!tb) return;
+        tb.innerHTML = "";
+        for (let i = 0; i < 6; i++) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+          <td><div class="skel" style="height:14px;width:60px"></div></td>
+          <td><div class="skel" style="height:14px;width:200px"></div></td>
+          <td><div class="skel" style="height:14px;width:90px"></div></td>
+          <td><div class="skel" style="height:14px;width:80px"></div></td>
+          <td><div class="skel" style="height:14px;width:120px"></div></td>
+          <td><div class="skel" style="height:22px;width:96px;border-radius:999px"></div></td>`;
+          tb.appendChild(tr);
+        }
+      }
+      function animIn(selector) {
+        const els = document.querySelectorAll(selector);
+        els.forEach((el, i) => {
+          el.classList.remove("in");
+          void el.offsetWidth;
+          el.style.setProperty("--d", i * 50 + "ms");
+          el.classList.add("in");
+        });
+      }
+
+      // ===== Init =====
+      init();
+      async function init() {
+        document.getElementById("todayStr").textContent =
+          new Date().toLocaleDateString("vi-VN");
+
+        // Range tabs
+        document.getElementById("rangeTabs").addEventListener("click", (e) => {
+          const b = e.target.closest("button");
+          if (!b) return;
+          RANGE = b.dataset.range;
+          document
+            .querySelectorAll("#rangeTabs button")
+            .forEach((x) => x.classList.toggle("active", x === b));
+          repaint();
+        });
+
+        // Filters bind
+        ["f_month", "f_assign", "f_category", "f_status", "q"].forEach((id) => {
+          document.getElementById(id).addEventListener("input", repaint);
+          document.getElementById(id).addEventListener("change", repaint);
+        });
+        document.getElementById("f_reset").addEventListener("click", () => {
+          ["f_month", "f_assign", "f_category", "f_status", "q"].forEach(
+            (id) => (document.getElementById(id).value = "")
+          );
+          repaint();
+        });
+
+        // CSV
+        document.getElementById("btnCSV").addEventListener("click", exportCSV);
+
+        // Fetch data
+        try {
+          setLoading(true);
+          const url = new URL(`${BASE}/task`);
+          url.searchParams.set(
+            "select",
+            "id,name,date,price,is_charged,assign_to,category:category(name)"
+          );
+          url.searchParams.set("order", "date.desc");
+          const res = await fetch(url, { headers: HEADERS });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          ROWS = await res.json();
+          buildFilterOptions(ROWS);
+          repaint();
+        } catch (e) {
+          console.error(e);
+          setStatus("❌ API error: " + e.message);
+        } finally {
+          setLoading(false);
+          // Animate initial paint
+          animIn(".kpi .kcard");
+          animIn("#tbody tr");
+          animIn("#topCats > div, #agenda > div");
+          const chart = document.getElementById("lineChart");
+          chart.classList.remove("in");
+          void chart.offsetWidth;
+          chart.classList.add("in");
+        }
+      }
+
+      // ===== Filters =====
+      function monthKey(d) {
+        const dt = new Date(d + (String(d).length > 10 ? "" : "T00:00:00"));
+        return isNaN(dt)
+          ? ""
+          : `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
+      }
+      function prettyYM(key) {
+        const [y, m] = key.split("-");
+        return `${m}/${y}`;
+      }
+      function buildFilterOptions(rows) {
+        const months = Array.from(
+          new Set(rows.filter((r) => r.date).map((r) => monthKey(r.date)))
+        )
+          .sort()
+          .reverse();
+        fillSelect("f_month", ["", ...months], (v) =>
+          v ? prettyYM(v) : "All months"
+        );
+        const assigns = Array.from(
+          new Set(rows.map((r) => r.assign_to).filter(Boolean))
+        ).sort();
+        fillSelect("f_assign", ["", ...assigns], (v) => v || "All assignees");
+        const cats = Array.from(
+          new Set(rows.map((r) => r.category?.name).filter(Boolean))
+        ).sort();
+        fillSelect("f_category", ["", ...cats], (v) => v || "All categories");
+      }
+      function fillSelect(id, values, labelMap) {
+        const sel = document.getElementById(id);
+        sel.innerHTML = values
+          .map(
+            (v) => `<option value="${escapeAttr(v)}">${labelMap(v)}</option>`
+          )
+          .join("");
+      }
+      function getFilters() {
+        return {
+          month: document.getElementById("f_month").value.trim(),
+          assign: document.getElementById("f_assign").value.trim(),
+          category: document.getElementById("f_category").value.trim(),
+          status: document.getElementById("f_status").value.trim(), // "", "charged", "Unpaid"
+          q: document.getElementById("q").value.trim().toLowerCase(),
+        };
+      }
+      function applyFilters(rows) {
+        const f = getFilters();
+        return rows.filter((r) => {
+          if (f.month && monthKey(r.date) !== f.month) return false;
+          if (f.assign && (r.assign_to || "") !== f.assign) return false;
+          if (f.category && (r.category?.name || "") !== f.category)
+            return false;
+          if (f.status === "charged" && !r.is_charged) return false;
+          if (f.status === "Unpaid" && r.is_charged) return false;
+          if (f.q) {
+            const hay = [r.name, r.assign_to, r.category?.name]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+            if (!hay.includes(f.q)) return false;
+          }
+          return true;
+        });
+      }
+
+      // ===== Repaint =====
+      function repaint() {
+        const rows = applyFilters(ROWS);
+        kpis(rows);
+        renderTable(rows);
+        drawLine(rows);
+        agenda(rows);
+        topCats(rows);
+
+        // Animate on every repaint
+        animIn(".kpi .kcard");
+        animIn("#tbody tr");
+        animIn("#topCats > div, #agenda > div");
+        const chart = document.getElementById("lineChart");
+        chart.classList.remove("in");
+        void chart.offsetWidth;
+        chart.classList.add("in");
+      }
+
+      // ===== KPI =====
+      function kpis(rows) {
+        const total = rows.length;
+        const doneRows = rows.filter((r) => r.is_charged);
+        const done = doneRows.length;
+        const pending = total - done;
+        const revenue = sum(doneRows.map((r) => +r.price || 0));
+        set("#k_total", total);
+        set("#k_done", done);
+        set("#k_pending", pending);
+        set("#k_rev", formatVND(revenue));
+
+        const { from, prevFrom } = rangeDates();
+        const cur = doneRows.filter((r) => inRange(r.date, from, new Date()));
+        const prev = doneRows.filter((r) => inRange(r.date, prevFrom, from));
+        const curRev = sum(cur.map((r) => +r.price || 0)),
+          prevRev = sum(prev.map((r) => +r.price || 0));
+        const delta = prevRev
+          ? (((curRev - prevRev) / prevRev) * 100).toFixed(1) + "%"
+          : curRev > 0
+          ? "+∞"
+          : "0%";
+        set("#bigRevenue", formatVND(curRev));
+        set("#bigRevenueNote", `vs prev. period ${delta}`);
+        set("#k_rev_delta", `period: ${formatVND(curRev)}`);
+        set("#k_total_delta", `${RANGE}`);
+        set("#k_done_delta", `${done}/${total}`);
+      }
+
+      // ===== Table =====
+      function renderTable(rows) {
+        const tb = document.getElementById("tbody");
+        tb.innerHTML = "";
+        rows.slice(0, 8).forEach((r, i) => {
+          const tr = document.createElement("tr");
+          tr.className = "anim";
+          tr.style.setProperty("--d", i * 40 + "ms");
+          tr.innerHTML = `
+          <td class="mono">#${(r.id || "").slice(0, 6)}</td>
+          <td><a href="detail.html?id=${encodeURIComponent(r.id)}">${escapeHtml(
+            r.name || ""
+          )}</a></td>
+          <td>${fmtDate(r.date)}</td>
+          <td class="money">${formatVND(r.price)}</td>
+          <td>${escapeHtml(r.category?.name || "—")}</td>
+          <td>
+            ${
+              r.is_charged
+                ? `<span class="state ok btnlike" data-toggle-charged data-id="${escapeAttr(
+                    r.id
+                  )}" data-val="true" title="Nhấn để đổi sang Chưa">Completed</span>`
+                : `<span class="state no btnlike" data-toggle-charged data-id="${escapeAttr(
+                    r.id
+                  )}" data-val="false" title="Nhấn để đổi sang Đã charge">Unpaid</span>`
+            }
+          </td>`;
+          tb.appendChild(tr);
+        });
+      }
+
+      // Toggle charged inline
+      document.getElementById("tbody").addEventListener("click", async (e) => {
+        const el = e.target.closest("[data-toggle-charged]");
+        if (!el) return;
+        const id = el.getAttribute("data-id");
+        const oldVal = el.getAttribute("data-val") === "true";
+        const newVal = !oldVal;
+        const oldHtml = el.innerHTML;
+        el.textContent = "…";
+        el.classList.add("muted");
+        try {
+          const url = `${BASE}/task?id=eq.${encodeURIComponent(id)}`;
+          const res = await fetch(url, {
+            method: "PATCH",
+            headers: {
+              ...HEADERS,
+              "Content-Type": "application/json",
+              Prefer: "return=representation",
+            },
+            body: JSON.stringify({ is_charged: newVal }),
+          });
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || `HTTP ${res.status}`);
+          }
+          const [updated] = await res.json();
+          const i = ROWS.findIndex((r) => String(r.id) === String(id));
+          if (i >= 0) ROWS[i] = { ...ROWS[i], ...updated };
+          repaint();
+        } catch (err) {
+          console.error(err);
+          el.innerHTML = oldHtml;
+          el.classList.remove("muted");
+          alert(
+            "Cập nhật thất bại: " + err.message + "\nKiểm tra RLS/KEY/Policy."
+          );
+        }
+      });
+
+      // ===== Right widgets =====
+      function agenda(rows) {
+        const host = document.getElementById("agenda");
+        host.innerHTML = "";
+        const today = new Date().toISOString().slice(0, 10);
+        const list = rows
+          .filter((r) => (r.date || "").slice(0, 10) === today)
+          .slice(0, 4);
+        if (!list.length) {
+          host.innerHTML = '<div class="muted">No schedule today</div>';
+          return;
+        }
+        list.forEach((r, i) => {
+          const div = document.createElement("div");
+          div.className = "anim";
+          div.style.setProperty("--d", i * 60 + "ms");
+          div.style.cssText =
+            "display:flex;justify-content:space-between;align-items:center;border:1px dashed var(--line);border-radius:12px;padding:10px;margin-bottom:8px";
+          div.innerHTML = `<div><b>${escapeHtml(
+            r.name || ""
+          )}</b><div class="muted">${escapeHtml(
+            r.category?.name || ""
+          )}</div></div><div class="money">${formatVND(r.price)}</div>`;
+          host.appendChild(div);
+        });
+      }
+      function topCats(rows) {
+        const host = document.getElementById("topCats");
+        host.innerHTML = "";
+        const m = new Map();
+        for (const r of rows) {
+          const k = r.category?.name || "Uncategorized";
+          m.set(k, (m.get(k) || 0) + (+r.price || 0));
+        }
+        [...m.entries()]
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .forEach(([k, v], i) => {
+            const row = document.createElement("div");
+            row.className = "anim";
+            row.style.setProperty("--d", i * 60 + "ms");
+            row.style.cssText =
+              "display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px";
+            row.innerHTML = `<span>${escapeHtml(k)}</span><b>${formatVND(
+              v
+            )}</b>`;
+            host.appendChild(row);
+          });
+      }
+
+      // ===== Charts =====
+      function drawLine(rows) {
+        const { from } = rangeDates();
+        const days = daysBetween(from, new Date());
+        const labels = days.labels;
+        const rev = days.map.map((d) =>
+          sum(
+            rows
+              .filter((r) => sameDay(r.date, d) && r.is_charged)
+              .map((r) => +r.price || 0)
+          )
+        );
+        const cnt = days.map.map(
+          (d) => rows.filter((r) => sameDay(r.date, d)).length
+        );
+        lineChart("#lineChart", rev, cnt, labels);
+      }
+      function lineChart(sel, seriesA, seriesB, labels) {
+        const svg = document.querySelector(sel);
+        const W = 700,
+          H = 220,
+          P = 28;
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svg.innerHTML = "";
+        const max = Math.max(1, ...seriesA, ...seriesB);
+        const toXY = (v, i, n) => {
+          const x = P + (i / (n - 1)) * (W - P * 2);
+          const y = H - P - (v / max) * (H - P * 2);
+          return [x, y];
+        };
+        for (let i = 0; i <= 4; i++) {
+          const y = P + (H - P * 2) * (i / 4);
+          svg.insertAdjacentHTML(
+            "beforeend",
+            `<line x1="${P}" y1="${y}" x2="${
+              W - P
+            }" y2="${y}" stroke="#e5e7eb"/>`
+          );
+        }
+        const pathOf = (arr) =>
+          arr
+            .map((v, i) => {
+              const [x, y] = toXY(v, i, arr.length);
+              return `${i ? "L" : "M"}${x},${y}`;
+            })
+            .join(" ");
+        svg.insertAdjacentHTML(
+          "beforeend",
+          `<path d="${pathOf(
+            seriesA
+          )}" fill="none" stroke="#2563eb" stroke-width="2.3"/>`
+        );
+        svg.insertAdjacentHTML(
+          "beforeend",
+          `<path d="${pathOf(
+            seriesB
+          )}" fill="none" stroke="#fb923c" stroke-width="2.3" opacity=".9"/>`
+        );
+        labels.forEach((lab, i) => {
+          const [x] = toXY(0, i, labels.length);
+          if (i % Math.ceil(labels.length / 12) === 0) {
+            svg.insertAdjacentHTML(
+              "beforeend",
+              `<text x="${x}" y="${
+                H - 6
+              }" text-anchor="middle" font-size="10" fill="#64748b">${lab}</text>`
+            );
+          }
+        });
+      }
+
+      // ===== Export =====
+      function exportCSV() {
+        const rows = applyFilters(ROWS);
+        const header = ["id", "name", "date", "price", "category", "charged"];
+        const csv = [header.join(",")]
+          .concat(
+            rows.map((r) =>
+              [
+                escCsv(r.id),
+                escCsv(r.name),
+                escCsv(r.date),
+                escCsv(r.price),
+                escCsv(r.category?.name),
+                r.is_charged ? 1 : 0,
+              ].join(",")
+            )
+          )
+          .join("\n");
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "transactions.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      // ===== Utils =====
+      function set(sel, v) {
+        const el = document.querySelector(sel);
+        if (el) el.textContent = v;
+      }
+      function sum(a) {
+        return a.reduce((x, y) => x + y, 0);
+      }
+      function fmtDate(d) {
+        if (!d) return "";
+        const dt = new Date(d + (String(d).length > 10 ? "" : "T00:00:00"));
+        return isNaN(dt) ? d : dt.toLocaleDateString("vi-VN");
+      }
+      function escapeHtml(s) {
+        return String(s ?? "").replace(
+          /[&<>\"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }[m] || m)
+        );
+      }
+      function escapeAttr(s) {
+        return String(s ?? "").replace(/\"/g, "&quot;");
+      }
+      function escCsv(v) {
+        return '"' + String(v ?? "").replaceAll('"', '""') + '"';
+      }
+      function sameDay(d1, d2) {
+        const a = new Date(d1 + (String(d1).length > 10 ? "" : "T00:00:00"));
+        const b = new Date(d2);
+        return (
+          a.getFullYear() === b.getFullYear() &&
+          a.getMonth() === b.getMonth() &&
+          a.getDate() === b.getDate()
+        );
+      }
+      function daysBetween(start, end) {
+        const s = new Date(
+          start.getFullYear(),
+          start.getMonth(),
+          start.getDate()
+        );
+        const e = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+        const labels = [],
+          days = [];
+        let d = s;
+        while (d <= e) {
+          labels.push(
+            `${String(d.getDate()).padStart(2, "0")}/${String(
+              d.getMonth() + 1
+            ).padStart(2, "0")}`
+          );
+          days.push(new Date(d));
+          d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+        }
+        const map = { map: (fn) => days.map(fn) };
+        return { labels, map };
+      }
+      function rangeDates() {
+        const now = new Date();
+        const fMonth = document.getElementById("f_month").value;
+        if (fMonth) {
+          const [y, m] = fMonth.split("-").map(Number);
+          const from = new Date(y, m - 1, 1);
+          const prevFrom = new Date(y, m - 2, 1);
+          return { from, prevFrom };
+        }
+        if (RANGE === "7d") {
+          const from = new Date(now);
+          from.setDate(from.getDate() - 6);
+          const prevFrom = new Date(from);
+          prevFrom.setDate(prevFrom.getDate() - 7);
+          return { from, prevFrom };
+        }
+        if (RANGE === "30d") {
+          const from = new Date(now);
+          from.setDate(from.getDate() - 29);
+          const prevFrom = new Date(from);
+          prevFrom.setDate(prevFrom.getDate() - 30);
+          return { from, prevFrom };
+        }
+        if (RANGE === "90d") {
+          const from = new Date(now);
+          from.setDate(from.getDate() - 89);
+          const prevFrom = new Date(from);
+          prevFrom.setDate(prevFrom.getDate() - 90);
+          return { from, prevFrom };
+        }
+        const from = new Date(now.getFullYear(), 0, 1);
+        const prevFrom = new Date(now.getFullYear() - 1, 0, 1);
+        return { from, prevFrom };
+      }
+      function inRange(dateStr, from, to) {
+        const d = new Date(
+          dateStr + (String(dateStr).length > 10 ? "" : "T00:00:00")
+        );
+        return d >= from && d <= to;
+      }
+
+      const _VND_FORMATTER = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        maximumFractionDigits: 0,
+      });
+      function formatVND(n) {
+        if (n == null || n === "") return "₫0";
+        const v = +n || 0;
+        return _VND_FORMATTER.format(v);
+      }
+
+      function setStatus(t) {
+        const el = document.getElementById("status");
+        if (el) el.textContent = t;
+      }
+    </script>
+  </body>
+</html>

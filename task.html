@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Task Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #f7f8fb;
+        --panel: #ffffff;
+        --ink: #0f172a;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --primary: #3b82f6;
+        --chip: #eef2ff;
+        --good: #10b981;
+        --warn: #f59e0b;
+        --bad: #ef4444;
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+      .side {
+        background: #fff;
+        border-right: 1px solid var(--line);
+        padding: 22px 16px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        margin-bottom: 18px;
+      }
+      .brand .logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #4f46e5, #22d3ee);
+      }
+      .nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        color: #334155;
+      }
+      .nav a.active {
+        background: #eef2ff;
+        color: #111827;
+        font-weight: 600;
+      }
+      .nav h4 {
+        margin: 18px 10px 8px;
+        font-size: 12px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+
+      .content {
+        padding: 26px 26px 40px;
+      }
+      .topbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+      .breadcrumbs {
+        font-size: 13px;
+        color: #94a3b8;
+      }
+      .breadcrumbs b {
+        color: #111827;
+      }
+      .title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .title h1 {
+        margin: 4px 0 0;
+        font-size: 24px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .search {
+        min-width: 280px;
+        flex: 1;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+      }
+      .seg {
+        display: flex;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .seg button {
+        padding: 8px 12px;
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+        color: #374151;
+        font-weight: 600;
+      }
+      .seg button[aria-pressed="true"] {
+        background: var(--chip);
+        color: #111827;
+      }
+      .chip {
+        padding: 6px 10px;
+        background: #f1f5f9;
+        border-radius: 999px;
+        font-size: 12px;
+        color: #334155;
+      }
+      .btn {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 12px;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      .btn.primary {
+        background: var(--primary);
+        border-color: transparent;
+        color: #fff;
+        text-decoration: none;
+      }
+
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 10px 0 18px;
+      }
+      .filters select {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 10px;
+        padding: 8px 10px;
+        min-width: 160px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+      }
+      .tabs button {
+        border: 0;
+        background: #f8fafc;
+        color: #334155;
+        padding: 8px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .tabs button.active {
+        background: #e0e7ff;
+        color: #111827;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 14px;
+        padding: 14px;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 14px;
+        box-shadow: var(--shadow);
+      }
+      .badge {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: #3730a3;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0;
+        color: #64748b;
+        font-size: 12px;
+      }
+      .people {
+        display: flex;
+      }
+      .avatar {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #c7d2fe;
+        border: 2px solid #fff;
+        margin-left: -6px;
+      }
+      .card h3 {
+        margin: 10px 0 6px;
+        font-size: 16px;
+      }
+      .card p {
+        margin: 0;
+        color: #475569;
+        font-size: 13px;
+      }
+      .link {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .pill {
+        padding: 6px 8px;
+        background: #f1f5f9;
+        border-radius: 10px;
+        font-size: 12px;
+        color: #334155;
+        text-decoration: none;
+      }
+
+      .table-wrap {
+        width: 100%;
+        overflow: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      thead th {
+        position: sticky;
+        top: 0;
+        background: #f8fafc;
+        text-align: left;
+        padding: 12px;
+        font-size: 12px;
+        color: #64748b;
+        border-bottom: 1px solid var(--line);
+      }
+      tbody td {
+        padding: 12px;
+        border-bottom: 1px dashed #e5e7eb;
+        font-size: 14px;
+        color: #111827;
+        vertical-align: top;
+      }
+      tbody tr:hover {
+        background: #f9fafb;
+      }
+      .money {
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .state {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+      }
+      .state.ok {
+        background: rgba(16, 185, 129, 0.12);
+        color: #059669;
+      }
+      .state.no {
+        background: rgba(239, 68, 68, 0.12);
+        color: #dc2626;
+      }
+      .muted {
+        color: #64748b;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .state.btnlike {
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.06s ease;
+      }
+      .state.btnlike:active {
+        transform: scale(0.97);
+      }
+
+      /* ===== Loader Overlay + Skeleton ===== */
+      .loader {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: saturate(1.2) blur(2px);
+        z-index: 999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+      .loader.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .loader .box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px 18px;
+        box-shadow: var(--shadow);
+      }
+      .loader .txt {
+        font-size: 12px;
+        color: #475569;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .loader .ring {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 3px solid #e5e7eb;
+        border-top-color: var(--primary);
+        animation: spin 1s linear infinite;
+      }
+
+      .skel {
+        position: relative;
+        overflow: hidden;
+        background: #eef2f7;
+        border-radius: 10px;
+      }
+      .skel::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.55) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        transform: translateX(-100%);
+        animation: shimmer 1.2s infinite;
+      }
+      @keyframes shimmer {
+        to {
+          transform: translateX(100%);
+        }
+      }
+
+      /* ===== Appear Animations ===== */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .anim {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      .anim.in {
+        animation: fadeUp 0.35s ease var(--d, 0ms) both;
+      }
+      /* đặt gần phần table sẵn có */
+      tbody tr.total-row {
+        background: #f8fafc;
+        font-weight: 700;
+      }
+      tbody tr.total-row td {
+        border-bottom: 0;
+      }
+      tbody tr.total-row .total-label {
+        text-align: right;
+        color: #334155;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="side">
+        <div class="brand">
+          <div class="logo"></div>
+          <span>Allout</span>
+        </div>
+        <nav class="nav">
+          <a href="index.html"><span>Dashboard</span></a>
+          <a href="#"><span>Analytics</span></a>
+          <a href="#"><span>Mailbox</span></a>
+          <h4>Tasks</h4>
+          <a class="active" href="task.html"><span>Task List</span></a>
+          <a href="task-new.html"><span>Create Task</span></a>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <div class="topbar">
+          <div>
+            <div class="breadcrumbs">Projects / <b>Task Board</b></div>
+            <div class="title">
+              <h1>Projects List 📌</h1>
+              <span class="chip" id="countChip">0 items</span>
+            </div>
+          </div>
+          <div class="toolbar">
+            <input
+              id="search"
+              class="search"
+              placeholder="Search task, note, assignee…" />
+            <div class="seg" role="tablist" aria-label="View switch">
+              <button id="btnGrid" aria-pressed="true" title="Grid view">
+                Grid
+              </button>
+              <button id="btnTable" aria-pressed="false" title="Table view">
+                Table
+              </button>
+            </div>
+            <button id="reload" class="btn">↻ Reload</button>
+            <a class="btn primary" href="task-new.html">+ New</a>
+          </div>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="filters">
+          <select id="f_month">
+            <option value="">All months</option>
+          </select>
+          <select id="f_assign">
+            <option value="">All assignees</option>
+          </select>
+          <select id="f_category">
+            <option value="">All categories</option>
+          </select>
+          <select id="f_status">
+            <option value="">All status</option>
+            <option value="charged">Charged</option>
+            <option value="Unpaid">Unpaid</option>
+          </select>
+          <button id="f_reset" class="btn">Reset</button>
+        </div>
+
+        <section class="panel" aria-live="polite">
+          <div class="panel-head">
+            <div class="tabs">
+              <button class="active" data-tab="all">All</button>
+              <button data-tab="charged">Charged</button>
+              <button data-tab="Unpaid">Unpaid</button>
+            </div>
+            <div class="muted" id="status">Loading…</div>
+            <button id="btnExportUnpaid" class="btn">Export</button>
+          </div>
+
+          <!-- Grid -->
+          <div id="grid" class="grid"></div>
+
+          <!-- Table -->
+          <div id="table" class="table-wrap hidden">
+            <table>
+              <thead>
+                <tr>
+                  <th>Task</th>
+                  <th>Category</th>
+                  <th>Date</th>
+                  <th>Price</th>
+                  <th>Charged?</th>
+                  <th>Assign To</th>
+                  <th>Note</th>
+                  <th>Link</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <!-- Popup Export Unpaid -->
+    <dialog
+      id="dlgExport"
+      style="
+        border: 0;
+        border-radius: 16px;
+        padding: 0;
+        max-width: 720px;
+        width: clamp(320px, 90vw, 720px);
+      ">
+      <div
+        style="
+          padding: 14px 16px;
+          border-bottom: 1px solid var(--line);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        ">
+        <b>Unpaid Report</b>
+        <div style="display: flex; gap: 8px">
+          <button id="btnCopyExport" class="btn">Copy</button>
+          <button id="btnCloseExport" class="btn">Close</button>
+        </div>
+      </div>
+      <div style="padding: 14px 16px">
+        <pre
+          id="exportContent"
+          style="
+            margin: 0;
+            white-space: pre-wrap;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+              monospace;
+          "></pre>
+      </div>
+    </dialog>
+
+    <!-- Loader -->
+    <div id="loader" class="loader" aria-live="polite" aria-busy="true">
+      <div class="box">
+        <div class="ring"></div>
+        <div class="txt">Đang tải dữ liệu…</div>
+      </div>
+    </div>
+
+    <script>
+      // ====== CONFIG ======
+      const PROJECT_URL = "https://zuitnapveubnhjumvdnt.supabase.co";
+      const ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aXRuYXB2ZXVibmhqdW12ZG50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMTcwMjEsImV4cCI6MjA3NTY5MzAyMX0.rjhf7gSNaATuKCuVBYBgVA8wmUisSyTcM25Qeexj5Gg";
+      const BASE = `${PROJECT_URL}/rest/v1`;
+      const HEADERS = { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` };
+
+      let RAW = [];
+      let VIEW = "grid"; // grid | table
+      let TAB = "all"; // all | charged | Unpaid
+
+      // Restore view
+      try {
+        VIEW = localStorage.getItem("view") || "grid";
+      } catch {}
+      document
+        .getElementById("btnGrid")
+        .setAttribute("aria-pressed", VIEW === "grid");
+      document
+        .getElementById("btnTable")
+        .setAttribute("aria-pressed", VIEW === "table");
+      setView(VIEW);
+
+      // First load
+      load();
+      // Export button -> mở popup với nội dung unpaid theo format
+      document
+        .getElementById("btnExportUnpaid")
+        .addEventListener("click", () => {
+          // dùng RAW gốc, nhưng nếu bạn muốn theo trạng thái filter hiện tại,
+          // có thể thay bằng "getRowsAfterApply()" tuỳ thiết kế. Ở đây xuất theo toàn bộ Unpaid.
+          const txt = buildUnpaidExportText(RAW);
+          openExportModal(txt);
+        });
+
+      document
+        .getElementById("btnCloseExport")
+        .addEventListener("click", () => {
+          const dlg = document.getElementById("dlgExport");
+          dlg.close?.();
+          dlg.removeAttribute("open");
+        });
+
+      document
+        .getElementById("btnCopyExport")
+        .addEventListener("click", async () => {
+          const pre = document.getElementById("exportContent");
+          try {
+            await navigator.clipboard.writeText(pre.textContent || "");
+            alert("Đã copy vào clipboard!");
+          } catch {
+            // fallback: chọn và copy
+            const range = document.createRange();
+            range.selectNodeContents(pre);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            document.execCommand("copy");
+            sel.removeAllRanges();
+            alert("Đã copy vào clipboard!");
+          }
+        });
+
+      // ====== Loader helpers ======
+      function showLoader(on) {
+        const L = document.getElementById("loader");
+        L.classList.toggle("show", !!on);
+        setStatus(on ? "Loading…" : "Ready");
+        if (on) renderSkeleton(); // show skeleton while loading
+      }
+
+      function renderSkeleton() {
+        // Grid skeleton
+        const grid = document.getElementById("grid");
+        grid.innerHTML = "";
+        if (!grid.classList.contains("hidden")) {
+          for (let i = 0; i < 8; i++) {
+            const card = document.createElement("article");
+            card.className = "card";
+            card.innerHTML = `
+              <div class="skel" style="width:80px;height:22px;border-radius:999px"></div>
+              <div class="skel" style="margin-top:10px;width:70%;height:18px"></div>
+              <div class="skel" style="margin-top:6px;width:95%;height:14px"></div>
+              <div style="display:flex;justify-content:space-between;gap:10px;margin-top:12px">
+                <div class="skel" style="width:120px;height:14px"></div>
+                <div class="skel" style="width:90px;height:14px"></div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:10px">
+                <div class="skel" style="width:56px;height:26px;border-radius:9px"></div>
+                <div class="skel" style="width:74px;height:26px;border-radius:999px"></div>
+              </div>
+            `;
+            grid.appendChild(card);
+          }
+        }
+        // Table skeleton
+        const tb = document.getElementById("tbody");
+        tb.innerHTML = "";
+        if (!document.getElementById("table").classList.contains("hidden")) {
+          for (let i = 0; i < 8; i++) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td><div class="skel" style="height:14px;width:180px"></div></td>
+              <td><div class="skel" style="height:14px;width:120px"></div></td>
+              <td><div class="skel" style="height:14px;width:90px"></div></td>
+              <td><div class="skel" style="height:14px;width:80px"></div></td>
+              <td><div class="skel" style="height:24px;width:110px;border-radius:999px"></div></td>
+              <td><div class="skel" style="height:14px;width:120px"></div></td>
+              <td><div class="skel" style="height:14px;width:220px"></div></td>
+              <td><div class="skel" style="height:14px;width:36px"></div></td>`;
+            tb.appendChild(tr);
+          }
+        }
+      }
+
+      // ====== Fetch data ======
+      async function load() {
+        showLoader(true);
+        try {
+          const url = new URL(`${BASE}/task`);
+          url.searchParams.set(
+            "select",
+            "id,name,link,date,price,is_charged,assign_to,note,category:category(name)"
+          );
+          url.searchParams.set("order", "date.desc");
+          const res = await fetch(url, { headers: HEADERS });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          RAW = await res.json();
+
+          buildFilterOptions(RAW);
+          document.getElementById(
+            "countChip"
+          ).textContent = `${RAW.length} items`;
+
+          apply();
+          setStatus("Ready");
+          // Appear animation
+          appear("#grid > .card, #tbody > tr");
+        } catch (e) {
+          setStatus("❌ API error: " + e.message + " · Kiểm tra URL/KEY/RLS");
+        } finally {
+          showLoader(false);
+        }
+      }
+
+      // ====== Filters ======
+      function monthKey(d) {
+        if (!d) return "";
+        const dt = new Date(d + (String(d).length > 10 ? "" : "T00:00:00"));
+        if (isNaN(dt)) return "";
+        return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}`;
+      }
+      function prettyYM(key) {
+        const [y, m] = key.split("-");
+        return `${m}/${y}`;
+      }
+      function buildFilterOptions(rows) {
+        const months = Array.from(
+          new Set(rows.filter((r) => r.date).map((r) => monthKey(r.date)))
+        )
+          .sort()
+          .reverse();
+        fillSelect("f_month", ["", ...months], (v) =>
+          v ? prettyYM(v) : "All months"
+        );
+        const assigns = Array.from(
+          new Set(rows.map((r) => r.assign_to).filter(Boolean))
+        ).sort();
+        fillSelect("f_assign", ["", ...assigns], (v) => v || "All assignees");
+        const cats = Array.from(
+          new Set(rows.map((r) => r.category?.name).filter(Boolean))
+        ).sort();
+        fillSelect("f_category", ["", ...cats], (v) => v || "All categories");
+
+        ["f_month", "f_assign", "f_category", "f_status"].forEach((id) => {
+          document.getElementById(id).addEventListener("change", apply);
+        });
+        document.getElementById("f_reset").addEventListener("click", () => {
+          ["f_month", "f_assign", "f_category", "f_status", "search"].forEach(
+            (id) => (document.getElementById(id).value = "")
+          );
+          apply();
+        });
+      }
+      function fillSelect(id, values, label) {
+        const el = document.getElementById(id);
+        el.innerHTML = values
+          .map((v) => `<option value="${escapeAttr(v)}">${label(v)}</option>`)
+          .join("");
+      }
+      function getFilters() {
+        return {
+          month: document.getElementById("f_month").value.trim(),
+          assign: document.getElementById("f_assign").value.trim(),
+          category: document.getElementById("f_category").value.trim(),
+          status: document.getElementById("f_status").value.trim(),
+          q: document.getElementById("search").value.trim().toLowerCase(),
+        };
+      }
+
+      // ====== Apply filters & View ======
+      function apply() {
+        const f = getFilters();
+        let rows = RAW.filter((r) => {
+          if (TAB === "charged" && !r.is_charged) return false;
+          if (TAB === "Unpaid" && r.is_charged) return false;
+          if (f.month && monthKey(r.date) !== f.month) return false;
+          if (f.assign && (r.assign_to || "") !== f.assign) return false;
+          if (f.category && (r.category?.name || "") !== f.category)
+            return false;
+          if (f.status === "charged" && !r.is_charged) return false;
+          if (f.status === "Unpaid" && r.is_charged) return false;
+          if (f.q) {
+            const hay = [r.name, r.note, r.assign_to, r.link, r.category?.name]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+            if (!hay.includes(f.q)) return false;
+          }
+          return true;
+        });
+
+        if (VIEW === "grid") renderGrid(rows);
+        else renderTable(rows);
+
+        appear("#grid > .card, #tbody > tr"); // animate after render
+      }
+
+      // ====== Renderers ======
+      function renderGrid(rows) {
+        const el = document.getElementById("grid");
+        const fmt = (d) =>
+          !d
+            ? ""
+            : new Date(
+                d + (String(d).length > 10 ? "" : "T00:00:00")
+              ).toLocaleDateString("vi-VN");
+        el.innerHTML = rows
+          .map((r, i) => {
+            const cat = r.category?.name || "—";
+            const charged = r.is_charged
+              ? '<span class="state ok">Charged</span>'
+              : '<span class="state no">Unpaid</span>';
+            return `<article class="card anim" style="--d:${i * 40}ms">
+            <span class="badge">${escapeHtml(cat)}</span>
+            <h3>${escapeHtml(r.name || "")}</h3>
+            <p class="muted">${escapeHtml(r.note || "")}</p>
+            <div class="meta"><span class="muted">📅 ${fmt(
+              r.date
+            )}</span><span class="money">${fmtMoney(r.price)}</span></div>
+            <div class="link">
+              ${
+                r.link
+                  ? `<a class="pill" href="${escapeAttr(
+                      r.link
+                    )}" target="_blank" rel="noopener">Open</a>`
+                  : ""
+              }
+              ${charged}
+            </div>
+            <div class="people" aria-label="assignees" title="${escapeAttr(
+              r.assign_to || ""
+            )}">
+              <div class="avatar"></div><div class="avatar"></div><div class="avatar"></div>
+            </div>
+          </article>`;
+          })
+          .join("");
+      }
+
+      function renderTable(rows) {
+        const tb = document.getElementById("tbody");
+        tb.innerHTML = "";
+
+        // render từng row
+        rows.forEach((r, i) => {
+          const chargedChip = r.is_charged
+            ? `<span class="state ok btnlike" data-toggle-charged data-id="${escapeAttr(
+                r.id
+              )}" data-val="true" title="Nhấn để chuyển sang Unpaid">Completed</span>`
+            : `<span class="state no btnlike" data-toggle-charged data-id="${escapeAttr(
+                r.id
+              )}" data-val="false" title="Nhấn để chuyển sang Completed">Unpaid</span>`;
+
+          const tr = document.createElement("tr");
+          tr.className = "anim";
+          tr.style.setProperty("--d", i * 35 + "ms");
+          tr.innerHTML = `
+      <td><strong>${escapeHtml(r.name || "")}</strong></td>
+      <td class="muted">${escapeHtml(r.category?.name || "")}</td>
+      <td>${fmtDate(r.date)}</td>
+      <td class="money">${fmtMoney(r.price)}</td>
+      <td>${chargedChip}</td>
+      <td>${escapeHtml(r.assign_to || "")}</td>
+      <td>${escapeHtml(r.note || "")}</td>
+      <td>${
+        r.link
+          ? `<a href="${escapeAttr(
+              r.link
+            )}" target="_blank" rel="noopener">open</a>`
+          : ""
+      }</td>`;
+          tb.appendChild(tr);
+        });
+
+        // ==== hàng tổng ở cuối (sum theo rows đang hiển thị) ====
+        const total = rows.reduce((acc, r) => acc + (+r.price || 0), 0);
+
+        const trTotal = document.createElement("tr");
+        trTotal.className = "total-row anim";
+        trTotal.style.setProperty("--d", rows.length * 35 + "ms");
+        trTotal.innerHTML = `
+    <td class="total-label" colspan="3">Tổng</td>
+    <td class="money">${fmtMoney(total)}</td>
+    <td colspan="4"></td>
+  `;
+        tb.appendChild(trTotal);
+      }
+
+      // ====== Toggle charged via PATCH ======
+      document.getElementById("tbody").addEventListener("click", async (e) => {
+        const el = e.target.closest("[data-toggle-charged]");
+        if (!el) return;
+        const id = el.getAttribute("data-id");
+        const oldVal = el.getAttribute("data-val") === "true";
+        const newVal = !oldVal;
+
+        // optimistic
+        const keep = el.innerHTML;
+        el.textContent = "…";
+        el.classList.add("muted");
+
+        try {
+          const res = await fetch(
+            `${BASE}/task?id=eq.${encodeURIComponent(id)}`,
+            {
+              method: "PATCH",
+              headers: {
+                ...HEADERS,
+                "Content-Type": "application/json",
+                Prefer: "return=representation",
+              },
+              body: JSON.stringify({ is_charged: newVal }),
+            }
+          );
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || `HTTP ${res.status}`);
+          }
+
+          const [rowUpd] = await res.json();
+          const idx = RAW.findIndex((r) => String(r.id) === String(id));
+          if (idx >= 0) RAW[idx] = { ...RAW[idx], ...rowUpd };
+
+          apply();
+        } catch (err) {
+          console.error(err);
+          el.innerHTML = keep;
+          el.classList.remove("muted");
+          alert(
+            "Cập nhật thất bại: " + err.message + "\nKiểm tra RLS/KEY/Policy."
+          );
+        }
+      });
+
+      // ====== View / Tabs / Events ======
+      function setView(v) {
+        VIEW = v;
+        try {
+          localStorage.setItem("view", v);
+        } catch {}
+        document
+          .getElementById("grid")
+          .classList.toggle("hidden", v !== "grid");
+        document
+          .getElementById("table")
+          .classList.toggle("hidden", v !== "table");
+        document
+          .getElementById("btnGrid")
+          .setAttribute("aria-pressed", v === "grid");
+        document
+          .getElementById("btnTable")
+          .setAttribute("aria-pressed", v === "table");
+      }
+
+      document.querySelectorAll(".tabs button").forEach((b) => {
+        b.addEventListener("click", () => {
+          document
+            .querySelectorAll(".tabs button")
+            .forEach((x) => x.classList.remove("active"));
+          b.classList.add("active");
+          TAB = b.dataset.tab;
+          apply();
+        });
+      });
+
+      document.getElementById("search").addEventListener("input", apply);
+      document.getElementById("reload").addEventListener("click", load);
+      document.getElementById("btnGrid").addEventListener("click", () => {
+        setView("grid");
+        apply();
+      });
+      document.getElementById("btnTable").addEventListener("click", () => {
+        setView("table");
+        apply();
+      });
+
+      // ====== Small utils ======
+      function setStatus(t) {
+        const el = document.getElementById("status");
+        if (el) el.textContent = t;
+      }
+      function escapeHtml(s) {
+        const map = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        };
+        return String(s ?? "").replace(/[&<>"']/g, (ch) => map[ch] || ch);
+      }
+      function escapeAttr(s) {
+        return String(s ?? "").replace(/\"/g, "&quot;");
+      }
+      function fmtDate(d) {
+        if (!d) return "";
+        const dt = new Date(d + (String(d).length > 10 ? "" : "T00:00:00"));
+        return isNaN(dt) ? d : dt.toLocaleDateString("vi-VN");
+      }
+      function fmtMoney(n) {
+        if (n == null || n === "") return "";
+        const v = +n || 0;
+        return new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+          maximumFractionDigits: 0,
+        }).format(v);
+      }
+
+      function appear(selector) {
+        const els = document.querySelectorAll(selector);
+        els.forEach((el) => {
+          el.classList.remove("in");
+          void el.offsetWidth; // restart animation
+          el.classList.add("in");
+        });
+      }
+
+      // ==== Export Unpaid ====
+      function buildUnpaidExportText(rows) {
+        // lọc Unpaid (is_charged == false)
+        const unpaid = rows.filter((r) => !r.is_charged);
+
+        // nhóm theo category
+        const byCat = new Map(); // key: catName, val: array rows
+        unpaid.forEach((r) => {
+          const key = r.category?.name || "Uncategorized";
+          if (!byCat.has(key)) byCat.set(key, []);
+          byCat.get(key).push(r);
+        });
+
+        // compose text
+        let parts = [];
+        let grand = 0;
+
+        for (const [cat, list] of byCat.entries()) {
+          const qty = list.length;
+          parts.push(`${qty} ${cat}:`);
+          list.forEach((item) => {
+            const linkStr = item.link ? item.link : item.name || "—";
+            const moneyStr = fmtMoney(item.price);
+            parts.push(`-${linkStr} (${moneyStr})`);
+            grand += +item.price || 0;
+          });
+        }
+
+        parts.push(`Tổng tiền: ${fmtMoney(grand)}`);
+        return parts.join("\n");
+      }
+
+      function openExportModal(text) {
+        const dlg = document.getElementById("dlgExport");
+        const pre = document.getElementById("exportContent");
+        pre.textContent = text || "Không có dữ liệu Unpaid.";
+        if (typeof dlg.showModal === "function") dlg.showModal();
+        else dlg.setAttribute("open", "open"); // fallback rất cũ
+      }
+    </script>
+  </body>
+</html>

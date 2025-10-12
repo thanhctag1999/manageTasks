@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+    default-src 'self';
+    connect-src 'self' https://zuitnapveubnhjumvdnt.supabase.co https://*.supabase.co http://127.0.0.1:5500 ws://127.0.0.1:5500;
+    img-src 'self' data: https:;
+    style-src 'self' 'unsafe-inline' https:;
+    script-src 'self' 'unsafe-inline' https:;
+    font-src 'self' https: data:;
+  " />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Task · Detail & Edit</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #f7f8fb;
+        --panel: #ffffff;
+        --ink: #0f172a;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --primary: #3b82f6;
+        --chip: #eef2ff;
+        --good: #10b981;
+        --warn: #f59e0b;
+        --bad: #ef4444;
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto,
+          sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+      /* Sidebar */
+      .side {
+        background: #fff;
+        border-right: 1px solid var(--line);
+        padding: 22px 16px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        margin-bottom: 18px;
+      }
+      .brand .logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #4f46e5, #22d3ee);
+      }
+      .nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        color: #334155;
+      }
+      .nav a.active {
+        background: #eef2ff;
+        color: #111827;
+        font-weight: 600;
+      }
+      .nav h4 {
+        margin: 18px 10px 8px;
+        font-size: 12px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+
+      /* Content */
+      .content {
+        padding: 26px 26px 40px;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .breadcrumbs {
+        font-size: 13px;
+        color: #94a3b8;
+      }
+      .breadcrumbs b {
+        color: #111827;
+      }
+      .title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .title h1 {
+        margin: 4px 0 0;
+        font-size: 24px;
+      }
+      .chip {
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: #3730a3;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      .panel-body {
+        padding: 16px;
+      }
+
+      .btn {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 12px;
+        padding: 9px 12px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn.primary {
+        background: var(--primary);
+        border-color: transparent;
+        color: #fff;
+      }
+      .btn.danger {
+        background: #fee2e2;
+        border-color: #fecaca;
+        color: #dc2626;
+      }
+
+      form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .row-1 {
+        grid-column: 1/-1;
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 6px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: #fff;
+        color: #0f172a;
+      }
+      textarea {
+        min-height: 96px;
+        resize: vertical;
+      }
+      .muted {
+        color: #6b7280;
+      }
+      .inline {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .hint {
+        font-size: 12px;
+        color: #94a3b8;
+      }
+      .state {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+      }
+      .ok {
+        background: rgba(16, 185, 129, 0.12);
+        color: #059669;
+      }
+      .no {
+        background: rgba(239, 68, 68, 0.12);
+        color: #dc2626;
+      }
+      .actions {
+        grid-column: 1/-1;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 6px;
+      }
+
+      .toast {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        color: #fff;
+        box-shadow: var(--shadow);
+        display: none;
+      }
+      .toast.ok {
+        background: var(--good);
+      }
+      .toast.err {
+        background: var(--bad);
+      }
+      .hidden {
+        display: none !important;
+      }
+
+      .money {
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          monospace;
+      }
+      @media (max-width: 980px) {
+        form {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="side">
+        <div class="brand">
+          <div class="logo"></div>
+          <span>Allout</span>
+        </div>
+        <nav class="nav">
+          <a href="index.html"><span>Overview</span></a>
+          <a href="#"><span>Analytics</span></a>
+          <a href="#"><span>Mailbox</span></a>
+          <h4>Tasks</h4>
+          <a href="task.html"><span>Task List</span></a>
+          <a href="task-new.html"><span>Create Task</span></a>
+          <a class="active" href="#"><span>Task Detail</span></a>
+        </nav>
+      </aside>
+
+      <!-- Main -->
+      <main class="content">
+        <div class="topbar">
+          <div>
+            <div class="breadcrumbs">Projects / Task / <b>Detail</b></div>
+            <div class="title">
+              <h1 id="pageTitle">Task Detail</h1>
+              <span id="chipState" class="chip">—</span>
+            </div>
+          </div>
+          <div class="inline">
+            <a class="btn" href="task.html">← Back to List</a>
+            <a class="btn" href="index.html">🏠 Dashboard</a>
+          </div>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <b id="headTitle">—</b>
+              <div class="muted" style="font-size: 12px">
+                ID: <span id="id" class="mono">—</span>
+              </div>
+            </div>
+            <div class="inline">
+              <button id="btnEdit" class="btn">✏️ Edit</button>
+              <button id="btnSave" class="btn primary hidden">💾 Save</button>
+              <button id="btnCancel" class="btn hidden">↩ Cancel</button>
+              <button id="btnDelete" class="btn danger">🗑 Delete</button>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <form id="form">
+              <div class="row-1">
+                <label for="name">Task name *</label>
+                <input
+                  id="name"
+                  required
+                  placeholder="VD: Thiết kế UI Task Board"
+                  disabled />
+              </div>
+
+              <div>
+                <label for="category">Category *</label>
+                <div class="inline" style="align-items: stretch">
+                  <select id="category" required disabled></select>
+                  <button
+                    id="btnAddCat"
+                    type="button"
+                    class="btn hidden"
+                    title="Add new category">
+                    + New
+                  </button>
+                </div>
+                <div class="hint">Chọn hoặc tạo mới nhanh.</div>
+              </div>
+
+              <div>
+                <label for="date">Date</label>
+                <input id="date" type="date" disabled />
+              </div>
+
+              <div>
+                <label for="price">Price</label>
+                <input
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  placeholder="0"
+                  disabled />
+                <div class="hint">
+                  Preview: <b class="money" id="pricePreview">₫0</b>
+                </div>
+              </div>
+
+              <div>
+                <label for="assign">Assign to</label>
+                <select id="assign" disabled>
+                  <option value="The One">The One</option>
+                  <option value="Piecesi">Piecesi</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="charged">Charged?</label>
+                <select id="charged" disabled>
+                  <option value="false">Chưa</option>
+                  <option value="true">Đã charge</option>
+                </select>
+              </div>
+
+              <div class="row-1">
+                <label for="link">Link</label>
+                <div class="inline" style="align-items: stretch">
+                  <input
+                    id="link"
+                    type="text"
+                    placeholder="https://…"
+                    disabled />
+                  <a
+                    id="openLink"
+                    class="btn"
+                    href="#"
+                    target="_blank"
+                    rel="noopener"
+                    >Open</a
+                  >
+                </div>
+                <div class="hint">Dán URL nếu có; nút Open sẽ mở tab mới.</div>
+              </div>
+
+              <div class="row-1">
+                <label for="note">Note</label>
+                <textarea
+                  id="note"
+                  placeholder="Ghi chú thêm…"
+                  disabled></textarea>
+              </div>
+            </form>
+
+            <div id="error" class="hidden" style="margin-top: 10px">
+              <p>
+                ❌ Không tải được task. Kiểm tra tham số
+                <code>?id=...</code> hoặc quyền truy cập.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Dialog Add Category -->
+    <dialog id="dlgCat">
+      <h3 style="margin: 0 0 10px">New Category</h3>
+      <label for="catName" class="muted" style="font-size: 12px">Name</label>
+      <input id="catName" placeholder="VD: Work" />
+      <div class="inline" style="justify-content: flex-end; margin-top: 10px">
+        <button id="catCancel" class="btn">Cancel</button>
+        <button id="catSave" class="btn primary">Save</button>
+      </div>
+    </dialog>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      // ====== CONFIG ======
+      const PROJECT_URL = "https://zuitnapveubnhjumvdnt.supabase.co";
+      const ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aXRuYXB2ZXVibmhqdW12ZG50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMTcwMjEsImV4cCI6MjA3NTY5MzAyMX0.rjhf7gSNaATuKCuVBYBgVA8wmUisSyTcM25Qeexj5Gg"; // thay bằng key thực tế hoặc JWT user nếu RLS bật
+      const BASE = `${PROJECT_URL}/rest/v1`;
+      const HEADERS_JSON = {
+        apikey: ANON_KEY,
+        Authorization: `Bearer ${ANON_KEY}`,
+        "Content-Type": "application/json",
+      };
+      const HEADERS = { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` };
+
+      // ====== MONEY (VND) ======
+      const _VND_FORMATTER = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        maximumFractionDigits: 0,
+      });
+      function formatVND(n) {
+        if (n == null || n === "") return "₫0";
+        const v = +n || 0;
+        return _VND_FORMATTER.format(v);
+      }
+
+      // ====== STATE ======
+      const els = {
+        pageTitle: document.getElementById("pageTitle"),
+        chipState: document.getElementById("chipState"),
+        headTitle: document.getElementById("headTitle"),
+        id: document.getElementById("id"),
+        form: document.getElementById("form"),
+        name: document.getElementById("name"),
+        category: document.getElementById("category"),
+        date: document.getElementById("date"),
+        price: document.getElementById("price"),
+        pricePreview: document.getElementById("pricePreview"),
+        assign: document.getElementById("assign"),
+        charged: document.getElementById("charged"),
+        link: document.getElementById("link"),
+        openLink: document.getElementById("openLink"),
+        note: document.getElementById("note"),
+        btnEdit: document.getElementById("btnEdit"),
+        btnSave: document.getElementById("btnSave"),
+        btnCancel: document.getElementById("btnCancel"),
+        btnDelete: document.getElementById("btnDelete"),
+        btnAddCat: document.getElementById("btnAddCat"),
+        toast: document.getElementById("toast"),
+        dlgCat: document.getElementById("dlgCat"),
+        catName: document.getElementById("catName"),
+        catSave: document.getElementById("catSave"),
+        catCancel: document.getElementById("catCancel"),
+        error: document.getElementById("error"),
+      };
+
+      // ====== ID parsing (có fallback) ======
+      const qs = new URLSearchParams(location.search);
+      let taskId = qs.get("id");
+      if (!taskId && location.hash) {
+        const h = new URLSearchParams(location.hash.slice(1));
+        taskId = h.get("id");
+      }
+
+      // ====== INIT ======
+      let ORIG = null; // bản gốc để so sánh/cancel
+      let CATS = []; // category list
+
+      init();
+      async function init() {
+        if (!taskId) return showError("Thiếu tham số id");
+        try {
+          await loadCategories();
+          const row = await fetchTask(taskId);
+          ORIG = row;
+          fillForm(row);
+          setViewMode(true);
+        } catch (e) {
+          showError(e.message || String(e));
+        }
+        wireEvents();
+      }
+
+      function wireEvents() {
+        els.btnEdit.addEventListener("click", () => setViewMode(false));
+        els.btnCancel.addEventListener("click", () => {
+          fillForm(ORIG);
+          setViewMode(true);
+        });
+        els.btnSave.addEventListener("click", onSave);
+        els.btnDelete.addEventListener("click", onDelete);
+
+        els.price.addEventListener("input", () => {
+          els.pricePreview.textContent = formatVND(els.price.value);
+        });
+
+        els.link.addEventListener("input", () => {
+          const v = els.link.value.trim();
+          els.openLink.href = v && /^https?:\/\//i.test(v) ? v : "#";
+        });
+
+        // Add new category
+        els.btnAddCat.addEventListener("click", () => {
+          els.catName.value = "";
+          els.dlgCat.showModal();
+          setTimeout(() => els.catName.focus(), 30);
+        });
+        els.catCancel.addEventListener("click", () => els.dlgCat.close());
+        els.catSave.addEventListener("click", createCategory);
+      }
+
+      // ====== LOADERS ======
+      async function loadCategories() {
+        const url = new URL(`${BASE}/category`);
+        url.searchParams.set("select", "id,name");
+        url.searchParams.set("order", "name.asc");
+        const res = await fetch(url, { headers: HEADERS });
+        if (!res.ok) throw new Error("Không tải được category");
+        CATS = await res.json();
+        els.category.innerHTML = CATS.map(
+          (c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`
+        ).join("");
+      }
+
+      async function fetchTask(id) {
+        const url = new URL(`${BASE}/task`);
+        url.searchParams.set(
+          "select",
+          "id,name,link,date,price,is_charged,assign_to,note,category_id,category:category(name)"
+        );
+        url.searchParams.set("id", `eq.${id}`);
+        url.searchParams.set("limit", "1");
+        const res = await fetch(url, { headers: HEADERS });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const rows = await res.json();
+        if (!rows.length) throw new Error("Không tìm thấy task");
+        return rows[0];
+      }
+
+      // ====== RENDER ======
+      function fillForm(r) {
+        els.pageTitle.textContent = r.name || "Task Detail";
+        els.headTitle.textContent = r.name || "—";
+        els.id.textContent = r.id;
+        drawStateChip(r.is_charged === true);
+
+        els.name.value = r.name || "";
+        els.category.value = r.category_id || "";
+        els.date.value = normalizeDateInput(r.date);
+        els.price.value = r.price ?? "";
+        els.pricePreview.textContent = formatVND(r.price);
+        els.assign.value = r.assign_to || "The One";
+        els.charged.value = r.is_charged === true ? "true" : "false";
+        els.link.value = r.link || "";
+        els.openLink.href =
+          r.link && /^https?:\/\//i.test(r.link) ? r.link : "#";
+        els.note.value = r.note || "";
+      }
+
+      function normalizeDateInput(d) {
+        if (!d) return "";
+        const s = String(d);
+        if (s.length >= 10) return s.slice(0, 10);
+        try {
+          const dt = new Date(d);
+          if (isNaN(dt)) return "";
+          const pad = (n) => String(n).padStart(2, "0");
+          return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(
+            dt.getDate()
+          )}`;
+        } catch {
+          return "";
+        }
+      }
+
+      function drawStateChip(isCharged) {
+        els.chipState.textContent = isCharged ? "Charged" : "Unpaid";
+        els.chipState.style.background = isCharged
+          ? "rgba(16,185,129,.12)"
+          : "#fee2e2";
+        els.chipState.style.color = isCharged ? "#059669" : "#991b1b";
+      }
+
+      function setViewMode(viewOnly) {
+        // viewOnly = true -> disable inputs, show Edit button
+        const inputs = [
+          els.name,
+          els.category,
+          els.date,
+          els.price,
+          els.assign,
+          els.charged,
+          els.link,
+          els.note,
+        ];
+        inputs.forEach((i) => (i.disabled = viewOnly));
+        els.btnSave.classList.toggle("hidden", viewOnly);
+        els.btnCancel.classList.toggle("hidden", viewOnly);
+        els.btnAddCat.classList.toggle("hidden", viewOnly);
+        els.btnEdit.classList.toggle("hidden", !viewOnly);
+      }
+
+      // ====== ACTIONS ======
+      async function onSave() {
+        // Validate
+        const body = {
+          name: els.name.value.trim(),
+          category_id: els.category.value || null,
+          date: els.date.value || null,
+          price: els.price.value ? Number(els.price.value) : null,
+          assign_to: els.assign.value || null,
+          is_charged: els.charged.value === "true",
+          link: els.link.value.trim() || null,
+          note: els.note.value.trim() || null,
+        };
+        if (!body.name) return notify("Thiếu tên task", true);
+        if (body.link && !/^https?:\/\//i.test(body.link))
+          return notify("Link phải bắt đầu bằng http(s)", true);
+
+        // PATCH
+        try {
+          els.btnSave.disabled = true;
+          els.btnSave.textContent = "Saving…";
+          const res = await fetch(
+            `${BASE}/task?id=eq.${encodeURIComponent(taskId)}`,
+            {
+              method: "PATCH",
+              headers: { ...HEADERS_JSON, Prefer: "return=representation" },
+              body: JSON.stringify(body),
+            }
+          );
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || "HTTP " + res.status);
+          }
+          const [row] = await res.json();
+          ORIG = row; // cập nhật bản gốc
+          fillForm(row);
+          setViewMode(true);
+          drawStateChip(row.is_charged === true);
+          notify("Đã lưu thay đổi ✔️");
+        } catch (e) {
+          notify("Lỗi lưu: " + (e.message || e), true);
+        } finally {
+          els.btnSave.disabled = false;
+          els.btnSave.textContent = "💾 Save";
+        }
+      }
+
+      async function onDelete() {
+        if (!confirm("Xóa task này? Hành động không thể hoàn tác.")) return;
+        try {
+          const res = await fetch(
+            `${BASE}/task?id=eq.${encodeURIComponent(taskId)}`,
+            {
+              method: "DELETE",
+              headers: HEADERS,
+            }
+          );
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || "HTTP " + res.status);
+          }
+          notify("Đã xóa task", false);
+          setTimeout(() => (location.href = "task.html"), 700);
+        } catch (e) {
+          notify("Lỗi xóa: " + (e.message || e), true);
+        }
+      }
+
+      async function createCategory() {
+        const name = els.catName.value.trim();
+        if (!name) return notify("Nhập tên category", true);
+        try {
+          const res = await fetch(`${BASE}/category`, {
+            method: "POST",
+            headers: { ...HEADERS_JSON, Prefer: "return=representation" },
+            body: JSON.stringify({ name }),
+          });
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || "HTTP " + res.status);
+          }
+          const [row] = await res.json();
+          els.dlgCat.close();
+          await loadCategories();
+          els.category.value = row.id;
+          notify("Đã tạo category");
+        } catch (e) {
+          notify("Lỗi tạo category: " + (e.message || e), true);
+        }
+      }
+
+      // ====== UTILS ======
+      function notify(msg, isErr = false) {
+        els.toast.textContent = msg;
+        els.toast.className = "toast " + (isErr ? "err" : "ok");
+        els.toast.style.display = "block";
+        clearTimeout(window.__t);
+        window.__t = setTimeout(() => (els.toast.style.display = "none"), 2600);
+      }
+      function escapeHtml(s) {
+        return String(s ?? "").replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }[m])
+        );
+      }
+      function showError(msg) {
+        els.error.classList.remove("hidden");
+        els.error.innerHTML = `<p>❌ ${escapeHtml(msg)}</p>`;
+      }
+    </script>
+  </body>
+</html>
