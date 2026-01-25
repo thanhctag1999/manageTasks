@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
   <head>
     <meta charset="utf-8" />
@@ -30,7 +30,12 @@
       }
       body {
         margin: 0;
-        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
           sans-serif;
         background: var(--bg);
         color: var(--ink);
@@ -434,8 +439,7 @@
         </div>
         <nav class="nav">
           <a class="active" href="index.html"><span>Dashboard</span></a>
-          <a href="#"><span>Analytics</span></a>
-          <a href="#"><span>Mailbox</span></a>
+          <a href="analytics.html"><span>Analytics</span></a>
           <h4>Tasks</h4>
           <a href="task.html"><span>Task List</span></a>
           <a href="task-new.html"><span>Create Task</span></a>
@@ -674,7 +678,7 @@
         });
         document.getElementById("f_reset").addEventListener("click", () => {
           ["f_month", "f_assign", "f_category", "f_status", "q"].forEach(
-            (id) => (document.getElementById(id).value = "")
+            (id) => (document.getElementById(id).value = ""),
           );
           repaint();
         });
@@ -688,7 +692,7 @@
           const url = new URL(`${BASE}/task`);
           url.searchParams.set(
             "select",
-            "id,name,date,price,is_charged,assign_to,category:category(name)"
+            "id,name,date,price,is_charged,assign_to,category:category(name)",
           );
           url.searchParams.set("order", "date.desc");
           const res = await fetch(url, { headers: HEADERS });
@@ -725,19 +729,19 @@
       }
       function buildFilterOptions(rows) {
         const months = Array.from(
-          new Set(rows.filter((r) => r.date).map((r) => monthKey(r.date)))
+          new Set(rows.filter((r) => r.date).map((r) => monthKey(r.date))),
         )
           .sort()
           .reverse();
         fillSelect("f_month", ["", ...months], (v) =>
-          v ? prettyYM(v) : "All months"
+          v ? prettyYM(v) : "All months",
         );
         const assigns = Array.from(
-          new Set(rows.map((r) => r.assign_to).filter(Boolean))
+          new Set(rows.map((r) => r.assign_to).filter(Boolean)),
         ).sort();
         fillSelect("f_assign", ["", ...assigns], (v) => v || "All assignees");
         const cats = Array.from(
-          new Set(rows.map((r) => r.category?.name).filter(Boolean))
+          new Set(rows.map((r) => r.category?.name).filter(Boolean)),
         ).sort();
         fillSelect("f_category", ["", ...cats], (v) => v || "All categories");
       }
@@ -745,7 +749,7 @@
         const sel = document.getElementById(id);
         sel.innerHTML = values
           .map(
-            (v) => `<option value="${escapeAttr(v)}">${labelMap(v)}</option>`
+            (v) => `<option value="${escapeAttr(v)}">${labelMap(v)}</option>`,
           )
           .join("");
       }
@@ -809,6 +813,17 @@
         set("#k_pending", pending);
         set("#k_rev", formatVND(revenue));
 
+        // Nếu filter All months (không chọn tháng), bigRevenue = tổng theo dữ liệu đã filter
+        const fMonth = document.getElementById("f_month")?.value?.trim();
+        if (!fMonth) {
+          set("#bigRevenue", formatVND(revenue));
+          set("#bigRevenueNote", "All months (filtered)");
+          set("#k_rev_delta", `period: ${formatVND(revenue)}`);
+          set("#k_total_delta", "All");
+          set("#k_done_delta", `${done}/${total}`);
+          return;
+        }
+
         const { from, prevFrom } = rangeDates();
         const cur = doneRows.filter((r) => inRange(r.date, from, new Date()));
         const prev = doneRows.filter((r) => inRange(r.date, prevFrom, from));
@@ -817,8 +832,8 @@
         const delta = prevRev
           ? (((curRev - prevRev) / prevRev) * 100).toFixed(1) + "%"
           : curRev > 0
-          ? "+∞"
-          : "0%";
+            ? "+∞"
+            : "0%";
         set("#bigRevenue", formatVND(curRev));
         set("#bigRevenueNote", `vs prev. period ${delta}`);
         set("#k_rev_delta", `period: ${formatVND(curRev)}`);
@@ -830,14 +845,15 @@
       function renderTable(rows) {
         const tb = document.getElementById("tbody");
         tb.innerHTML = "";
-        rows.slice(0, 8).forEach((r, i) => {
+        const list = rows; // luôn hiển thị tất cả sau khi đã filter
+        list.forEach((r, i) => {
           const tr = document.createElement("tr");
           tr.className = "anim";
           tr.style.setProperty("--d", i * 40 + "ms");
           tr.innerHTML = `
           <td class="mono">#${(r.id || "").slice(0, 6)}</td>
           <td><a href="detail.html?id=${encodeURIComponent(r.id)}">${escapeHtml(
-            r.name || ""
+            r.name || "",
           )}</a></td>
           <td>${fmtDate(r.date)}</td>
           <td class="money">${formatVND(r.price)}</td>
@@ -846,10 +862,10 @@
             ${
               r.is_charged
                 ? `<span class="state ok btnlike" data-toggle-charged data-id="${escapeAttr(
-                    r.id
+                    r.id,
                   )}" data-val="true" title="Nhấn để đổi sang Chưa">Completed</span>`
                 : `<span class="state no btnlike" data-toggle-charged data-id="${escapeAttr(
-                    r.id
+                    r.id,
                   )}" data-val="false" title="Nhấn để đổi sang Đã charge">Unpaid</span>`
             }
           </td>`;
@@ -891,7 +907,7 @@
           el.innerHTML = oldHtml;
           el.classList.remove("muted");
           alert(
-            "Cập nhật thất bại: " + err.message + "\nKiểm tra RLS/KEY/Policy."
+            "Cập nhật thất bại: " + err.message + "\nKiểm tra RLS/KEY/Policy.",
           );
         }
       });
@@ -915,9 +931,9 @@
           div.style.cssText =
             "display:flex;justify-content:space-between;align-items:center;border:1px dashed var(--line);border-radius:12px;padding:10px;margin-bottom:8px";
           div.innerHTML = `<div><b>${escapeHtml(
-            r.name || ""
+            r.name || "",
           )}</b><div class="muted">${escapeHtml(
-            r.category?.name || ""
+            r.category?.name || "",
           )}</div></div><div class="money">${formatVND(r.price)}</div>`;
           host.appendChild(div);
         });
@@ -940,7 +956,7 @@
             row.style.cssText =
               "display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px";
             row.innerHTML = `<span>${escapeHtml(k)}</span><b>${formatVND(
-              v
+              v,
             )}</b>`;
             host.appendChild(row);
           });
@@ -955,11 +971,11 @@
           sum(
             rows
               .filter((r) => sameDay(r.date, d) && r.is_charged)
-              .map((r) => +r.price || 0)
-          )
+              .map((r) => +r.price || 0),
+          ),
         );
         const cnt = days.map.map(
-          (d) => rows.filter((r) => sameDay(r.date, d)).length
+          (d) => rows.filter((r) => sameDay(r.date, d)).length,
         );
         lineChart("#lineChart", rev, cnt, labels);
       }
@@ -982,7 +998,7 @@
             "beforeend",
             `<line x1="${P}" y1="${y}" x2="${
               W - P
-            }" y2="${y}" stroke="#e5e7eb"/>`
+            }" y2="${y}" stroke="#e5e7eb"/>`,
           );
         }
         const pathOf = (arr) =>
@@ -995,14 +1011,14 @@
         svg.insertAdjacentHTML(
           "beforeend",
           `<path d="${pathOf(
-            seriesA
-          )}" fill="none" stroke="#2563eb" stroke-width="2.3"/>`
+            seriesA,
+          )}" fill="none" stroke="#2563eb" stroke-width="2.3"/>`,
         );
         svg.insertAdjacentHTML(
           "beforeend",
           `<path d="${pathOf(
-            seriesB
-          )}" fill="none" stroke="#fb923c" stroke-width="2.3" opacity=".9"/>`
+            seriesB,
+          )}" fill="none" stroke="#fb923c" stroke-width="2.3" opacity=".9"/>`,
         );
         labels.forEach((lab, i) => {
           const [x] = toXY(0, i, labels.length);
@@ -1011,7 +1027,7 @@
               "beforeend",
               `<text x="${x}" y="${
                 H - 6
-              }" text-anchor="middle" font-size="10" fill="#64748b">${lab}</text>`
+              }" text-anchor="middle" font-size="10" fill="#64748b">${lab}</text>`,
             );
           }
         });
@@ -1031,8 +1047,8 @@
                 escCsv(r.price),
                 escCsv(r.category?.name),
                 r.is_charged ? 1 : 0,
-              ].join(",")
-            )
+              ].join(","),
+            ),
           )
           .join("\n");
         const blob = new Blob([csv], { type: "text/csv" });
@@ -1067,7 +1083,7 @@
               ">": "&gt;",
               '"': "&quot;",
               "'": "&#39;",
-            }[m] || m)
+            })[m] || m,
         );
       }
       function escapeAttr(s) {
@@ -1089,7 +1105,7 @@
         const s = new Date(
           start.getFullYear(),
           start.getMonth(),
-          start.getDate()
+          start.getDate(),
         );
         const e = new Date(end.getFullYear(), end.getMonth(), end.getDate());
         const labels = [],
@@ -1098,8 +1114,8 @@
         while (d <= e) {
           labels.push(
             `${String(d.getDate()).padStart(2, "0")}/${String(
-              d.getMonth() + 1
-            ).padStart(2, "0")}`
+              d.getMonth() + 1,
+            ).padStart(2, "0")}`,
           );
           days.push(new Date(d));
           d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
@@ -1143,7 +1159,7 @@
       }
       function inRange(dateStr, from, to) {
         const d = new Date(
-          dateStr + (String(dateStr).length > 10 ? "" : "T00:00:00")
+          dateStr + (String(dateStr).length > 10 ? "" : "T00:00:00"),
         );
         return d >= from && d <= to;
       }

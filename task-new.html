@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
   <head>
     <meta charset="utf-8" />
@@ -30,7 +30,12 @@
       }
       body {
         margin: 0;
-        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
           sans-serif;
         background: var(--bg);
         color: var(--ink);
@@ -247,8 +252,7 @@
         </div>
         <nav class="nav">
           <a href="index.html"><span>Overview</span></a>
-          <a href="#"><span>Analytics</span></a>
-          <a href="#"><span>Mailbox</span></a>
+          <a href="analytics.html"><span>Analytics</span></a>
           <h4>Tasks</h4>
           <a href="task.html"><span>Task List</span></a>
           <a class="active" href="task-new.html"><span>Create Task</span></a>
@@ -418,17 +422,46 @@
         const now = new Date();
         const pad = (n) => String(n).padStart(2, "0");
         els.date.value = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
-          now.getDate()
+          now.getDate(),
         )}`;
         const v = els.link.value.trim();
         els.openLink.href = v && /^https?:\/\//i.test(v) ? v : "#";
+        // Auto-fill task name from link's last segment if name is empty
+        if (!els.name.value.trim()) {
+          const s = extractLastSegment(v);
+          if (s) els.name.value = s;
+        }
       })();
+
+      // Helper: get last path segment after '/'
+      function extractLastSegment(input) {
+        const raw = String(input || "").trim();
+        if (!raw) return "";
+        try {
+          // Support both absolute and relative inputs
+          const u = new URL(raw, "http://x");
+          const pathname = u.pathname.replace(/\/+$/, ""); // trim trailing slashes
+          const parts = pathname.split("/").filter(Boolean);
+          const last = parts.pop() || "";
+          return decodeURIComponent(last);
+        } catch {
+          // Fallback simple parser
+          const cleaned = raw.split(/[?#]/)[0].replace(/\/+$/, "");
+          const parts = cleaned.split("/").filter(Boolean);
+          return decodeURIComponent(parts.pop() || "");
+        }
+      }
 
       // Init
       loadCategories();
       els.link.addEventListener("input", () => {
         const v = els.link.value.trim();
         els.openLink.href = v && /^https?:\/\//i.test(v) ? v : "#";
+        // Auto-fill name only when it's currently empty
+        if (!els.name.value.trim()) {
+          const s = extractLastSegment(v);
+          if (s) els.name.value = s;
+        }
       });
 
       els.form.addEventListener("submit", onSubmit);
@@ -452,7 +485,7 @@
           const cats = await res.json();
           els.category.innerHTML = cats
             .map(
-              (c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`
+              (c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`,
             )
             .join("");
         } catch (e) {
@@ -517,7 +550,7 @@
           const now = new Date();
           const pad = (n) => String(n).padStart(2, "0");
           els.date.value = `${now.getFullYear()}-${pad(
-            now.getMonth() + 1
+            now.getMonth() + 1,
           )}-${pad(now.getDate())}`;
           els.assign.value = "The One";
         } catch (err) {
@@ -545,7 +578,7 @@
               ">": "&gt;",
               '"': "&quot;",
               "'": "&#39;",
-            }[m])
+            })[m],
         );
       }
     </script>

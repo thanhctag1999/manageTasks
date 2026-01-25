@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
   <head>
     <meta charset="utf-8" />
@@ -31,7 +31,12 @@
       }
       body {
         margin: 0;
-        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
           sans-serif;
         background: var(--bg);
         color: var(--ink);
@@ -455,8 +460,7 @@
         </div>
         <nav class="nav">
           <a href="index.html"><span>Dashboard</span></a>
-          <a href="#"><span>Analytics</span></a>
-          <a href="#"><span>Mailbox</span></a>
+          <a href="analytics.html"><span>Analytics</span></a>
           <h4>Tasks</h4>
           <a class="active" href="task.html"><span>Task List</span></a>
           <a href="task-new.html"><span>Create Task</span></a>
@@ -574,8 +578,8 @@
           style="
             margin: 0;
             white-space: pre-wrap;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-              monospace;
+            font-family:
+              ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
           "></pre>
       </div>
     </dialog>
@@ -711,7 +715,7 @@
           const url = new URL(`${BASE}/task`);
           url.searchParams.set(
             "select",
-            "id,name,link,date,price,is_charged,assign_to,note,category:category(name)"
+            "id,name,link,date,price,is_charged,assign_to,note,category:category(name)",
           );
           url.searchParams.set("order", "date.desc");
           const res = await fetch(url, { headers: HEADERS });
@@ -719,9 +723,8 @@
           RAW = await res.json();
 
           buildFilterOptions(RAW);
-          document.getElementById(
-            "countChip"
-          ).textContent = `${RAW.length} items`;
+          document.getElementById("countChip").textContent =
+            `${RAW.length} items`;
 
           apply();
           setStatus("Ready");
@@ -741,7 +744,7 @@
         if (isNaN(dt)) return "";
         return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(
           2,
-          "0"
+          "0",
         )}`;
       }
       function prettyYM(key) {
@@ -750,19 +753,19 @@
       }
       function buildFilterOptions(rows) {
         const months = Array.from(
-          new Set(rows.filter((r) => r.date).map((r) => monthKey(r.date)))
+          new Set(rows.filter((r) => r.date).map((r) => monthKey(r.date))),
         )
           .sort()
           .reverse();
         fillSelect("f_month", ["", ...months], (v) =>
-          v ? prettyYM(v) : "All months"
+          v ? prettyYM(v) : "All months",
         );
         const assigns = Array.from(
-          new Set(rows.map((r) => r.assign_to).filter(Boolean))
+          new Set(rows.map((r) => r.assign_to).filter(Boolean)),
         ).sort();
         fillSelect("f_assign", ["", ...assigns], (v) => v || "All assignees");
         const cats = Array.from(
-          new Set(rows.map((r) => r.category?.name).filter(Boolean))
+          new Set(rows.map((r) => r.category?.name).filter(Boolean)),
         ).sort();
         fillSelect("f_category", ["", ...cats], (v) => v || "All categories");
 
@@ -771,7 +774,7 @@
         });
         document.getElementById("f_reset").addEventListener("click", () => {
           ["f_month", "f_assign", "f_category", "f_status", "search"].forEach(
-            (id) => (document.getElementById(id).value = "")
+            (id) => (document.getElementById(id).value = ""),
           );
           apply();
         });
@@ -827,7 +830,7 @@
           !d
             ? ""
             : new Date(
-                d + (String(d).length > 10 ? "" : "T00:00:00")
+                d + (String(d).length > 10 ? "" : "T00:00:00"),
               ).toLocaleDateString("vi-VN");
         el.innerHTML = rows
           .map((r, i) => {
@@ -840,20 +843,23 @@
             <h3>${escapeHtml(r.name || "")}</h3>
             <p class="muted">${escapeHtml(r.note || "")}</p>
             <div class="meta"><span class="muted">📅 ${fmt(
-              r.date
+              r.date,
             )}</span><span class="money">${fmtMoney(r.price)}</span></div>
             <div class="link">
               ${
                 r.link
                   ? `<a class="pill" href="${escapeAttr(
-                      r.link
-                    )}" target="_blank" rel="noopener">Open</a>`
+                      r.link,
+                    )}" target="_blank" rel="noopener">Open</a>
+                    <a class="pill" href="#" data-copy-link="${escapeAttr(
+                      r.link,
+                    )}" title="Copy link">📋 Copy</a>`
                   : ""
               }
               ${charged}
             </div>
             <div class="people" aria-label="assignees" title="${escapeAttr(
-              r.assign_to || ""
+              r.assign_to || "",
             )}">
               <div class="avatar"></div><div class="avatar"></div><div class="avatar"></div>
             </div>
@@ -870,10 +876,10 @@
         rows.forEach((r, i) => {
           const chargedChip = r.is_charged
             ? `<span class="state ok btnlike" data-toggle-charged data-id="${escapeAttr(
-                r.id
+                r.id,
               )}" data-val="true" title="Nhấn để chuyển sang Unpaid">Completed</span>`
             : `<span class="state no btnlike" data-toggle-charged data-id="${escapeAttr(
-                r.id
+                r.id,
               )}" data-val="false" title="Nhấn để chuyển sang Completed">Unpaid</span>`;
 
           const tr = document.createElement("tr");
@@ -890,8 +896,10 @@
       <td>${
         r.link
           ? `<a href="${escapeAttr(
-              r.link
-            )}" target="_blank" rel="noopener">open</a>`
+              r.link,
+            )}" target="_blank" rel="noopener">open</a> <a href="#" data-copy-link="${escapeAttr(
+              r.link,
+            )}" title="Copy link">📋</a>`
           : ""
       }</td>`;
           tb.appendChild(tr);
@@ -935,7 +943,7 @@
                 Prefer: "return=representation",
               },
               body: JSON.stringify({ is_charged: newVal }),
-            }
+            },
           );
           if (!res.ok) {
             const t = await res.text();
@@ -952,7 +960,7 @@
           el.innerHTML = keep;
           el.classList.remove("muted");
           alert(
-            "Cập nhật thất bại: " + err.message + "\nKiểm tra RLS/KEY/Policy."
+            "Cập nhật thất bại: " + err.message + "\nKiểm tra RLS/KEY/Policy.",
           );
         }
       });
@@ -999,6 +1007,49 @@
         apply();
       });
 
+      // ====== Copy link (delegated) ======
+      document.addEventListener("click", async (e) => {
+        const el = e.target.closest("[data-copy-link]");
+        if (!el) return;
+        e.preventDefault();
+        const url = el.getAttribute("data-copy-link") || "";
+        if (!url) return;
+        const ok = await copyText(url);
+        flashCopied(el, ok ? "Copied" : "Copy failed");
+      });
+
+      async function copyText(text) {
+        try {
+          await navigator.clipboard.writeText(text);
+          return true;
+        } catch {
+          try {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            return true;
+          } catch {
+            return false;
+          }
+        }
+      }
+      function flashCopied(el, msg) {
+        const old = el.textContent;
+        el.textContent = msg;
+        el.classList.add("muted");
+        el.style.pointerEvents = "none";
+        setTimeout(() => {
+          el.textContent = old;
+          el.classList.remove("muted");
+          el.style.pointerEvents = "";
+        }, 900);
+      }
+
       // ====== Small utils ======
       function setStatus(t) {
         const el = document.getElementById("status");
@@ -1043,34 +1094,53 @@
 
       // ==== Export Unpaid ====
       function buildUnpaidExportText(rows) {
-        // lọc Unpaid (is_charged == false)
-        const unpaid = rows.filter((r) => !r.is_charged);
+        // Lọc Unpaid có price > 0 (phục vụ báo cáo thanh toán)
+        const unpaid = rows.filter((r) => !r.is_charged && (+r.price || 0) > 0);
+        const isAccount = (r) => (r.category?.name || "") === "Account";
 
-        // nhóm theo category
-        const byCat = new Map(); // key: catName, val: array rows
-        unpaid.forEach((r) => {
-          const key = r.category?.name || "Uncategorized";
-          if (!byCat.has(key)) byCat.set(key, []);
-          byCat.get(key).push(r);
+        const tasks = unpaid.filter((r) => !isAccount(r));
+        const resources = unpaid.filter((r) => isAccount(r));
+
+        const sum = (arr) => arr.reduce((acc, r) => acc + (+r.price || 0), 0);
+        const sumTasks = sum(tasks);
+        const sumRes = sum(resources);
+        const grand = sumTasks + sumRes;
+
+        const moneyText = (n) => String(fmtMoney(n)).replace(/\s*₫/, " đ"); // đổi ký hiệu thành "đ"
+
+        let lines = [];
+
+        // Tiền task (tất cả category khác "Account")
+        lines.push(`+ Tiền task:`);
+        tasks.forEach((r, idx) => {
+          const name = r.name || "—";
+          const link = r.link ? r.link : "";
+          const cat = r.category?.name || "Uncategorized";
+          const amt = moneyText(r.price);
+          // Ví dụ: 1. - [Category] name: https://... ( 400.000 đ )
+          lines.push(
+            `${idx + 1}. - [${cat}] ${name}: ${link}${link ? " " : ""}( ${amt} )`,
+          );
         });
+        lines.push(`=====> Tổng tiền task: ${moneyText(sumTasks)}`);
+        lines.push(""); // dòng trống
 
-        // compose text
-        let parts = [];
-        let grand = 0;
+        // Tiền tài nguyên (chỉ category "Account")
+        lines.push(`+ Tiền tài nguyên:`);
+        resources.forEach((r, idx) => {
+          const name = r.name || "—";
+          const cat = r.category?.name || "Account";
+          const amt = moneyText(r.price);
+          // Ví dụ: 1. - [Account] cursor pro: 1.625.000 đ
+          lines.push(`${idx + 1}. - [${cat}] ${name}: ${amt}`);
+        });
+        lines.push(`=====> Tổng tiền tài nguyên: ${moneyText(sumRes)}`);
+        lines.push(""); // dòng trống
 
-        for (const [cat, list] of byCat.entries()) {
-          const qty = list.length;
-          parts.push(`${qty} ${cat}:`);
-          list.forEach((item) => {
-            const linkStr = item.link ? item.link : item.name || "—";
-            const moneyStr = fmtMoney(item.price);
-            parts.push(`-${linkStr} (${moneyStr})`);
-            grand += +item.price || 0;
-          });
-        }
+        // Tổng cuối
+        lines.push(`=====> Tổng tiền cần thanh toán: ${moneyText(grand)}`);
 
-        parts.push(`Tổng tiền: ${fmtMoney(grand)}`);
-        return parts.join("\n");
+        return lines.join("\n");
       }
 
       function openExportModal(text) {

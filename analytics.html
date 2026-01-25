@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Analytics · Monthly Revenue & PIT</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #f7f8fb;
+        --panel: #ffffff;
+        --ink: #0f172a;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --primary: #3b82f6;
+        --good: #10b981;
+        --warn: #f59e0b;
+        --bad: #ef4444;
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 100vh;
+      }
+      .side {
+        background: #fff;
+        border-right: 1px solid var(--line);
+        padding: 22px 16px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        margin-bottom: 18px;
+      }
+      .brand .logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #4f46e5, #22d3ee);
+      }
+      .nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        color: #334155;
+      }
+      .nav a.active {
+        background: #eef2ff;
+        color: #111827;
+        font-weight: 600;
+      }
+      .nav h4 {
+        margin: 18px 10px 8px;
+        font-size: 12px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+      .content {
+        padding: 26px 26px 40px;
+      }
+      .topbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+      .breadcrumbs {
+        font-size: 13px;
+        color: #94a3b8;
+      }
+      .breadcrumbs b {
+        color: #111827;
+      }
+      .title h1 {
+        margin: 4px 0 0;
+        font-size: 24px;
+      }
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 10px 0 18px;
+      }
+      .filters select {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 10px;
+        padding: 8px 10px;
+        min-width: 160px;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      .panel-body {
+        padding: 14px;
+      }
+      .table-wrap {
+        width: 100%;
+        overflow: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      thead th {
+        position: sticky;
+        top: 0;
+        background: #f8fafc;
+        text-align: left;
+        padding: 12px;
+        font-size: 12px;
+        color: #64748b;
+        border-bottom: 1px solid var(--line);
+      }
+      tbody td {
+        padding: 12px;
+        border-bottom: 1px dashed #e5e7eb;
+        font-size: 14px;
+        color: #111827;
+        vertical-align: top;
+      }
+      tbody tr:hover {
+        background: #f9fafb;
+      }
+      .money {
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .muted {
+        color: #64748b;
+      }
+      .loader {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: saturate(1.2) blur(2px);
+        z-index: 999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+      .loader.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .loader .box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px 18px;
+        box-shadow: var(--shadow);
+      }
+      .loader .txt {
+        font-size: 12px;
+        color: #475569;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .loader .ring {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 3px solid #e5e7eb;
+        border-top-color: var(--primary);
+        animation: spin 1s linear infinite;
+      }
+      tfoot td {
+        font-weight: 700;
+        background: #f8fafc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="side">
+        <div class="brand">
+          <div class="logo"></div>
+          <span>Allout</span>
+        </div>
+        <nav class="nav">
+          <a href="index.html"><span>Dashboard</span></a>
+          <a class="active" href="analytics.html"><span>Analytics</span></a>
+          <h4>Tasks</h4>
+          <a href="task.html"><span>Task List</span></a>
+          <a href="task-new.html"><span>Create Task</span></a>
+        </nav>
+      </aside>
+
+      <!-- Main -->
+      <main class="content">
+        <div class="topbar">
+          <div>
+            <div class="breadcrumbs">Dashboard / <b>Analytics</b></div>
+            <div class="title">
+              <h1>Monthly Revenue & PIT</h1>
+            </div>
+          </div>
+          <div class="muted" id="status">Loading…</div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+          <select id="f_year"></select>
+          <span class="muted"
+            >Assume: 0 dependents · personal deduction 11,000,000 ₫/month</span
+          >
+        </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <b>Revenue by month & personal income tax</b>
+            <span class="muted">Salary per month: 9,600,000 ₫</span>
+          </div>
+          <div class="panel-body table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Task revenue (charged)</th>
+                  <th>Salary</th>
+                  <th>Total income</th>
+                  <th>PIT (est.)</th>
+                  <th>Tax %</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+              <tfoot>
+                <tr>
+                  <td>TOTAL (year)</td>
+                  <td class="money" id="t_rev">₫0</td>
+                  <td class="money" id="t_salary">₫0</td>
+                  <td class="money" id="t_total">₫0</td>
+                  <td class="money" id="t_pit">₫0</td>
+                  <td id="t_pct">0%</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Loader -->
+    <div id="loader" class="loader" aria-live="polite" aria-busy="true">
+      <div class="box">
+        <div class="ring"></div>
+        <div class="txt">Đang tải dữ liệu…</div>
+      </div>
+    </div>
+
+    <script>
+      // ====== CONFIG ======
+      const PROJECT_URL = "https://zuitnapveubnhjumvdnt.supabase.co";
+      const ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aXRuYXB2ZXVibmhqdW12ZG50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMTcwMjEsImV4cCI6MjA3NTY5MzAyMX0.rjhf7gSNaATuKCuVBYBgVA8wmUisSyTcM25Qeexj5Gg";
+      const BASE = `${PROJECT_URL}/rest/v1`;
+      const HEADERS = { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` };
+
+      const SALARY_PER_MONTH = 9_600_000;
+      const PERSONAL_DEDUCTION = 11_000_000; // per month
+
+      let ROWS = [];
+
+      // ====== Init ======
+      init();
+      async function init() {
+        bindYearChange();
+        await load();
+      }
+
+      function bindYearChange() {
+        document.getElementById("f_year").addEventListener("change", paint);
+      }
+
+      // ====== Loader helpers ======
+      function setLoading(on) {
+        const L = document.getElementById("loader");
+        L.classList.toggle("show", !!on);
+        setStatus(on ? "Loading…" : "Ready");
+      }
+      function setStatus(t) {
+        const el = document.getElementById("status");
+        if (el) el.textContent = t;
+      }
+
+      // ====== Fetch ======
+      async function load() {
+        try {
+          setLoading(true);
+          const url = new URL(`${BASE}/task`);
+          url.searchParams.set(
+            "select",
+            "id,date,price,is_charged"
+          );
+          url.searchParams.set("order", "date.asc");
+          const res = await fetch(url, { headers: HEADERS });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          ROWS = await res.json();
+          buildYearOptions(ROWS);
+          paint();
+        } catch (e) {
+          console.error(e);
+          setStatus("❌ API error: " + e.message);
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      function monthKey(d) {
+        if (!d) return "";
+        const dt = new Date(d + (String(d).length > 10 ? "" : "T00:00:00"));
+        if (isNaN(dt)) return "";
+        return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}`;
+      }
+      function yearOf(d) {
+        if (!d) return "";
+        const dt = new Date(d + (String(d).length > 10 ? "" : "T00:00:00"));
+        return isNaN(dt) ? "" : String(dt.getFullYear());
+      }
+      function prettyYM(y, m) {
+        return `${String(m).padStart(2, "0")}/${y}`;
+        }
+
+      function buildYearOptions(rows) {
+        const years = Array.from(
+          new Set(rows.filter((r) => r.date).map((r) => yearOf(r.date)))
+        )
+          .filter(Boolean)
+          .map((x) => +x)
+          .sort((a, b) => b - a);
+        const curYear = new Date().getFullYear();
+        if (!years.includes(curYear)) years.unshift(curYear);
+
+        const sel = document.getElementById("f_year");
+        sel.innerHTML = years
+          .map((y) => `<option value="${y}">${y}</option>`)
+          .join("");
+        sel.value = String(curYear);
+      }
+
+      // ====== PIT (Vietnam progressive, monthly, no dependents) ======
+      function calcPITMonthly(gross) {
+        const taxable = Math.max(0, (+gross || 0) - PERSONAL_DEDUCTION);
+        if (taxable <= 0) return 0;
+        const B = [
+          [0, 5_000_000, 0.05],
+          [5_000_000, 10_000_000, 0.1],
+          [10_000_000, 18_000_000, 0.15],
+          [18_000_000, 32_000_000, 0.2],
+          [32_000_000, 52_000_000, 0.25],
+          [52_000_000, 80_000_000, 0.3],
+          [80_000_000, Infinity, 0.35],
+        ];
+        let tax = 0;
+        for (const [l, u, rate] of B) {
+          if (taxable > l) {
+            const amt = Math.min(taxable, u) - l;
+            tax += amt * rate;
+          } else {
+            break;
+          }
+        }
+        return tax;
+      }
+
+      // ====== Paint ======
+      function paint() {
+        const year = +document.getElementById("f_year").value || new Date().getFullYear();
+        const rows = ROWS.filter((r) => r.is_charged && yearOf(r.date) === String(year));
+
+        // pre-aggregate revenue by month
+        const revByMonth = new Map(); // key: 1..12 -> sum
+        for (let m = 1; m <= 12; m++) revByMonth.set(m, 0);
+        rows.forEach((r) => {
+          if (!r.date) return;
+          const dt = new Date(r.date + (String(r.date).length > 10 ? "" : "T00:00:00"));
+          if (isNaN(dt)) return;
+          const m = dt.getMonth() + 1;
+          revByMonth.set(m, (revByMonth.get(m) || 0) + (+r.price || 0));
+        });
+
+        const tb = document.getElementById("tbody");
+        tb.innerHTML = "";
+
+        let sumRev = 0;
+        let sumSalary = 0;
+        let sumTotal = 0;
+        let sumPIT = 0;
+
+        for (let m = 1; m <= 12; m++) {
+          const rev = revByMonth.get(m) || 0;
+          const sal = SALARY_PER_MONTH;
+          const total = rev + sal;
+          const pit = calcPITMonthly(total);
+          const pct = total > 0 ? (pit / total) * 100 : 0;
+
+          sumRev += rev;
+          sumSalary += sal;
+          sumTotal += total;
+          sumPIT += pit;
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${prettyYM(year, m)}</td>
+            <td class="money">${formatVND(rev)}</td>
+            <td class="money">${formatVND(sal)}</td>
+            <td class="money">${formatVND(total)}</td>
+            <td class="money">${formatVND(pit)}</td>
+            <td>${pct.toFixed(1)}%</td>
+          `;
+          tb.appendChild(tr);
+        }
+
+        document.getElementById("t_rev").textContent = formatVND(sumRev);
+        document.getElementById("t_salary").textContent = formatVND(sumSalary);
+        document.getElementById("t_total").textContent = formatVND(sumTotal);
+        document.getElementById("t_pit").textContent = formatVND(sumPIT);
+        const eff = sumTotal > 0 ? (sumPIT / sumTotal) * 100 : 0;
+        document.getElementById("t_pct").textContent = `${eff.toFixed(1)}%`;
+      }
+
+      // ====== Utils ======
+      const _VND_FORMATTER = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        maximumFractionDigits: 0,
+      });
+      function formatVND(n) {
+        if (n == null || n === "") return "₫0";
+        const v = +n || 0;
+        return _VND_FORMATTER.format(v);
+      }
+    </script>
+  </body>
+  </html>
