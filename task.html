@@ -568,6 +568,7 @@
         ">
         <b>Unpaid Report</b>
         <div style="display: flex; gap: 8px">
+          <button id="btnCompleteUnpaid" class="btn primary">Complete</button>
           <button id="btnCopyExport" class="btn">Copy</button>
           <button id="btnCloseExport" class="btn">Close</button>
         </div>
@@ -578,8 +579,7 @@
           style="
             margin: 0;
             white-space: pre-wrap;
-            font-family:
-              ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
           "></pre>
       </div>
     </dialog>
@@ -655,6 +655,9 @@
             alert("Đã copy vào clipboard!");
           }
         });
+      document
+        .getElementById("btnCompleteUnpaid")
+        .addEventListener("click", completeAllUnpaid);
 
       // ====== Loader helpers ======
       function showLoader(on) {
@@ -1149,6 +1152,51 @@
         pre.textContent = text || "Không có dữ liệu Unpaid.";
         if (typeof dlg.showModal === "function") dlg.showModal();
         else dlg.setAttribute("open", "open"); // fallback rất cũ
+      }
+
+      // ====== Complete all unpaid ======
+      async function completeAllUnpaid() {
+        const unpaidCount = RAW.filter((r) => !r.is_charged).length;
+        if (!unpaidCount) {
+          alert("Không có task Unpaid nào.");
+          return;
+        }
+        if (
+          !confirm(
+            `Xác nhận chuyển ${unpaidCount} task Unpaid sang Completed? Thao tác áp dụng cho TẤT CẢ Unpaid.`
+          )
+        ) {
+          return;
+        }
+        showLoader(true);
+        try {
+          const res = await fetch(`${BASE}/task?is_charged=eq.false`, {
+            method: "PATCH",
+            headers: {
+              ...HEADERS,
+              "Content-Type": "application/json",
+              Prefer: "return=representation",
+            },
+            body: JSON.stringify({ is_charged: true }),
+          });
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || `HTTP ${res.status}`);
+          }
+          const updated = await res.json();
+          // Reload full dataset to reflect changes
+          await load();
+          // Close dialog if open
+          const dlg = document.getElementById("dlgExport");
+          dlg.close?.();
+          dlg.removeAttribute("open");
+          alert(`Đã chuyển ${updated.length} task sang Completed.`);
+        } catch (e) {
+          console.error(e);
+          alert("Lỗi cập nhật: " + e.message);
+        } finally {
+          showLoader(false);
+        }
       }
     </script>
   </body>
