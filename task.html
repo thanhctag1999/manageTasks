@@ -522,6 +522,7 @@
             </div>
             <div class="muted" id="status">Loading…</div>
             <button id="btnExportUnpaid" class="btn">Export</button>
+            <button id="btnExportCsv" class="btn">Export CSV</button>
           </div>
 
           <!-- Grid -->
@@ -658,6 +659,36 @@
       document
         .getElementById("btnCompleteUnpaid")
         .addEventListener("click", completeAllUnpaid);
+
+      // ====== Export CSV (Task, Category, Date, Note, Link) ======
+      function escapeCsvField(val) {
+        const s = String(val ?? "").trim();
+        if (/[",\r\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+        return s;
+      }
+      function buildCsv(rows) {
+        const header = "Task,Category,Date,Note,Link";
+        const lines = rows.map((r) => {
+          const task = escapeCsvField(r.name);
+          const category = escapeCsvField(r.category?.name);
+          const date = escapeCsvField(fmtDate(r.date));
+          const note = escapeCsvField(r.note);
+          const link = escapeCsvField(r.link);
+          return [task, category, date, note, link].join(",");
+        });
+        return [header, ...lines].join("\r\n");
+      }
+      document.getElementById("btnExportCsv").addEventListener("click", () => {
+        const rows = getFilteredRows();
+        const csv = buildCsv(rows);
+        const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "tasks_" + new Date().toISOString().slice(0, 10) + ".csv";
+        a.click();
+        URL.revokeObjectURL(url);
+      });
 
       // ====== Loader helpers ======
       function showLoader(on) {
@@ -799,9 +830,9 @@
       }
 
       // ====== Apply filters & View ======
-      function apply() {
+      function getFilteredRows() {
         const f = getFilters();
-        let rows = RAW.filter((r) => {
+        return RAW.filter((r) => {
           if (TAB === "charged" && !r.is_charged) return false;
           if (TAB === "Unpaid" && r.is_charged) return false;
           if (f.month && monthKey(r.date) !== f.month) return false;
@@ -819,10 +850,12 @@
           }
           return true;
         });
+      }
 
+      function apply() {
+        const rows = getFilteredRows();
         if (VIEW === "grid") renderGrid(rows);
         else renderTable(rows);
-
         appear("#grid > .card, #tbody > tr"); // animate after render
       }
 
