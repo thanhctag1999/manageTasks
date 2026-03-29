@@ -4,475 +4,55 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Task Dashboard</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
-      rel="stylesheet" />
-    <style>
-      :root {
-        --bg: #f7f8fb;
-        --panel: #ffffff;
-        --ink: #0f172a;
-        --muted: #6b7280;
-        --line: #e5e7eb;
-        --primary: #3b82f6;
-        --chip: #eef2ff;
-        --good: #10b981;
-        --warn: #f59e0b;
-        --bad: #ef4444;
-        --radius: 16px;
-        --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        height: 100%;
-      }
-      body {
-        margin: 0;
-        font-family:
-          Inter,
-          system-ui,
-          -apple-system,
-          "Segoe UI",
-          Roboto,
-          sans-serif;
-        background: var(--bg);
-        color: var(--ink);
-      }
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="app-theme.css" />
 
-      .layout {
-        display: grid;
-        grid-template-columns: 260px 1fr;
-        min-height: 100vh;
-      }
-      .side {
-        background: #fff;
-        border-right: 1px solid var(--line);
-        padding: 22px 16px;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-      }
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 800;
-        margin-bottom: 18px;
-      }
-      .brand .logo {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        background: linear-gradient(135deg, #4f46e5, #22d3ee);
-      }
-      .nav a {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 12px;
-        border-radius: 12px;
-        color: #334155;
-      }
-      .nav a.active {
-        background: #eef2ff;
-        color: #111827;
-        font-weight: 600;
-      }
-      .nav h4 {
-        margin: 18px 10px 8px;
-        font-size: 12px;
-        color: #94a3b8;
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
-      }
-
-      .content {
-        padding: 26px 26px 40px;
-      }
-      .topbar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 14px;
-      }
-      .breadcrumbs {
-        font-size: 13px;
-        color: #94a3b8;
-      }
-      .breadcrumbs b {
-        color: #111827;
-      }
-      .title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .title h1 {
-        margin: 4px 0 0;
-        font-size: 24px;
-      }
-      .toolbar {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      .search {
-        min-width: 280px;
-        flex: 1;
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 10px 12px;
-      }
-      .seg {
-        display: flex;
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        overflow: hidden;
-      }
-      .seg button {
-        padding: 8px 12px;
-        border: 0;
-        background: transparent;
-        cursor: pointer;
-        color: #374151;
-        font-weight: 600;
-      }
-      .seg button[aria-pressed="true"] {
-        background: var(--chip);
-        color: #111827;
-      }
-      .chip {
-        padding: 6px 10px;
-        background: #f1f5f9;
-        border-radius: 999px;
-        font-size: 12px;
-        color: #334155;
-      }
-      .btn {
-        border: 1px solid var(--line);
-        background: #fff;
-        border-radius: 12px;
-        padding: 8px 12px;
-        cursor: pointer;
-      }
-      .btn.primary {
-        background: var(--primary);
-        border-color: transparent;
-        color: #fff;
-        text-decoration: none;
-      }
-
-      .filters {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin: 10px 0 18px;
-      }
-      .filters select {
-        border: 1px solid var(--line);
-        background: #fff;
-        border-radius: 10px;
-        padding: 8px 10px;
-        min-width: 160px;
-      }
-
-      .panel {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-      }
-      .panel-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 14px;
-        border-bottom: 1px solid var(--line);
-      }
-      .tabs {
-        display: flex;
-        gap: 8px;
-      }
-      .tabs button {
-        border: 0;
-        background: #f8fafc;
-        color: #334155;
-        padding: 8px 12px;
-        border-radius: 999px;
-        cursor: pointer;
-        font-weight: 600;
-      }
-      .tabs button.active {
-        background: #e0e7ff;
-        color: #111827;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 14px;
-        padding: 14px;
-      }
-      .card {
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        padding: 14px;
-        box-shadow: var(--shadow);
-      }
-      .badge {
-        display: inline-flex;
-        gap: 6px;
-        align-items: center;
-        padding: 4px 8px;
-        border-radius: 999px;
-        background: #eef2ff;
-        color: #3730a3;
-        font-size: 12px;
-        font-weight: 700;
-      }
-      .meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 10px 0;
-        color: #64748b;
-        font-size: 12px;
-      }
-      .people {
-        display: flex;
-      }
-      .avatar {
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        background: #c7d2fe;
-        border: 2px solid #fff;
-        margin-left: -6px;
-      }
-      .card h3 {
-        margin: 10px 0 6px;
-        font-size: 16px;
-      }
-      .card p {
-        margin: 0;
-        color: #475569;
-        font-size: 13px;
-      }
-      .link {
-        display: flex;
-        gap: 8px;
-        margin-top: 10px;
-      }
-      .pill {
-        padding: 6px 8px;
-        background: #f1f5f9;
-        border-radius: 10px;
-        font-size: 12px;
-        color: #334155;
-        text-decoration: none;
-      }
-
-      .table-wrap {
-        width: 100%;
-        overflow: auto;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      thead th {
-        position: sticky;
-        top: 0;
-        background: #f8fafc;
-        text-align: left;
-        padding: 12px;
-        font-size: 12px;
-        color: #64748b;
-        border-bottom: 1px solid var(--line);
-      }
-      tbody td {
-        padding: 12px;
-        border-bottom: 1px dashed #e5e7eb;
-        font-size: 14px;
-        color: #111827;
-        vertical-align: top;
-      }
-      tbody tr:hover {
-        background: #f9fafb;
-      }
-      .money {
-        font-variant-numeric: tabular-nums;
-        white-space: nowrap;
-      }
-      .state {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 8px;
-        border-radius: 999px;
-        font-size: 12px;
-      }
-      .state.ok {
-        background: rgba(16, 185, 129, 0.12);
-        color: #059669;
-      }
-      .state.no {
-        background: rgba(239, 68, 68, 0.12);
-        color: #dc2626;
-      }
-      .muted {
-        color: #64748b;
-      }
-      .hidden {
-        display: none !important;
-      }
-      .state.btnlike {
-        cursor: pointer;
-        user-select: none;
-        transition: transform 0.06s ease;
-      }
-      .state.btnlike:active {
-        transform: scale(0.97);
-      }
-
-      /* ===== Loader Overlay + Skeleton ===== */
-      .loader {
-        position: fixed;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        background: rgba(255, 255, 255, 0.6);
-        backdrop-filter: saturate(1.2) blur(2px);
-        z-index: 999;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s ease;
-      }
-      .loader.show {
-        opacity: 1;
-        pointer-events: auto;
-      }
-      .loader .box {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 16px 18px;
-        box-shadow: var(--shadow);
-      }
-      .loader .txt {
-        font-size: 12px;
-        color: #475569;
-      }
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      .loader .ring {
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        border: 3px solid #e5e7eb;
-        border-top-color: var(--primary);
-        animation: spin 1s linear infinite;
-      }
-
-      .skel {
-        position: relative;
-        overflow: hidden;
-        background: #eef2f7;
-        border-radius: 10px;
-      }
-      .skel::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          90deg,
-          rgba(255, 255, 255, 0) 0%,
-          rgba(255, 255, 255, 0.55) 50%,
-          rgba(255, 255, 255, 0) 100%
-        );
-        transform: translateX(-100%);
-        animation: shimmer 1.2s infinite;
-      }
-      @keyframes shimmer {
-        to {
-          transform: translateX(100%);
-        }
-      }
-
-      /* ===== Appear Animations ===== */
-      @keyframes fadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(8px);
-        }
-        to {
-          opacity: 1;
-          transform: none;
-        }
-      }
-      .anim {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      .anim.in {
-        animation: fadeUp 0.35s ease var(--d, 0ms) both;
-      }
-      /* đặt gần phần table sẵn có */
-      tbody tr.total-row {
-        background: #f8fafc;
-        font-weight: 700;
-      }
-      tbody tr.total-row td {
-        border-bottom: 0;
-      }
-      tbody tr.total-row .total-label {
-        text-align: right;
-        color: #334155;
-      }
-    </style>
   </head>
   <body>
     <div class="layout">
       <aside class="side">
         <div class="brand">
-          <div class="logo"></div>
+          <div class="logo logo--wallet" aria-hidden="true"></div>
           <span>Allout</span>
         </div>
-        <nav class="nav">
-          <a href="index.html"><span>Dashboard</span></a>
-          <a href="analytics.html"><span>Analytics</span></a>
+        <div class="side-user">
+          <div class="side-user__avatar" aria-hidden="true">TO</div>
+          <div class="side-user__meta">
+            <b class="side-user__name">The One</b>
+            <span class="side-user__role">Workspace owner</span>
+          </div>
+        </div>
+        <nav class="nav nav--stack">
+          <a href="index.html"
+            ><span class="nav__ic" aria-hidden="true">⌂</span> Overview</a
+          >
+          <a href="analytics.html"
+            ><span class="nav__ic" aria-hidden="true">▤</span> Analytics</a
+          >
           <h4>Tasks</h4>
-          <a class="active" href="task.html"><span>Task List</span></a>
-          <a href="task-new.html"><span>Create Task</span></a>
+          <a class="active" href="task.html"
+            ><span class="nav__ic" aria-hidden="true">☰</span> Task List</a
+          >
+          <a href="task-new.html"
+            ><span class="nav__ic" aria-hidden="true">＋</span> Create Task</a
+          >
         </nav>
+        <div class="side-foot">
+          <a href="mailto:" class="side-foot__link">Support</a>
+          <span class="side-foot__sep">·</span>
+          <span>Allout v1</span>
+        </div>
       </aside>
 
-      <main class="content">
-        <div class="topbar">
+      <main class="content content--task">
+        <header class="page-head">
           <div>
             <div class="breadcrumbs">Projects / <b>Task Board</b></div>
             <div class="title">
-              <h1>Projects List 📌</h1>
+              <h1 class="page-head__title">Task workspace</h1>
               <span class="chip" id="countChip">0 items</span>
             </div>
           </div>
@@ -492,96 +72,120 @@
             <button id="reload" class="btn">↻ Reload</button>
             <a class="btn primary" href="task-new.html">+ New</a>
           </div>
-        </div>
+        </header>
 
-        <!-- FILTER BAR -->
-        <div class="filters">
-          <select id="f_month">
-            <option value="">All months</option>
-          </select>
-          <select id="f_assign">
-            <option value="">All assignees</option>
-          </select>
-          <select id="f_category">
-            <option value="">All categories</option>
-          </select>
-          <select id="f_status">
-            <option value="">All status</option>
-            <option value="charged">Charged</option>
-            <option value="Unpaid">Unpaid</option>
-          </select>
-          <button id="f_reset" class="btn">Reset</button>
-        </div>
-
-        <section class="panel" aria-live="polite">
-          <div class="panel-head">
-            <div class="tabs">
-              <button class="active" data-tab="all">All</button>
-              <button data-tab="charged">Charged</button>
-              <button data-tab="Unpaid">Unpaid</button>
-            </div>
-            <div class="muted" id="status">Loading…</div>
-            <button id="btnExportUnpaid" class="btn">Export</button>
-            <button id="btnExportCsv" class="btn">Export CSV</button>
+        <section class="task-kpi-strip" aria-live="polite">
+          <div class="task-kpi anim">
+            <span class="task-kpi__lbl">Đang hiển thị</span>
+            <b id="tkShown">0</b>
           </div>
-
-          <!-- Grid -->
-          <div id="grid" class="grid"></div>
-
-          <!-- Table -->
-          <div id="table" class="table-wrap hidden">
-            <table>
-              <thead>
-                <tr>
-                  <th>Task</th>
-                  <th>Category</th>
-                  <th>Date</th>
-                  <th>Price</th>
-                  <th>Charged?</th>
-                  <th>Assign To</th>
-                  <th>Note</th>
-                  <th>Link</th>
-                </tr>
-              </thead>
-              <tbody id="tbody"></tbody>
-            </table>
+          <div class="task-kpi anim">
+            <span class="task-kpi__lbl">Đã charge</span>
+            <b id="tkCharged">0</b>
+          </div>
+          <div class="task-kpi anim">
+            <span class="task-kpi__lbl">Unpaid</span>
+            <b id="tkUnpaid">0</b>
+          </div>
+          <div class="task-kpi anim">
+            <span class="task-kpi__lbl">Tổng giá trị (lọc)</span>
+            <b id="tkValue">₫0</b>
           </div>
         </section>
+
+        <div class="task-layout">
+          <div class="task-main-col">
+            <div class="filters">
+              <select id="f_month">
+                <option value="">All months</option>
+              </select>
+              <select id="f_assign">
+                <option value="">All assignees</option>
+              </select>
+              <select id="f_category">
+                <option value="">All categories</option>
+              </select>
+              <select id="f_status">
+                <option value="">All status</option>
+                <option value="charged">Charged</option>
+                <option value="Unpaid">Unpaid</option>
+              </select>
+              <button type="button" id="f_reset" class="btn">Reset</button>
+            </div>
+
+            <section class="panel" aria-live="polite">
+              <div class="panel-head">
+                <div class="tabs">
+                  <button type="button" class="active" data-tab="all">
+                    All
+                  </button>
+                  <button type="button" data-tab="charged">Charged</button>
+                  <button type="button" data-tab="Unpaid">Unpaid</button>
+                </div>
+                <div class="muted" id="status">Loading…</div>
+                <button type="button" id="btnExportUnpaid" class="btn">
+                  Export
+                </button>
+                <button type="button" id="btnExportCsv" class="btn">
+                  Export CSV
+                </button>
+              </div>
+
+              <div id="grid" class="grid"></div>
+
+              <div id="table" class="table-wrap hidden">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Task</th>
+                      <th>Category</th>
+                      <th>Date</th>
+                      <th>Price</th>
+                      <th>Charged?</th>
+                      <th>Assign To</th>
+                      <th>Note</th>
+                      <th>Link</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <aside class="task-rail">
+            <section class="card">
+              <div class="hd"><b>Số task theo danh mục</b></div>
+              <div class="bd" id="railByCat"></div>
+            </section>
+            <section class="card">
+              <div class="hd"><b>Unpaid · giá trị cao</b></div>
+              <div class="bd rail-list" id="railUnpaid"></div>
+            </section>
+            <section class="card">
+              <div class="hd"><b>Điều hướng</b></div>
+              <div class="bd dash-shortcuts">
+                <a class="shortcut-btn" href="index.html">Dashboard</a>
+                <a class="shortcut-btn" href="task-new.html">＋ Task mới</a>
+                <a class="shortcut-btn" href="analytics.html">Analytics</a>
+              </div>
+            </section>
+          </aside>
+        </div>
       </main>
     </div>
     <!-- Popup Export Unpaid -->
-    <dialog
-      id="dlgExport"
-      style="
-        border: 0;
-        border-radius: 16px;
-        padding: 0;
-        max-width: 720px;
-        width: clamp(320px, 90vw, 720px);
-      ">
-      <div
-        style="
-          padding: 14px 16px;
-          border-bottom: 1px solid var(--line);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        ">
+    <dialog id="dlgExport" class="export-dlg">
+      <div class="export-dlg__head">
         <b>Unpaid Report</b>
-        <div style="display: flex; gap: 8px">
+        <div class="toolbar" style="margin: 0">
           <button id="btnCompleteUnpaid" class="btn primary">Complete</button>
           <button id="btnCopyExport" class="btn">Copy</button>
           <button id="btnCloseExport" class="btn">Close</button>
         </div>
       </div>
-      <div style="padding: 14px 16px">
-        <pre
-          id="exportContent"
-          style="
-            margin: 0;
-            white-space: pre-wrap;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-          "></pre>
+      <div class="export-dlg__body">
+        <pre id="exportContent"></pre>
       </div>
     </dialog>
 
@@ -762,8 +366,7 @@
 
           apply();
           setStatus("Ready");
-          // Appear animation
-          appear("#grid > .card, #tbody > tr");
+          appear("#grid > .card, #tbody > tr, .task-kpi-strip .task-kpi");
         } catch (e) {
           setStatus("❌ API error: " + e.message + " · Kiểm tra URL/KEY/RLS");
         } finally {
@@ -854,9 +457,65 @@
 
       function apply() {
         const rows = getFilteredRows();
+        paintTaskKpis(rows);
+        paintRail(rows);
         if (VIEW === "grid") renderGrid(rows);
         else renderTable(rows);
-        appear("#grid > .card, #tbody > tr"); // animate after render
+        appear("#grid > .card, #tbody > tr, .task-kpi-strip .task-kpi");
+      }
+
+      function paintTaskKpis(rows) {
+        const charged = rows.filter((r) => r.is_charged).length;
+        const unpaid = rows.length - charged;
+        const val = rows.reduce((a, r) => a + (+r.price || 0), 0);
+        const s = document.getElementById("tkShown");
+        const c = document.getElementById("tkCharged");
+        const u = document.getElementById("tkUnpaid");
+        const v = document.getElementById("tkValue");
+        const chip = document.getElementById("countChip");
+        if (s) s.textContent = rows.length;
+        if (c) c.textContent = charged;
+        if (u) u.textContent = unpaid;
+        if (v) v.textContent = fmtMoney(val);
+        if (chip) chip.textContent = `${rows.length} hiển thị`;
+      }
+
+      function paintRail(rows) {
+        const catEl = document.getElementById("railByCat");
+        if (catEl) {
+          const m = new Map();
+          rows.forEach((r) => {
+            const k = r.category?.name || "Khác";
+            m.set(k, (m.get(k) || 0) + 1);
+          });
+          const top = [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6);
+          const max = Math.max(1, ...top.map((x) => x[1]));
+          catEl.innerHTML = top.length
+            ? top
+                .map(
+                  ([name, n]) =>
+                    `<div class="wbar-row"><span class="wbar-row__lbl">${escapeHtml(
+                      name,
+                    )}</span><div class="wbar-row__track"><span style="width:${(n / max) * 100}%"></span></div><span class="wbar-row__n">${n}</span></div>`,
+                )
+                .join("")
+            : '<div class="muted">—</div>';
+        }
+        const upEl = document.getElementById("railUnpaid");
+        if (upEl) {
+          const ups = rows
+            .filter((r) => !r.is_charged && (+r.price || 0) > 0)
+            .sort((a, b) => (+b.price || 0) - (+a.price || 0))
+            .slice(0, 6);
+          upEl.innerHTML = ups.length
+            ? ups
+                .map(
+                  (r) =>
+                    `<a class="rail-item" href="detail.html?id=${encodeURIComponent(r.id)}"><div><div class="rail-item__t">${escapeHtml(r.name || "—")}</div><div class="rail-item__m">${escapeHtml(r.category?.name || "")}</div></div><span class="rail-item__p money">${fmtMoney(r.price)}</span></a>`,
+                )
+                .join("")
+            : '<div class="muted" style="padding:4px 0">Không có unpaid có giá</div>';
+        }
       }
 
       // ====== Renderers ======
@@ -874,13 +533,24 @@
             const charged = r.is_charged
               ? '<span class="state ok">Charged</span>'
               : '<span class="state no">Unpaid</span>';
-            return `<article class="card anim" style="--d:${i * 40}ms">
-            <span class="badge">${escapeHtml(cat)}</span>
-            <h3>${escapeHtml(r.name || "")}</h3>
+            const idQ = encodeURIComponent(r.id);
+            return `<article class="card task-card anim" style="--d:${i * 40}ms">
+            <div class="task-card__top">
+              <span class="badge">${escapeHtml(cat)}</span>
+              ${charged}
+            </div>
+            <h3><a href="detail.html?id=${idQ}">${escapeHtml(r.name || "")}</a></h3>
             <p class="muted">${escapeHtml(r.note || "")}</p>
             <div class="meta"><span class="muted">📅 ${fmt(
               r.date,
             )}</span><span class="money">${fmtMoney(r.price)}</span></div>
+            ${
+              r.assign_to
+                ? `<div class="meta"><span class="muted">👤 ${escapeHtml(
+                    r.assign_to,
+                  )}</span></div>`
+                : ""
+            }
             <div class="link">
               ${
                 r.link
@@ -892,12 +562,9 @@
                     )}" title="Copy link">📋 Copy</a>`
                   : ""
               }
-              ${charged}
             </div>
-            <div class="people" aria-label="assignees" title="${escapeAttr(
-              r.assign_to || "",
-            )}">
-              <div class="avatar"></div><div class="avatar"></div><div class="avatar"></div>
+            <div class="task-card__foot">
+              <a class="btn btn--sm" href="detail.html?id=${idQ}">Chi tiết</a>
             </div>
           </article>`;
           })
@@ -918,11 +585,13 @@
                 r.id,
               )}" data-val="false" title="Nhấn để chuyển sang Completed">Unpaid</span>`;
 
+          const idQ = encodeURIComponent(r.id);
           const tr = document.createElement("tr");
-          tr.className = "anim";
+          tr.className = "anim tr--detail";
+          tr.dataset.detailId = String(r.id);
           tr.style.setProperty("--d", i * 35 + "ms");
           tr.innerHTML = `
-      <td><strong>${escapeHtml(r.name || "")}</strong></td>
+      <td><strong><a class="table-task-link" href="detail.html?id=${idQ}">${escapeHtml(r.name || "")}</a></strong></td>
       <td class="muted">${escapeHtml(r.category?.name || "")}</td>
       <td>${fmtDate(r.date)}</td>
       <td class="money">${fmtMoney(r.price)}</td>
@@ -955,49 +624,56 @@
         tb.appendChild(trTotal);
       }
 
-      // ====== Toggle charged via PATCH ======
+      // ====== Table row → detail; toggle charged ======
       document.getElementById("tbody").addEventListener("click", async (e) => {
         const el = e.target.closest("[data-toggle-charged]");
-        if (!el) return;
-        const id = el.getAttribute("data-id");
-        const oldVal = el.getAttribute("data-val") === "true";
-        const newVal = !oldVal;
+        if (el) {
+          const id = el.getAttribute("data-id");
+          const oldVal = el.getAttribute("data-val") === "true";
+          const newVal = !oldVal;
 
-        // optimistic
-        const keep = el.innerHTML;
-        el.textContent = "…";
-        el.classList.add("muted");
+          const keep = el.innerHTML;
+          el.textContent = "…";
+          el.classList.add("muted");
 
-        try {
-          const res = await fetch(
-            `${BASE}/task?id=eq.${encodeURIComponent(id)}`,
-            {
-              method: "PATCH",
-              headers: {
-                ...HEADERS,
-                "Content-Type": "application/json",
-                Prefer: "return=representation",
+          try {
+            const res = await fetch(
+              `${BASE}/task?id=eq.${encodeURIComponent(id)}`,
+              {
+                method: "PATCH",
+                headers: {
+                  ...HEADERS,
+                  "Content-Type": "application/json",
+                  Prefer: "return=representation",
+                },
+                body: JSON.stringify({ is_charged: newVal }),
               },
-              body: JSON.stringify({ is_charged: newVal }),
-            },
-          );
-          if (!res.ok) {
-            const t = await res.text();
-            throw new Error(t || `HTTP ${res.status}`);
+            );
+            if (!res.ok) {
+              const t = await res.text();
+              throw new Error(t || `HTTP ${res.status}`);
+            }
+
+            const [rowUpd] = await res.json();
+            const idx = RAW.findIndex((r) => String(r.id) === String(id));
+            if (idx >= 0) RAW[idx] = { ...RAW[idx], ...rowUpd };
+
+            apply();
+          } catch (err) {
+            console.error(err);
+            el.innerHTML = keep;
+            el.classList.remove("muted");
+            alert(
+              "Cập nhật thất bại: " + err.message + "\nKiểm tra RLS/KEY/Policy.",
+            );
           }
-
-          const [rowUpd] = await res.json();
-          const idx = RAW.findIndex((r) => String(r.id) === String(id));
-          if (idx >= 0) RAW[idx] = { ...RAW[idx], ...rowUpd };
-
-          apply();
-        } catch (err) {
-          console.error(err);
-          el.innerHTML = keep;
-          el.classList.remove("muted");
-          alert(
-            "Cập nhật thất bại: " + err.message + "\nKiểm tra RLS/KEY/Policy.",
-          );
+          return;
+        }
+        if (e.target.closest("a")) return;
+        const tr = e.target.closest("tr[data-detail-id]");
+        const did = tr?.dataset?.detailId;
+        if (did) {
+          window.location.href = `detail.html?id=${encodeURIComponent(did)}`;
         }
       });
 
@@ -1144,32 +820,62 @@
 
         const moneyText = (n) => String(fmtMoney(n)).replace(/\s*₫/, " đ"); // đổi ký hiệu thành "đ"
 
+        function groupByCategory(arr) {
+          const map = new Map();
+          for (const r of arr) {
+            const key = r.category?.name || "Uncategorized";
+            if (!map.has(key)) map.set(key, []);
+            map.get(key).push(r);
+          }
+          return map;
+        }
+
+        function sortedCategoryKeys(map) {
+          return [...map.keys()].sort((a, b) => {
+            if (a === "Uncategorized") return 1;
+            if (b === "Uncategorized") return -1;
+            return a.localeCompare(b, "vi");
+          });
+        }
+
         let lines = [];
 
-        // Tiền task (tất cả category khác "Account")
+        // Tiền task — nhóm theo category
         lines.push(`+ Tiền task:`);
-        tasks.forEach((r, idx) => {
-          const name = r.name || "—";
-          const link = r.link ? r.link : "";
-          const cat = r.category?.name || "Uncategorized";
-          const amt = moneyText(r.price);
-          // Ví dụ: 1. - [Category] name: https://... ( 400.000 đ )
-          lines.push(
-            `${idx + 1}. - [${cat}] ${name}: ${link}${link ? " " : ""}( ${amt} )`,
-          );
-        });
+        lines.push("");
+        const tasksByCat = groupByCategory(tasks);
+        for (const cat of sortedCategoryKeys(tasksByCat)) {
+          const items = tasksByCat.get(cat);
+          lines.push(`[${cat}]`);
+          items.forEach((r, idx) => {
+            const name = r.name || "—";
+            const link = r.link ? r.link : "";
+            const amt = moneyText(r.price);
+            lines.push(
+              `${idx + 1}. - ${name}: ${link}${link ? " " : ""}( ${amt} )`,
+            );
+          });
+          lines.push(`=====> Tổng [${cat}]: ${moneyText(sum(items))}`);
+          lines.push("");
+        }
         lines.push(`=====> Tổng tiền task: ${moneyText(sumTasks)}`);
         lines.push(""); // dòng trống
 
-        // Tiền tài nguyên (chỉ category "Account")
+        // Tiền tài nguyên (chỉ category "Account") — vẫn nhóm theo category cho đồng nhất
         lines.push(`+ Tiền tài nguyên:`);
-        resources.forEach((r, idx) => {
-          const name = r.name || "—";
-          const cat = r.category?.name || "Account";
-          const amt = moneyText(r.price);
-          // Ví dụ: 1. - [Account] cursor pro: 1.625.000 đ
-          lines.push(`${idx + 1}. - [${cat}] ${name}: ${amt}`);
-        });
+        lines.push("");
+        const resByCat = groupByCategory(resources);
+        for (const cat of sortedCategoryKeys(resByCat)) {
+          const items = resByCat.get(cat);
+          lines.push(`[${cat}]`);
+          items.forEach((r, idx) => {
+            const name = r.name || "—";
+            const amt = moneyText(r.price);
+            lines.push(`${idx + 1}. - ${name}: ${amt}`);
+          });
+          lines.push(`=====> Tổng [${cat}]: ${moneyText(sum(items))}`);
+          lines.push("");
+        }
         lines.push(`=====> Tổng tiền tài nguyên: ${moneyText(sumRes)}`);
         lines.push(""); // dòng trống
 

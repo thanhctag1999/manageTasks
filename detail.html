@@ -14,295 +14,60 @@
   " />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Task · Detail & Edit</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
-      rel="stylesheet" />
-    <style>
-      :root {
-        --bg: #f7f8fb;
-        --panel: #ffffff;
-        --ink: #0f172a;
-        --muted: #6b7280;
-        --line: #e5e7eb;
-        --primary: #3b82f6;
-        --chip: #eef2ff;
-        --good: #10b981;
-        --warn: #f59e0b;
-        --bad: #ef4444;
-        --radius: 16px;
-        --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        height: 100%;
-      }
-      body {
-        margin: 0;
-        font-family:
-          Inter,
-          system-ui,
-          -apple-system,
-          Segoe UI,
-          Roboto,
-          sans-serif;
-        background: var(--bg);
-        color: var(--ink);
-      }
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="app-theme.css" />
 
-      .layout {
-        display: grid;
-        grid-template-columns: 260px 1fr;
-        min-height: 100vh;
-      }
-      /* Sidebar */
-      .side {
-        background: #fff;
-        border-right: 1px solid var(--line);
-        padding: 22px 16px;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-      }
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 800;
-        margin-bottom: 18px;
-      }
-      .brand .logo {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        background: linear-gradient(135deg, #4f46e5, #22d3ee);
-      }
-      .nav a {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 12px;
-        border-radius: 12px;
-        color: #334155;
-      }
-      .nav a.active {
-        background: #eef2ff;
-        color: #111827;
-        font-weight: 600;
-      }
-      .nav h4 {
-        margin: 18px 10px 8px;
-        font-size: 12px;
-        color: #94a3b8;
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
-      }
-
-      /* Content */
-      .content {
-        padding: 26px 26px 40px;
-      }
-      .topbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 14px;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-      .breadcrumbs {
-        font-size: 13px;
-        color: #94a3b8;
-      }
-      .breadcrumbs b {
-        color: #111827;
-      }
-      .title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .title h1 {
-        margin: 4px 0 0;
-        font-size: 24px;
-      }
-      .chip {
-        padding: 4px 8px;
-        border-radius: 999px;
-        background: #eef2ff;
-        color: #3730a3;
-        font-size: 12px;
-        font-weight: 700;
-      }
-
-      .panel {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-      }
-      .panel-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 14px;
-        border-bottom: 1px solid var(--line);
-      }
-      .panel-body {
-        padding: 16px;
-      }
-
-      .btn {
-        border: 1px solid var(--line);
-        background: #fff;
-        border-radius: 12px;
-        padding: 9px 12px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .btn.primary {
-        background: var(--primary);
-        border-color: transparent;
-        color: #fff;
-      }
-      .btn.danger {
-        background: #fee2e2;
-        border-color: #fecaca;
-        color: #dc2626;
-      }
-
-      form {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-      }
-      .row-1 {
-        grid-column: 1/-1;
-      }
-      label {
-        display: block;
-        font-size: 12px;
-        color: #64748b;
-        margin-bottom: 6px;
-      }
-      input,
-      select,
-      textarea {
-        width: 100%;
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid var(--line);
-        background: #fff;
-        color: #0f172a;
-      }
-      textarea {
-        min-height: 96px;
-        resize: vertical;
-      }
-      .muted {
-        color: #6b7280;
-      }
-      .inline {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-      }
-      .hint {
-        font-size: 12px;
-        color: #94a3b8;
-      }
-      .state {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 8px;
-        border-radius: 999px;
-        font-size: 12px;
-      }
-      .ok {
-        background: rgba(16, 185, 129, 0.12);
-        color: #059669;
-      }
-      .no {
-        background: rgba(239, 68, 68, 0.12);
-        color: #dc2626;
-      }
-      .actions {
-        grid-column: 1/-1;
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
-        margin-top: 6px;
-      }
-
-      .toast {
-        position: fixed;
-        right: 16px;
-        bottom: 16px;
-        padding: 12px 14px;
-        border-radius: 12px;
-        color: #fff;
-        box-shadow: var(--shadow);
-        display: none;
-      }
-      .toast.ok {
-        background: var(--good);
-      }
-      .toast.err {
-        background: var(--bad);
-      }
-      .hidden {
-        display: none !important;
-      }
-
-      .money {
-        font-variant-numeric: tabular-nums;
-        white-space: nowrap;
-      }
-      .mono {
-        font-family:
-          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      }
-      @media (max-width: 980px) {
-        form {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
   </head>
   <body>
     <div class="layout">
       <!-- Sidebar -->
       <aside class="side">
         <div class="brand">
-          <div class="logo"></div>
+          <div class="logo logo--wallet" aria-hidden="true"></div>
           <span>Allout</span>
         </div>
-        <nav class="nav">
-          <a href="index.html"><span>Overview</span></a>
-          <a href="#"><span>Analytics</span></a>
+        <div class="side-user">
+          <div class="side-user__avatar" aria-hidden="true">TO</div>
+          <div class="side-user__meta">
+            <b class="side-user__name">The One</b>
+            <span class="side-user__role">Workspace owner</span>
+          </div>
+        </div>
+        <nav class="nav nav--stack">
+          <a href="index.html"
+            ><span class="nav__ic" aria-hidden="true">⌂</span> Overview</a
+          >
+          <a href="analytics.html"
+            ><span class="nav__ic" aria-hidden="true">▤</span> Analytics</a
+          >
           <h4>Tasks</h4>
-          <a href="task.html"><span>Task List</span></a>
-          <a href="task-new.html"><span>Create Task</span></a>
-          <a class="active" href="#"><span>Task Detail</span></a>
+          <a href="task.html"
+            ><span class="nav__ic" aria-hidden="true">☰</span> Task List</a
+          >
+          <a href="task-new.html"
+            ><span class="nav__ic" aria-hidden="true">＋</span> Create Task</a
+          >
+          <a class="active" href="#"
+            ><span class="nav__ic" aria-hidden="true">◉</span> Task Detail</a
+          >
         </nav>
+        <div class="side-foot">
+          <a href="mailto:" class="side-foot__link">Support</a>
+          <span class="side-foot__sep">·</span>
+          <span>Allout v1</span>
+        </div>
       </aside>
 
       <!-- Main -->
       <main class="content">
-        <div class="topbar">
+        <header class="page-head">
           <div>
             <div class="breadcrumbs">Projects / Task / <b>Detail</b></div>
             <div class="title">
-              <h1 id="pageTitle">Task Detail</h1>
+              <h1 class="page-head__title" id="pageTitle">Task Detail</h1>
               <span id="chipState" class="chip">—</span>
             </div>
           </div>
@@ -310,7 +75,7 @@
             <a class="btn" href="task.html">← Back to List</a>
             <a class="btn" href="index.html">🏠 Dashboard</a>
           </div>
-        </div>
+        </header>
 
         <section class="panel">
           <div class="panel-head">
@@ -360,15 +125,17 @@
               </div>
 
               <div>
-                <label for="price">Price</label>
+                <label for="price">Price (VND)</label>
                 <input
                   id="price"
-                  type="number"
-                  step="0.01"
-                  placeholder="0"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  placeholder="VD: 1.500.000"
+                  class="money-input"
                   disabled />
                 <div class="hint">
-                  Preview: <b class="money" id="pricePreview">₫0</b>
+                  Xem nhanh: <b class="money" id="pricePreview">₫0</b>
                 </div>
               </div>
 
@@ -466,6 +233,10 @@
         return _VND_FORMATTER.format(v);
       }
 
+      const priceGroupFmt = new Intl.NumberFormat("vi-VN", {
+        maximumFractionDigits: 0,
+      });
+
       // ====== STATE ======
       const els = {
         pageTitle: document.getElementById("pageTitle"),
@@ -533,7 +304,20 @@
         els.btnDelete.addEventListener("click", onDelete);
 
         els.price.addEventListener("input", () => {
-          els.pricePreview.textContent = formatVND(els.price.value);
+          const dig = els.price.value.replace(/\D/g, "");
+          if (!dig) {
+            els.price.value = "";
+            els.pricePreview.textContent = formatVND(0);
+            return;
+          }
+          const n = parseInt(dig, 10);
+          if (!Number.isFinite(n)) {
+            els.price.value = "";
+            els.pricePreview.textContent = formatVND(0);
+            return;
+          }
+          els.price.value = priceGroupFmt.format(n);
+          els.pricePreview.textContent = formatVND(n);
         });
 
         els.link.addEventListener("input", () => {
@@ -589,8 +373,15 @@
         els.name.value = r.name || "";
         els.category.value = r.category_id || "";
         els.date.value = normalizeDateInput(r.date);
-        els.price.value = r.price ?? "";
-        els.pricePreview.textContent = formatVND(r.price);
+        const pv = r.price;
+        if (pv != null && pv !== "" && Number.isFinite(+pv)) {
+          const n = Math.round(+pv);
+          els.price.value = priceGroupFmt.format(n);
+          els.pricePreview.textContent = formatVND(n);
+        } else {
+          els.price.value = "";
+          els.pricePreview.textContent = formatVND(0);
+        }
         els.assign.value = r.assign_to || "The One";
         els.charged.value = r.is_charged === true ? "true" : "false";
         els.link.value = r.link || "";
@@ -649,7 +440,10 @@
           name: els.name.value.trim(),
           category_id: els.category.value || null,
           date: els.date.value || null,
-          price: els.price.value ? Number(els.price.value) : null,
+          price: (() => {
+            const dig = els.price.value.replace(/\D/g, "");
+            return dig ? parseInt(dig, 10) : null;
+          })(),
           assign_to: els.assign.value || null,
           is_charged: els.charged.value === "true",
           link: els.link.value.trim() || null,

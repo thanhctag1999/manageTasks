@@ -4,469 +4,84 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Dashboard · Overview</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet" />
-    <style>
-      :root {
-        --bg: #f7f8fb;
-        --panel: #fff;
-        --ink: #0f172a;
-        --muted: #6b7280;
-        --line: #e5e7eb;
-        --primary: #3b82f6;
-        --good: #10b981;
-        --warn: #f59e0b;
-        --bad: #ef4444;
-        --radius: 16px;
-        --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        height: 100%;
-      }
-      body {
-        margin: 0;
-        font-family:
-          Inter,
-          system-ui,
-          -apple-system,
-          "Segoe UI",
-          Roboto,
-          sans-serif;
-        background: var(--bg);
-        color: var(--ink);
-      }
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      .layout {
-        display: grid;
-        grid-template-columns: 260px 1fr;
-        min-height: 100vh;
-      }
-      .side {
-        background: #fff;
-        border-right: 1px solid var(--line);
-        padding: 22px 16px;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-      }
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 800;
-        margin-bottom: 18px;
-      }
-      .brand .logo {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        background: linear-gradient(135deg, #4f46e5, #22d3ee);
-      }
-      .nav a {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 12px;
-        border-radius: 12px;
-        color: #334155;
-      }
-      .nav a.active {
-        background: #eef2ff;
-        color: #111827;
-        font-weight: 600;
-      }
-      .nav h4 {
-        margin: 18px 10px 8px;
-        font-size: 12px;
-        color: #94a3b8;
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
-      }
-
-      .content {
-        padding: 26px 26px 40px;
-        display: grid;
-        grid-template-columns: 1fr 360px;
-        gap: 18px;
-        align-items: start;
-      }
-      .topbar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 14px;
-      }
-      .breadcrumbs {
-        font-size: 13px;
-        color: #94a3b8;
-      }
-      .breadcrumbs b {
-        color: #111827;
-      }
-      .title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .title h1 {
-        margin: 4px 0 0;
-        font-size: 24px;
-      }
-      .toolbar {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      .search {
-        min-width: 280px;
-        flex: 1;
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 10px 12px;
-      }
-      .btn {
-        border: 1px solid var(--line);
-        background: #fff;
-        border-radius: 12px;
-        padding: 8px 12px;
-        cursor: pointer;
-      }
-      .btn.primary {
-        background: var(--primary);
-        border-color: transparent;
-        color: #fff;
-      }
-
-      .filters {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 10px;
-      }
-      .filters select {
-        border: 1px solid var(--line);
-        background: #fff;
-        border-radius: 10px;
-        padding: 8px 10px;
-        min-width: 160px;
-      }
-      .filters .grow {
-        flex: 1;
-      }
-
-      .panel {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-      }
-      .panel-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 14px;
-        border-bottom: 1px solid var(--line);
-      }
-      .panel-body {
-        padding: 14px;
-      }
-      .tabs {
-        display: flex;
-        gap: 8px;
-      }
-      .tabs button {
-        border: 0;
-        background: #f8fafc;
-        color: #334155;
-        padding: 8px 12px;
-        border-radius: 999px;
-        cursor: pointer;
-        font-weight: 600;
-      }
-      .tabs button.active {
-        background: #e0e7ff;
-        color: #111827;
-      }
-
-      .kpi {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 12px;
-      }
-      .kcard {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        box-shadow: var(--shadow);
-        padding: 12px;
-      }
-      .kname {
-        font-size: 12px;
-        color: var(--muted);
-      }
-      .kval {
-        font-size: 22px;
-        font-weight: 800;
-      }
-      .kdelta {
-        font-size: 12px;
-        color: #16a34a;
-      }
-
-      .chart {
-        width: 100%;
-        height: 220px;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        background: #fafafa;
-      }
-
-      .table-wrap {
-        width: 100%;
-        overflow: auto;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      thead th {
-        position: sticky;
-        top: 0;
-        background: #f8fafc;
-        text-align: left;
-        padding: 12px;
-        font-size: 12px;
-        color: #64748b;
-        border-bottom: 1px solid var(--line);
-      }
-      tbody td {
-        padding: 12px;
-        border-bottom: 1px dashed #e5e7eb;
-        font-size: 14px;
-        color: #111827;
-        vertical-align: top;
-      }
-      tbody tr:hover {
-        background: #f9fafb;
-      }
-      .money {
-        font-variant-numeric: tabular-nums;
-        white-space: nowrap;
-      }
-      .state {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 8px;
-        border-radius: 999px;
-        font-size: 12px;
-      }
-      .ok {
-        background: rgba(16, 185, 129, 0.12);
-        color: #059669;
-      }
-      .no {
-        background: rgba(239, 68, 68, 0.12);
-        color: #dc2626;
-      }
-      .muted {
-        color: #64748b;
-      }
-      .state.btnlike {
-        cursor: pointer;
-        user-select: none;
-        transition: transform 0.06s ease;
-      }
-      .state.btnlike:active {
-        transform: scale(0.97);
-      }
-
-      .card {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-      }
-      .card .hd {
-        padding: 14px;
-        border-bottom: 1px solid var(--line);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .card .bd {
-        padding: 14px;
-      }
-
-      @media (max-width: 1100px) {
-        .content {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      /* ===== Loader overlay ===== */
-      .loader {
-        position: fixed;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        background: rgba(255, 255, 255, 0.6);
-        backdrop-filter: saturate(1.2) blur(2px);
-        z-index: 999;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s ease;
-      }
-      .loader.show {
-        opacity: 1;
-        pointer-events: auto;
-      }
-      .loader .box {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 16px 18px;
-        box-shadow: var(--shadow);
-      }
-      .loader .txt {
-        font-size: 12px;
-        color: #475569;
-      }
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      .loader .ring {
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        border: 3px solid #e5e7eb;
-        border-top-color: var(--primary);
-        animation: spin 1s linear infinite;
-      }
-
-      /* ===== Skeleton ===== */
-      .skel {
-        position: relative;
-        overflow: hidden;
-        background: #eef2f7;
-        border-radius: 10px;
-      }
-      .skel::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          90deg,
-          rgba(255, 255, 255, 0) 0%,
-          rgba(255, 255, 255, 0.55) 50%,
-          rgba(255, 255, 255, 0) 100%
-        );
-        transform: translateX(-100%);
-        animation: shimmer 1.2s infinite;
-      }
-      @keyframes shimmer {
-        to {
-          transform: translateX(100%);
-        }
-      }
-
-      /* ===== Animations ===== */
-      @keyframes fadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(8px);
-        }
-        to {
-          opacity: 1;
-          transform: none;
-        }
-      }
-      @keyframes pop {
-        from {
-          opacity: 0;
-          transform: scale(0.98);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-      .anim {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      .anim.in {
-        animation: fadeUp 0.35s ease var(--d, 0ms) both;
-      }
-      .chart-anim {
-        opacity: 0;
-        transform: scale(0.98);
-      }
-      .chart-anim.in {
-        animation: pop 0.35s ease 0.05s both;
-      }
-    </style>
+    <link rel="stylesheet" href="app-theme.css" />
   </head>
   <body>
     <div class="layout">
-      <!-- Sidebar -->
       <aside class="side">
         <div class="brand">
-          <div class="logo"></div>
+          <div class="logo logo--wallet" aria-hidden="true"></div>
           <span>Allout</span>
         </div>
-        <nav class="nav">
-          <a class="active" href="index.html"><span>Dashboard</span></a>
-          <a href="analytics.html"><span>Analytics</span></a>
+        <div class="side-user">
+          <div class="side-user__avatar" aria-hidden="true">TO</div>
+          <div class="side-user__meta">
+            <b class="side-user__name">The One</b>
+            <span class="side-user__role">Workspace owner</span>
+          </div>
+        </div>
+        <nav class="nav nav--stack">
+          <a class="active" href="index.html"
+            ><span class="nav__ic" aria-hidden="true">⌂</span> Overview</a
+          >
+          <a href="analytics.html"
+            ><span class="nav__ic" aria-hidden="true">▤</span> Analytics</a
+          >
           <h4>Tasks</h4>
-          <a href="task.html"><span>Task List</span></a>
-          <a href="task-new.html"><span>Create Task</span></a>
+          <a href="task.html"
+            ><span class="nav__ic" aria-hidden="true">☰</span> Task List</a
+          >
+          <a href="task-new.html"
+            ><span class="nav__ic" aria-hidden="true">＋</span> Create Task</a
+          >
         </nav>
+        <div class="side-foot">
+          <a href="mailto:" class="side-foot__link">Support</a>
+          <span class="side-foot__sep">·</span>
+          <span>Allout v1</span>
+        </div>
       </aside>
 
-      <!-- Main + Right -->
-      <main class="content">
-        <div>
-          <div class="topbar">
-            <div>
-              <div class="breadcrumbs">Projects / <b>Dashboard</b></div>
-              <div class="title">
-                <h1>Good Morning, <span id="who">The One</span></h1>
-              </div>
+      <main class="content content--split">
+        <div class="dash-main">
+          <header class="dash-header">
+            <h1 class="dash-header__hello">
+              Hello <span id="who">The One</span> 👋
+            </h1>
+            <div class="dash-header__center">
+              <select id="f_month" class="select-account" aria-label="Period">
+                <option value="">All months</option>
+              </select>
             </div>
-            <div class="toolbar">
-              <input id="q" class="search" placeholder="Search tasks…" />
-              <a class="btn primary" href="task-new.html">+ Add Task</a>
+            <div class="dash-header__actions">
+              <button
+                type="button"
+                class="icon-btn"
+                id="btnFocusSearch"
+                aria-label="Focus search"
+                title="Search">
+                🔍
+              </button>
+              <button type="button" class="icon-btn" aria-hidden="true">
+                🔔
+              </button>
+              <a class="btn primary" href="task-new.html">＋ Add Task</a>
             </div>
-          </div>
+          </header>
 
-          <!-- FILTER BAR -->
           <div class="filters" id="filters">
-            <select id="f_month">
-              <option value="">All months</option>
-            </select>
+            <input
+              id="q"
+              class="search"
+              type="search"
+              placeholder="Search tasks…"
+              style="min-width: 200px; max-width: 280px" />
             <select id="f_assign">
               <option value="">All assignees</option>
             </select>
@@ -478,80 +93,145 @@
               <option value="charged">Charged</option>
               <option value="Unpaid">Unpaid</option>
             </select>
-            <button id="f_reset" class="btn">Reset</button>
+            <button type="button" id="f_reset" class="btn">Reset</button>
           </div>
 
-          <!-- KPIs -->
-          <section class="kpi" aria-live="polite" style="margin-top: 12px">
-            <div class="kcard anim">
-              <div class="kname">Total tasks</div>
-              <div class="kval" id="k_total">0</div>
-              <div class="kdelta" id="k_total_delta">—</div>
+          <div class="dash-hero-row">
+            <section class="hero-card">
+              <div class="hero-card__top">
+                <div>
+                  <div class="hero-card__label">Charged revenue (balance)</div>
+                  <div class="hero-card__balance" id="bigRevenue">₫0</div>
+                  <div class="hero-card__sub" id="bigRevenueNote">
+                    vs prev. period
+                  </div>
+                </div>
+                <div class="hero-card__spark">
+                  <div class="hero-card__trend" id="heroTrend">—</div>
+                  <svg
+                    id="sparkHero"
+                    viewBox="0 0 140 44"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"></svg>
+                </div>
+              </div>
+              <div class="hero-card__actions">
+                <a class="btn btn--hero-light" href="task-new.html"
+                  >＋ Thêm task</a
+                >
+                <button
+                  type="button"
+                  class="btn btn--hero-ghost"
+                  id="btnCSVHero">
+                  Xuất CSV
+                </button>
+              </div>
+            </section>
+            <div class="dash-hero-side">
+              <section class="card widget-compact">
+                <div class="hd"><b>Tiến độ hoàn thành</b></div>
+                <div class="bd" id="widgetCompletion"></div>
+              </section>
+              <section class="card widget-compact">
+                <div class="hd"><b>Giá trị chưa thu</b></div>
+                <div class="bd" id="widgetAtRisk"></div>
+              </section>
             </div>
-            <div class="kcard anim">
-              <div class="kname">Completed</div>
-              <div class="kval" id="k_done">0</div>
-              <div class="kdelta" id="k_done_delta">—</div>
+          </div>
+
+          <section class="dash-mini-stats" aria-live="polite">
+            <div class="mini-stat mini-stat--mint anim">
+              <div class="mini-stat__label">Total tasks</div>
+              <div class="mini-stat__val" id="k_total">0</div>
+              <div class="mini-stat__delta" id="k_total_delta">—</div>
+              <svg
+                class="mini-stat__spark"
+                id="sparkMini1"
+                viewBox="0 0 72 28"
+                preserveAspectRatio="none"
+                aria-hidden="true"></svg>
             </div>
-            <div class="kcard anim">
-              <div class="kname">Unpaid</div>
-              <div class="kval" id="k_pending">0</div>
-              <div class="kdelta">This period</div>
+            <div class="mini-stat mini-stat--peach anim">
+              <div class="mini-stat__label">Completed</div>
+              <div class="mini-stat__val" id="k_done">0</div>
+              <div class="mini-stat__delta" id="k_done_delta">—</div>
+              <svg
+                class="mini-stat__spark"
+                id="sparkMini2"
+                viewBox="0 0 72 28"
+                preserveAspectRatio="none"
+                aria-hidden="true"></svg>
             </div>
-            <div class="kcard anim">
-              <div class="kname">Revenue</div>
-              <div class="kval" id="k_rev">₫0</div>
-              <div class="kdelta" id="k_rev_delta">—</div>
+            <div class="mini-stat mini-stat--sky anim">
+              <div class="mini-stat__label">Unpaid</div>
+              <div class="mini-stat__val" id="k_pending">0</div>
+              <div class="mini-stat__delta">This period</div>
+              <svg
+                class="mini-stat__spark"
+                id="sparkMini3"
+                viewBox="0 0 72 28"
+                preserveAspectRatio="none"
+                aria-hidden="true"></svg>
             </div>
           </section>
 
-          <!-- Report -->
-          <section class="panel" style="margin-top: 12px">
+          <div class="dash-bento">
+            <section class="card">
+              <div class="hd"><b>Theo assignee</b></div>
+              <div class="bd" id="widgetAssignee"></div>
+            </section>
+            <section class="card">
+              <div class="hd"><b>Deadline 7 ngày tới</b></div>
+              <div class="bd" id="widgetUpcoming"></div>
+            </section>
+            <section class="card">
+              <div class="hd"><b>Bộ lọc hiện tại</b></div>
+              <div class="bd" id="widgetFilters"></div>
+            </section>
+            <section class="card">
+              <div class="hd"><b>Doanh thu · category (đã charge)</b></div>
+              <div class="bd" id="widgetCatMix"></div>
+            </section>
+          </div>
+
+          <section class="panel">
             <div class="panel-head">
               <div>
-                <b>Your tasks report</b>
+                <b>Money flow</b>
                 <div class="muted" style="font-size: 12px">
-                  Revenue vs Tasks
+                  Candlestick: revenue · bars: task count
                 </div>
               </div>
               <div class="tabs" id="rangeTabs">
-                <button data-range="7d" class="active">7d</button>
-                <button data-range="30d">30d</button>
-                <button data-range="90d">90d</button>
-                <button data-range="YTD">YTD</button>
+                <button type="button" data-range="7d" class="active">7d</button>
+                <button type="button" data-range="30d">30d</button>
+                <button type="button" data-range="90d">90d</button>
+                <button type="button" data-range="YTD">YTD</button>
               </div>
             </div>
-            <div
-              class="panel-body"
-              style="
-                display: grid;
-                grid-template-columns: 300px 1fr;
-                gap: 16px;
-                align-items: center;
-              ">
-              <div>
-                <div style="font-size: 36px; font-weight: 800" id="bigRevenue">
-                  ₫0
-                </div>
-                <div class="muted" id="bigRevenueNote" style="margin-top: 6px">
-                  vs prev. period
-                </div>
-              </div>
+            <div class="panel-body">
               <svg
                 id="lineChart"
                 class="chart chart-anim"
-                viewBox="0 0 700 220"
-                preserveAspectRatio="none"></svg>
+                viewBox="0 0 700 260"
+                preserveAspectRatio="xMidYMid meet"
+                role="img"
+                aria-label="Revenue and task chart"></svg>
+              <div class="chart-legend">
+                <span><i></i> Revenue (nến)</span>
+                <span><i class="sec"></i> Task count</span>
+              </div>
             </div>
           </section>
 
-          <!-- Table -->
-          <section class="panel" style="margin-top: 12px">
+          <section class="panel" style="margin-top: 16px">
             <div class="panel-head">
-              <b>Last transactions</b>
-              <div>
-                <button class="btn" id="btnCSV">Export CSV</button>
-                <span class="muted" id="status" style="margin-left: 10px"
+              <b>All transactions</b>
+              <div class="toolbar" style="margin: 0">
+                <button type="button" class="btn" id="btnCSV">
+                  Export CSV
+                </button>
+                <span class="muted" id="status" style="margin-left: 8px"
                   >Loading…</span
                 >
               </div>
@@ -574,24 +254,27 @@
           </section>
         </div>
 
-        <!-- Right column -->
-        <aside>
+        <aside class="dash-aside-stack">
           <section class="card">
-            <div class="hd"><b>Analytics!</b></div>
-            <div class="bd">
-              Some categories are doing the best.
-              <div
-                id="topCats"
-                style="display: grid; gap: 8px; margin-top: 10px"></div>
+            <div class="hd"><b>Thao tác nhanh</b></div>
+            <div class="bd dash-shortcuts">
+              <a class="shortcut-btn" href="task-new.html">＋ Task mới</a>
+              <a class="shortcut-btn" href="task.html">Danh sách task</a>
+              <a class="shortcut-btn" href="analytics.html">Analytics</a>
             </div>
           </section>
-          <section class="card" style="margin-top: 12px">
+          <section class="card">
+            <div class="hd"><b>Transactions</b></div>
+            <div class="bd txn-list-host" id="txnList"></div>
+          </section>
+          <section class="card">
+            <div class="hd"><b>Top categories</b></div>
+            <div class="bd cat-card-row" id="topCats"></div>
+          </section>
+          <section class="card">
             <div class="hd">
-              <b>Today</b
-              ><span
-                class="muted"
-                id="todayStr"
-                style="margin-left: 8px"></span>
+              <b>Today</b>
+              <span class="muted" id="todayStr" style="margin-left: 8px"></span>
             </div>
             <div class="bd" id="agenda"></div>
           </section>
@@ -685,6 +368,14 @@
 
         // CSV
         document.getElementById("btnCSV").addEventListener("click", exportCSV);
+        document
+          .getElementById("btnCSVHero")
+          .addEventListener("click", exportCSV);
+        document
+          .getElementById("btnFocusSearch")
+          .addEventListener("click", () =>
+            document.getElementById("q").focus(),
+          );
 
         // Fetch data
         try {
@@ -706,9 +397,10 @@
         } finally {
           setLoading(false);
           // Animate initial paint
-          animIn(".kpi .kcard");
+          animIn(".dash-mini-stats .mini-stat");
+          animIn(".dash-bento .card, .dash-hero-side .card");
           animIn("#tbody tr");
-          animIn("#topCats > div, #agenda > div");
+          animIn("#txnList .txn-row, #topCats .cat-mini, #agenda .agenda-row");
           const chart = document.getElementById("lineChart");
           chart.classList.remove("in");
           void chart.offsetWidth;
@@ -790,15 +482,30 @@
         drawLine(rows);
         agenda(rows);
         topCats(rows);
+        renderTxnList(rows);
+        widgetCompletion(rows);
+        widgetAtRisk(rows);
+        widgetAssignee(rows);
+        widgetUpcoming(rows);
+        widgetFilters();
+        widgetCatMix(rows);
 
         // Animate on every repaint
-        animIn(".kpi .kcard");
+        animIn(".dash-mini-stats .mini-stat");
+        animIn(".dash-bento .card, .dash-hero-side .card");
         animIn("#tbody tr");
-        animIn("#topCats > div, #agenda > div");
+        animIn("#txnList .txn-row, #topCats .cat-mini, #agenda .agenda-row");
         const chart = document.getElementById("lineChart");
         chart.classList.remove("in");
         void chart.offsetWidth;
         chart.classList.add("in");
+      }
+
+      function setHeroTrend(text, neg) {
+        const el = document.getElementById("heroTrend");
+        if (!el) return;
+        el.textContent = text;
+        el.classList.toggle("neg", !!neg);
       }
 
       // ===== KPI =====
@@ -811,16 +518,14 @@
         set("#k_total", total);
         set("#k_done", done);
         set("#k_pending", pending);
-        set("#k_rev", formatVND(revenue));
 
-        // Nếu filter All months (không chọn tháng), bigRevenue = tổng theo dữ liệu đã filter
         const fMonth = document.getElementById("f_month")?.value?.trim();
         if (!fMonth) {
           set("#bigRevenue", formatVND(revenue));
           set("#bigRevenueNote", "All months (filtered)");
-          set("#k_rev_delta", `period: ${formatVND(revenue)}`);
           set("#k_total_delta", "All");
           set("#k_done_delta", `${done}/${total}`);
+          setHeroTrend("—", false);
           return;
         }
 
@@ -836,9 +541,10 @@
             : "0%";
         set("#bigRevenue", formatVND(curRev));
         set("#bigRevenueNote", `vs prev. period ${delta}`);
-        set("#k_rev_delta", `period: ${formatVND(curRev)}`);
         set("#k_total_delta", `${RANGE}`);
         set("#k_done_delta", `${done}/${total}`);
+        const neg = prevRev > 0 && curRev < prevRev;
+        setHeroTrend(delta, neg);
       }
 
       // ===== Table =====
@@ -926,10 +632,8 @@
         }
         list.forEach((r, i) => {
           const div = document.createElement("div");
-          div.className = "anim";
+          div.className = "agenda-row anim";
           div.style.setProperty("--d", i * 60 + "ms");
-          div.style.cssText =
-            "display:flex;justify-content:space-between;align-items:center;border:1px dashed var(--line);border-radius:12px;padding:10px;margin-bottom:8px";
           div.innerHTML = `<div><b>${escapeHtml(
             r.name || "",
           )}</b><div class="muted">${escapeHtml(
@@ -951,15 +655,213 @@
           .slice(0, 3)
           .forEach(([k, v], i) => {
             const row = document.createElement("div");
-            row.className = "anim";
+            row.className = "cat-mini anim";
             row.style.setProperty("--d", i * 60 + "ms");
-            row.style.cssText =
-              "display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px";
             row.innerHTML = `<span>${escapeHtml(k)}</span><b>${formatVND(
               v,
             )}</b>`;
             host.appendChild(row);
           });
+      }
+
+      function renderTxnList(rows) {
+        const host = document.getElementById("txnList");
+        if (!host) return;
+        host.innerHTML = "";
+        const list = [...rows]
+          .sort((a, b) =>
+            String(b.date || "").localeCompare(String(a.date || "")),
+          )
+          .slice(0, 8);
+        const hues = [
+          "#3b82f6",
+          "#8b5cf6",
+          "#10b981",
+          "#f59e0b",
+          "#ec4899",
+          "#06b6d4",
+          "#64748b",
+          "#ef4444",
+        ];
+        if (!list.length) {
+          host.innerHTML =
+            '<div class="muted" style="padding:12px">No transactions</div>';
+          return;
+        }
+        list.forEach((r, i) => {
+          const div = document.createElement("div");
+          div.className = "txn-row anim";
+          div.style.setProperty("--d", i * 40 + "ms");
+          const letter = (r.name || "?").slice(0, 1).toUpperCase();
+          const hue = hues[i % hues.length];
+          div.innerHTML = `<div class="txn-row__ic" style="background:${hue}">${escapeHtml(
+            letter,
+          )}</div><div class="txn-row__body"><div class="txn-row__name">${escapeHtml(
+            r.name || "—",
+          )}</div><div class="txn-row__meta">${escapeHtml(
+            r.category?.name || "",
+          )} · ${fmtDate(r.date)}</div></div><div class="txn-row__amt">${formatVND(
+            r.price,
+          )}</div>`;
+          host.appendChild(div);
+        });
+      }
+
+      function widgetCompletion(rows) {
+        const el = document.getElementById("widgetCompletion");
+        if (!el) return;
+        const total = rows.length;
+        const done = rows.filter((r) => r.is_charged).length;
+        const pct = total ? Math.round((done / total) * 100) : 0;
+        el.innerHTML = `<div class="wprog"><div class="wprog__pct">${pct}%</div><div class="wprog__bar"><span style="width:${pct}%"></span></div><div class="muted wprog__sub">${done} / ${total} task completed</div></div>`;
+      }
+
+      function widgetAtRisk(rows) {
+        const el = document.getElementById("widgetAtRisk");
+        if (!el) return;
+        const unpaid = rows.filter((r) => !r.is_charged);
+        const s = sum(unpaid.map((r) => +r.price || 0));
+        el.innerHTML = `<div class="wrisk__amt">${formatVND(s)}</div><div class="muted">${unpaid.length} task chưa charge</div>`;
+      }
+
+      function widgetAssignee(rows) {
+        const el = document.getElementById("widgetAssignee");
+        if (!el) return;
+        const m = new Map();
+        rows.forEach((r) => {
+          const k = r.assign_to || "—";
+          m.set(k, (m.get(k) || 0) + 1);
+        });
+        const top = [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+        const max = Math.max(1, ...top.map((x) => x[1]));
+        el.innerHTML = top.length
+          ? top
+              .map(
+                ([name, n]) =>
+                  `<div class="wbar-row"><span class="wbar-row__lbl">${escapeHtml(
+                    name,
+                  )}</span><div class="wbar-row__track"><span style="width:${(n / max) * 100}%"></span></div><span class="wbar-row__n">${n}</span></div>`,
+              )
+              .join("")
+          : '<div class="muted">Không có dữ liệu</div>';
+      }
+
+      function widgetUpcoming(rows) {
+        const el = document.getElementById("widgetUpcoming");
+        if (!el) return;
+        const t0 = new Date().toISOString().slice(0, 10);
+        const t7 = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
+        const list = rows
+          .filter((r) => {
+            const ds = (r.date || "").slice(0, 10);
+            return ds.length >= 10 && ds >= t0 && ds <= t7;
+          })
+          .sort((a, b) =>
+            String(a.date || "").localeCompare(String(b.date || "")),
+          )
+          .slice(0, 5);
+        el.innerHTML = list.length
+          ? list
+              .map(
+                (r) =>
+                  `<a class="wup-row" href="detail.html?id=${encodeURIComponent(r.id)}"><span class="wup-row__d">${fmtDate(r.date)}</span><span class="wup-row__n">${escapeHtml(r.name || "—")}</span><span class="wup-row__p money">${formatVND(r.price)}</span></a>`,
+              )
+              .join("")
+          : '<div class="muted">Không có deadline trong 7 ngày</div>';
+      }
+
+      function widgetFilters() {
+        const el = document.getElementById("widgetFilters");
+        if (!el) return;
+        const f = getFilters();
+        const chips = [];
+        if (f.month) chips.push(`Tháng: ${f.month}`);
+        if (f.assign) chips.push(`Assign: ${f.assign}`);
+        if (f.category) chips.push(`Category: ${f.category}`);
+        if (f.status) chips.push(`Status: ${f.status}`);
+        if (f.q) chips.push(`Tìm: “${f.q}”`);
+        el.innerHTML = chips.length
+          ? chips
+              .map((c) => `<span class="fchip">${escapeHtml(c)}</span>`)
+              .join("")
+          : '<span class="muted">Không có bộ lọc — toàn bộ dữ liệu khớp</span>';
+      }
+
+      function widgetCatMix(rows) {
+        const el = document.getElementById("widgetCatMix");
+        if (!el) return;
+        const charged = rows.filter((r) => r.is_charged);
+        const m = new Map();
+        charged.forEach((r) => {
+          const k = r.category?.name || "Khác";
+          m.set(k, (m.get(k) || 0) + (+r.price || 0));
+        });
+        const top = [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6);
+        const tot = top.reduce((a, [, v]) => a + v, 0) || 1;
+        const colors = [
+          "#16a34a",
+          "#3b82f6",
+          "#8b5cf6",
+          "#f59e0b",
+          "#ec4899",
+          "#64748b",
+        ];
+        el.innerHTML = top.length
+          ? top
+              .map(
+                ([k, v], i) =>
+                  `<div class="catmix-row"><span class="catmix-row__k">${escapeHtml(k)}</span><div class="catmix-row__bar"><span style="width:${(v / tot) * 100}%;background:${colors[i % colors.length]}"></span></div><span class="catmix-row__v money">${formatVND(v)}</span></div>`,
+              )
+              .join("")
+          : '<div class="muted">Không có doanh thu đã charge</div>';
+      }
+
+      function miniSparklinePoly(sel, vals, stroke) {
+        const svg = document.querySelector(sel);
+        if (!svg) return;
+        const W = 72,
+          H = 28,
+          P = 2;
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svg.innerHTML = "";
+        const n = vals.length;
+        if (!n) return;
+        const mx = Math.max(1, ...vals);
+        const pts = vals
+          .map((v, i) => {
+            const x = P + (n <= 1 ? 0 : (i / (n - 1)) * (W - 2 * P));
+            const y = H - P - (v / mx) * (H - 2 * P);
+            return `${x},${y}`;
+          })
+          .join(" ");
+        svg.insertAdjacentHTML(
+          "beforeend",
+          `<polyline fill="none" stroke="${stroke}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" points="${pts}" />`,
+        );
+      }
+
+      function miniSparkline(sel, vals, stroke) {
+        const svg = document.querySelector(sel);
+        if (!svg) return;
+        const W = 140,
+          H = 44,
+          P = 4;
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svg.innerHTML = "";
+        const n = vals.length;
+        if (!n) return;
+        const mx = Math.max(1, ...vals);
+        const pts = vals
+          .map((v, i) => {
+            const x = P + (n <= 1 ? 0 : (i / (n - 1)) * (W - 2 * P));
+            const y = H - P - (v / mx) * (H - 2 * P);
+            return `${x},${y}`;
+          })
+          .join(" ");
+        svg.insertAdjacentHTML(
+          "beforeend",
+          `<polyline fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts}" />`,
+        );
       }
 
       // ===== Charts =====
@@ -977,57 +879,107 @@
         const cnt = days.map.map(
           (d) => rows.filter((r) => sameDay(r.date, d)).length,
         );
-        lineChart("#lineChart", rev, cnt, labels);
+        candlestickChart("#lineChart", rev, cnt, labels);
+        const tail = rev.slice(-14);
+        miniSparkline(
+          "#sparkHero",
+          tail.length ? tail : [0],
+          "rgba(134, 239, 172, 0.95)",
+        );
+        const cntCharged = days.map.map(
+          (d) => rows.filter((r) => sameDay(r.date, d) && r.is_charged).length,
+        );
+        const cntAll = days.map.map(
+          (d) => rows.filter((r) => sameDay(r.date, d)).length,
+        );
+        const cntUnpaid = cntAll.map((t, i) => Math.max(0, t - cntCharged[i]));
+        miniSparklinePoly("#sparkMini1", cntAll, "rgba(22, 163, 74, 0.85)");
+        miniSparklinePoly("#sparkMini2", cntCharged, "rgba(234, 88, 12, 0.9)");
+        miniSparklinePoly("#sparkMini3", cntUnpaid, "rgba(37, 99, 235, 0.9)");
       }
-      function lineChart(sel, seriesA, seriesB, labels) {
+      /** Nến tổng hợp từ doanh thu ngày (open = ngày trước); cột dưới = số task */
+      function candlestickChart(sel, seriesRev, seriesCnt, labels) {
         const svg = document.querySelector(sel);
-        const W = 700,
-          H = 220,
-          P = 28;
+        const W = 700;
+        const H = 260;
+        const P = 36;
+        const splitY = 198;
+        const volTop = 208;
+        const volBot = H - 22;
+        const n = seriesRev.length;
         svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
         svg.innerHTML = "";
-        const max = Math.max(1, ...seriesA, ...seriesB);
-        const toXY = (v, i, n) => {
-          const x = P + (i / (n - 1)) * (W - P * 2);
-          const y = H - P - (v / max) * (H - P * 2);
-          return [x, y];
-        };
-        for (let i = 0; i <= 4; i++) {
-          const y = P + (H - P * 2) * (i / 4);
+        if (n === 0) return;
+
+        const ohlc = seriesRev.map((c, i) => {
+          const o = i > 0 ? seriesRev[i - 1] : c;
+          const h = Math.max(o, c) * 1.03 + (Math.max(o, c) === 0 ? 1 : 0);
+          const l = Math.max(0, Math.min(o, c) * 0.97);
+          return { o, c, h, l };
+        });
+        const maxH = Math.max(1, ...ohlc.map((x) => x.h));
+        const maxVol = Math.max(1, ...seriesCnt);
+
+        const xAt = (i) =>
+          P + (n <= 1 ? (W - P * 2) / 2 : (i / (n - 1)) * (W - P * 2));
+        const yPrice = (v) => splitY - 10 - (v / maxH) * (splitY - P - 18);
+        const yVolBase = (v) => volBot - (v / maxVol) * (volBot - volTop);
+
+        for (let g = 0; g <= 4; g++) {
+          const y = P + ((splitY - P - 18) * g) / 4;
           svg.insertAdjacentHTML(
             "beforeend",
-            `<line x1="${P}" y1="${y}" x2="${
+            `<line class="grid-line" x1="${P}" y1="${y}" x2="${
               W - P
-            }" y2="${y}" stroke="#e5e7eb"/>`,
+            }" y2="${y}" />`,
           );
         }
-        const pathOf = (arr) =>
-          arr
-            .map((v, i) => {
-              const [x, y] = toXY(v, i, arr.length);
-              return `${i ? "L" : "M"}${x},${y}`;
-            })
-            .join(" ");
         svg.insertAdjacentHTML(
           "beforeend",
-          `<path d="${pathOf(
-            seriesA,
-          )}" fill="none" stroke="#2563eb" stroke-width="2.3"/>`,
+          `<line class="vol-axis" x1="${P}" y1="${volBot}" x2="${
+            W - P
+          }" y2="${volBot}" />`,
         );
-        svg.insertAdjacentHTML(
-          "beforeend",
-          `<path d="${pathOf(
-            seriesB,
-          )}" fill="none" stroke="#fb923c" stroke-width="2.3" opacity=".9"/>`,
-        );
+
+        const slot = n <= 1 ? W - P * 2 : (W - P * 2) / (n - 1);
+        const cw = Math.min(11, slot * 0.52);
+
+        ohlc.forEach((x, i) => {
+          const cx = xAt(i);
+          const yHi = yPrice(x.h);
+          const yLo = yPrice(x.l);
+          const yO = yPrice(x.o);
+          const yC = yPrice(x.c);
+          const top = Math.min(yO, yC);
+          const bot = Math.max(yO, yC);
+          const up = x.c >= x.o;
+          const cls = up ? "candle-up" : "candle-down";
+          svg.insertAdjacentHTML(
+            "beforeend",
+            `<line class="wick" x1="${cx}" y1="${yHi}" x2="${cx}" y2="${yLo}" />`,
+          );
+          const bh = Math.max(2.5, bot - top);
+          svg.insertAdjacentHTML(
+            "beforeend",
+            `<rect class="${cls}" x="${cx - cw / 2}" y="${top}" width="${cw}" height="${bh}" rx="1.5" />`,
+          );
+          const vb = yVolBase(seriesCnt[i]);
+          const vh = volBot - vb;
+          svg.insertAdjacentHTML(
+            "beforeend",
+            `<rect class="vol-bar" x="${cx - cw / 2}" y="${vb}" width="${cw}" height="${vh}" rx="1" />`,
+          );
+        });
+
+        const step = Math.max(1, Math.ceil(labels.length / 12));
         labels.forEach((lab, i) => {
-          const [x] = toXY(0, i, labels.length);
-          if (i % Math.ceil(labels.length / 12) === 0) {
+          if (i % step === 0) {
+            const x = xAt(i);
             svg.insertAdjacentHTML(
               "beforeend",
               `<text x="${x}" y="${
-                H - 6
-              }" text-anchor="middle" font-size="10" fill="#64748b">${lab}</text>`,
+                H - 5
+              }" text-anchor="middle" font-size="9" fill="#8b8499">${lab}</text>`,
             );
           }
         });
