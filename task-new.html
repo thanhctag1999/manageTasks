@@ -4,12 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Create Task</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="app-theme.css" />
-
   </head>
   <body>
     <div class="layout">
@@ -76,7 +78,8 @@
                 <input
                   id="name"
                   required
-                  placeholder="VD: Thiết kế UI Task Board" />
+                  placeholder="VD: Thiết kế UI Task Board"
+                />
               </div>
 
               <div>
@@ -87,7 +90,8 @@
                     id="btnAddCat"
                     type="button"
                     class="btn"
-                    title="Add new category">
+                    title="Add new category"
+                  >
                     + New
                   </button>
                 </div>
@@ -107,7 +111,8 @@
                   inputmode="numeric"
                   autocomplete="off"
                   placeholder="VD: 1.500.000"
-                  class="money-input" />
+                  class="money-input"
+                />
                 <div class="hint">Nhập số — hiển thị định dạng VND khi gõ.</div>
               </div>
 
@@ -170,13 +175,28 @@
       <h3 style="margin: 0 0 10px">New Category</h3>
       <label for="catName" class="small muted">Name</label>
       <input id="catName" placeholder="VD: Work" />
+      <label
+        for="catPrice"
+        class="small muted"
+        style="display: block; margin-top: 8px"
+        >Price (VND)</label
+      >
+      <input
+        id="catPrice"
+        type="number"
+        min="0"
+        step="1"
+        inputmode="numeric"
+        placeholder="VD: 1500000"
+      />
       <div
         style="
           display: flex;
           gap: 8px;
           justify-content: flex-end;
           margin-top: 10px;
-        ">
+        "
+      >
         <button id="catCancel" class="btn">Cancel</button>
         <button id="catSave" class="btn primary">Save</button>
       </div>
@@ -211,9 +231,12 @@
         toast: document.getElementById("toast"),
         dlgCat: document.getElementById("dlgCat"),
         catName: document.getElementById("catName"),
+        catPrice: document.getElementById("catPrice"),
         catSave: document.getElementById("catSave"),
         catCancel: document.getElementById("catCancel"),
       };
+
+      let categoriesCache = [];
 
       // Defaults
       (function setDefaults() {
@@ -250,6 +273,33 @@
         }
       }
 
+      const priceFmt = new Intl.NumberFormat("vi-VN", {
+        maximumFractionDigits: 0,
+      });
+
+      function setPriceInputFromNumber(n) {
+        if (n == null || !Number.isFinite(n)) {
+          els.price.value = "";
+          return;
+        }
+        els.price.value = priceFmt.format(Math.round(Number(n)));
+      }
+
+      function applyCategoryPriceToField() {
+        const id = els.category.value;
+        const cat = categoriesCache.find((c) => String(c.id) === String(id));
+        if (!cat) {
+          els.price.value = "";
+          return;
+        }
+        const p = cat.price;
+        if (p == null || p === "") {
+          els.price.value = "";
+          return;
+        }
+        setPriceInputFromNumber(Number(p));
+      }
+
       // Init
       loadCategories();
       els.link.addEventListener("input", () => {
@@ -262,9 +312,6 @@
         }
       });
 
-      const priceFmt = new Intl.NumberFormat("vi-VN", {
-        maximumFractionDigits: 0,
-      });
       els.price.addEventListener("input", () => {
         const dig = els.price.value.replace(/\D/g, "");
         if (!dig) {
@@ -282,6 +329,7 @@
       els.form.addEventListener("submit", onSubmit);
       document.getElementById("btnAddCat").addEventListener("click", () => {
         els.catName.value = "";
+        els.catPrice.value = "";
         els.dlgCat.showModal();
         setTimeout(() => els.catName.focus(), 50);
       });
@@ -291,31 +339,43 @@
       async function loadCategories() {
         try {
           const url = new URL(`${BASE}/category`);
-          url.searchParams.set("select", "id,name");
+          url.searchParams.set("select", "id,name,price");
           url.searchParams.set("order", "name.asc");
           const res = await fetch(url, {
             headers: { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` },
           });
           if (!res.ok) throw new Error("load category: " + res.status);
           const cats = await res.json();
+          categoriesCache = cats;
           els.category.innerHTML = cats
             .map(
               (c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`,
             )
             .join("");
+          applyCategoryPriceToField();
         } catch (e) {
           notify("Không tải được category: " + e.message, true);
         }
       }
 
+      els.category.addEventListener("change", applyCategoryPriceToField);
+
       async function createCategory() {
         const name = els.catName.value.trim();
         if (!name) return notify("Nhập tên category", true);
+        const priceRaw = els.catPrice.value.trim();
+        let price = null;
+        if (priceRaw !== "") {
+          price = Number(priceRaw);
+          if (!Number.isFinite(price) || price < 0)
+            return notify("Giá category phải là số ≥ 0", true);
+          price = Math.round(price);
+        }
         try {
           const res = await fetch(`${BASE}/category`, {
             method: "POST",
             headers: { ...HEADERS, Prefer: "return=representation" },
-            body: JSON.stringify({ name }),
+            body: JSON.stringify({ name, price }),
           });
           if (!res.ok) {
             const t = await res.text();
@@ -325,6 +385,7 @@
           els.dlgCat.close();
           await loadCategories();
           els.category.value = row.id;
+          applyCategoryPriceToField();
           notify("Đã tạo category");
         } catch (err) {
           notify("Lỗi tạo category: " + err.message, true);
