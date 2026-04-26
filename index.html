@@ -1,0 +1,1140 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard · Overview</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet" />
+    <link rel="stylesheet" href="app-theme.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="side app-sidebar">
+        <div class="app-sidebar__brand">Synchro</div>
+        <div class="side-user app-sidebar__user">
+          <div class="side-user__avatar" aria-hidden="true">TO</div>
+          <div class="side-user__meta">
+            <b class="side-user__name">The One</b>
+            <span class="side-user__email">theone@workspace.local</span>
+          </div>
+        </div>
+        <a href="task-new.html" class="btn-create">+ Create Task</a>
+        <nav class="nav nav--stack app-nav">
+          <a class="active" href="index.html"
+            ><span class="nav__ic" aria-hidden="true">⌂</span> Dashboard</a
+          >
+          <a href="task.html"
+            ><span class="nav__ic" aria-hidden="true">□</span> My Task</a
+          >
+          <a href="task.html"
+            ><span class="nav__ic" aria-hidden="true">✉</span> Inbox</a
+          >
+          <a href="analytics.html"
+            ><span class="nav__ic" aria-hidden="true">▤</span> Reporting</a
+          >
+          <h4>Favourite</h4>
+          <a href="index.html"
+            ><span class="nav__ic" aria-hidden="true">★</span> Overview</a
+          >
+        </nav>
+        <div class="side-foot">
+          <a href="mailto:" class="side-foot__link"
+            ><span class="nav__ic" aria-hidden="true">?</span> Help Center</a
+          >
+        </div>
+      </aside>
+
+      <main class="content content--split">
+        <div class="app-topbar">
+          <div class="app-topbar__crumb">Synchro › <b>Dashboard</b></div>
+          <input
+            id="q"
+            class="app-topbar__search"
+            type="search"
+            placeholder="Search tasks…"
+            aria-label="Search tasks" />
+        </div>
+        <div class="dash-main">
+          <header class="dash-header">
+            <h1 class="dash-header__hello">
+              Hello <span id="who">The One</span> 👋
+            </h1>
+            <div class="dash-header__center">
+              <select id="f_month" class="select-account" aria-label="Period">
+                <option value="">All months</option>
+              </select>
+            </div>
+            <div class="dash-header__actions">
+              <button
+                type="button"
+                class="icon-btn"
+                id="btnFocusSearch"
+                aria-label="Focus search"
+                title="Search">
+                🔍
+              </button>
+              <button type="button" class="icon-btn" aria-hidden="true">
+                🔔
+              </button>
+              <a class="btn primary" href="task-new.html">＋ Add Task</a>
+            </div>
+          </header>
+
+          <div class="filters" id="filters">
+            <select id="f_assign">
+              <option value="">All assignees</option>
+            </select>
+            <select id="f_category">
+              <option value="">All categories</option>
+            </select>
+            <select id="f_status">
+              <option value="">All status</option>
+              <option value="charged">Charged</option>
+              <option value="Unpaid">Unpaid</option>
+            </select>
+            <button type="button" id="f_reset" class="btn">Reset</button>
+          </div>
+
+          <div class="dash-hero-row">
+            <section class="hero-card">
+              <div class="hero-card__top">
+                <div>
+                  <div class="hero-card__label">Charged revenue (balance)</div>
+                  <div class="hero-card__balance" id="bigRevenue">₫0</div>
+                  <div class="hero-card__sub" id="bigRevenueNote">
+                    vs prev. period
+                  </div>
+                </div>
+                <div class="hero-card__spark">
+                  <div class="hero-card__trend" id="heroTrend">—</div>
+                  <svg
+                    id="sparkHero"
+                    viewBox="0 0 140 44"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"></svg>
+                </div>
+              </div>
+              <div class="hero-card__actions">
+                <a class="btn btn--hero-light" href="task-new.html"
+                  >＋ Thêm task</a
+                >
+                <button
+                  type="button"
+                  class="btn btn--hero-ghost"
+                  id="btnCSVHero">
+                  Xuất CSV
+                </button>
+              </div>
+            </section>
+            <div class="dash-hero-side">
+              <section class="card widget-compact">
+                <div class="hd"><b>Tiến độ hoàn thành</b></div>
+                <div class="bd" id="widgetCompletion"></div>
+              </section>
+              <section class="card widget-compact">
+                <div class="hd"><b>Giá trị chưa thu</b></div>
+                <div class="bd" id="widgetAtRisk"></div>
+              </section>
+            </div>
+          </div>
+
+          <section class="dash-mini-stats" aria-live="polite">
+            <div class="mini-stat mini-stat--mint anim">
+              <div class="mini-stat__label">Total tasks</div>
+              <div class="mini-stat__val" id="k_total">0</div>
+              <div class="mini-stat__delta" id="k_total_delta">—</div>
+              <svg
+                class="mini-stat__spark"
+                id="sparkMini1"
+                viewBox="0 0 72 28"
+                preserveAspectRatio="none"
+                aria-hidden="true"></svg>
+            </div>
+            <div class="mini-stat mini-stat--peach anim">
+              <div class="mini-stat__label">Completed</div>
+              <div class="mini-stat__val" id="k_done">0</div>
+              <div class="mini-stat__delta" id="k_done_delta">—</div>
+              <svg
+                class="mini-stat__spark"
+                id="sparkMini2"
+                viewBox="0 0 72 28"
+                preserveAspectRatio="none"
+                aria-hidden="true"></svg>
+            </div>
+            <div class="mini-stat mini-stat--sky anim">
+              <div class="mini-stat__label">Unpaid</div>
+              <div class="mini-stat__val" id="k_pending">0</div>
+              <div class="mini-stat__delta">This period</div>
+              <svg
+                class="mini-stat__spark"
+                id="sparkMini3"
+                viewBox="0 0 72 28"
+                preserveAspectRatio="none"
+                aria-hidden="true"></svg>
+            </div>
+          </section>
+
+          <div class="dash-bento">
+            <section class="card">
+              <div class="hd"><b>Theo assignee</b></div>
+              <div class="bd" id="widgetAssignee"></div>
+            </section>
+            <section class="card">
+              <div class="hd"><b>Deadline 7 ngày tới</b></div>
+              <div class="bd" id="widgetUpcoming"></div>
+            </section>
+            <section class="card">
+              <div class="hd"><b>Bộ lọc hiện tại</b></div>
+              <div class="bd" id="widgetFilters"></div>
+            </section>
+            <section class="card">
+              <div class="hd"><b>Doanh thu · category (đã charge)</b></div>
+              <div class="bd" id="widgetCatMix"></div>
+            </section>
+          </div>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <b>Money flow</b>
+                <div class="muted" style="font-size: 12px">
+                  Candlestick: revenue · bars: task count
+                </div>
+              </div>
+              <div class="tabs" id="rangeTabs">
+                <button type="button" data-range="7d" class="active">7d</button>
+                <button type="button" data-range="30d">30d</button>
+                <button type="button" data-range="90d">90d</button>
+                <button type="button" data-range="YTD">YTD</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <svg
+                id="lineChart"
+                class="chart chart-anim"
+                viewBox="0 0 700 260"
+                preserveAspectRatio="xMidYMid meet"
+                role="img"
+                aria-label="Revenue and task chart"></svg>
+              <div class="chart-legend">
+                <span><i></i> Revenue (nến)</span>
+                <span><i class="sec"></i> Task count</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel" style="margin-top: 16px">
+            <div class="panel-head">
+              <b>All transactions</b>
+              <div class="toolbar" style="margin: 0">
+                <button type="button" class="btn" id="btnCSV">
+                  Export CSV
+                </button>
+                <span class="muted" id="status" style="margin-left: 8px"
+                  >Loading…</span
+                >
+              </div>
+            </div>
+            <div class="panel-body table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Item</th>
+                    <th>Date</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <aside class="dash-aside-stack">
+          <section class="card">
+            <div class="hd"><b>Thao tác nhanh</b></div>
+            <div class="bd dash-shortcuts">
+              <a class="shortcut-btn" href="task-new.html">＋ Task mới</a>
+              <a class="shortcut-btn" href="task.html">Danh sách task</a>
+              <a class="shortcut-btn" href="analytics.html">Analytics</a>
+            </div>
+          </section>
+          <section class="card">
+            <div class="hd"><b>Transactions</b></div>
+            <div class="bd txn-list-host" id="txnList"></div>
+          </section>
+          <section class="card">
+            <div class="hd"><b>Top categories</b></div>
+            <div class="bd cat-card-row" id="topCats"></div>
+          </section>
+          <section class="card">
+            <div class="hd">
+              <b>Today</b>
+              <span class="muted" id="todayStr" style="margin-left: 8px"></span>
+            </div>
+            <div class="bd" id="agenda"></div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <!-- Loader overlay -->
+    <div id="loading" class="loader" aria-live="polite" aria-busy="true">
+      <div class="box">
+        <div class="ring"></div>
+        <div class="txt">Loading data…</div>
+      </div>
+    </div>
+
+    <script>
+      // ====== CONFIG ======
+      const PROJECT_URL = "https://zuitnapveubnhjumvdnt.supabase.co";
+      const ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aXRuYXB2ZXVibmhqdW12ZG50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMTcwMjEsImV4cCI6MjA3NTY5MzAyMX0.rjhf7gSNaATuKCuVBYBgVA8wmUisSyTcM25Qeexj5Gg";
+      const BASE = `${PROJECT_URL}/rest/v1`;
+      const HEADERS = { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` };
+
+      let ROWS = [];
+      let RANGE = "7d";
+
+      // ===== Loader / Anim helper =====
+      function setLoading(on) {
+        const L = document.getElementById("loading");
+        if (!L) return;
+        if (on) {
+          showTableSkeleton();
+        }
+        L.classList.toggle("show", !!on);
+        setStatus(on ? "Loading…" : "Ready");
+      }
+      function showTableSkeleton() {
+        const tb = document.getElementById("tbody");
+        if (!tb) return;
+        tb.innerHTML = "";
+        for (let i = 0; i < 6; i++) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+          <td><div class="skel" style="height:14px;width:60px"></div></td>
+          <td><div class="skel" style="height:14px;width:200px"></div></td>
+          <td><div class="skel" style="height:14px;width:90px"></div></td>
+          <td><div class="skel" style="height:14px;width:80px"></div></td>
+          <td><div class="skel" style="height:14px;width:120px"></div></td>
+          <td><div class="skel" style="height:22px;width:96px;border-radius:999px"></div></td>`;
+          tb.appendChild(tr);
+        }
+      }
+      function animIn(selector) {
+        const els = document.querySelectorAll(selector);
+        els.forEach((el, i) => {
+          el.classList.remove("in");
+          void el.offsetWidth;
+          el.style.setProperty("--d", i * 50 + "ms");
+          el.classList.add("in");
+        });
+      }
+
+      // ===== Init =====
+      init();
+      async function init() {
+        document.getElementById("todayStr").textContent =
+          new Date().toLocaleDateString("vi-VN");
+
+        // Range tabs
+        document.getElementById("rangeTabs").addEventListener("click", (e) => {
+          const b = e.target.closest("button");
+          if (!b) return;
+          RANGE = b.dataset.range;
+          document
+            .querySelectorAll("#rangeTabs button")
+            .forEach((x) => x.classList.toggle("active", x === b));
+          repaint();
+        });
+
+        // Filters bind
+        ["f_month", "f_assign", "f_category", "f_status", "q"].forEach((id) => {
+          document.getElementById(id).addEventListener("input", repaint);
+          document.getElementById(id).addEventListener("change", repaint);
+        });
+        document.getElementById("f_reset").addEventListener("click", () => {
+          ["f_month", "f_assign", "f_category", "f_status", "q"].forEach(
+            (id) => (document.getElementById(id).value = ""),
+          );
+          repaint();
+        });
+
+        // CSV
+        document.getElementById("btnCSV").addEventListener("click", exportCSV);
+        document
+          .getElementById("btnCSVHero")
+          .addEventListener("click", exportCSV);
+        document
+          .getElementById("btnFocusSearch")
+          .addEventListener("click", () =>
+            document.getElementById("q").focus(),
+          );
+
+        // Fetch data
+        try {
+          setLoading(true);
+          const url = new URL(`${BASE}/task`);
+          url.searchParams.set(
+            "select",
+            "id,name,date,price,is_charged,assign_to,category:category(name)",
+          );
+          url.searchParams.set("order", "date.desc");
+          const res = await fetch(url, { headers: HEADERS });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          ROWS = await res.json();
+          buildFilterOptions(ROWS);
+          repaint();
+        } catch (e) {
+          console.error(e);
+          setStatus("❌ API error: " + e.message);
+        } finally {
+          setLoading(false);
+          // Animate initial paint
+          animIn(".dash-mini-stats .mini-stat");
+          animIn(".dash-bento .card, .dash-hero-side .card");
+          animIn("#tbody tr");
+          animIn("#txnList .txn-row, #topCats .cat-mini, #agenda .agenda-row");
+          const chart = document.getElementById("lineChart");
+          chart.classList.remove("in");
+          void chart.offsetWidth;
+          chart.classList.add("in");
+        }
+      }
+
+      // ===== Filters =====
+      function monthKey(d) {
+        const dt = new Date(d + (String(d).length > 10 ? "" : "T00:00:00"));
+        return isNaN(dt)
+          ? ""
+          : `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
+      }
+      function prettyYM(key) {
+        const [y, m] = key.split("-");
+        return `${m}/${y}`;
+      }
+      function buildFilterOptions(rows) {
+        const months = Array.from(
+          new Set(rows.filter((r) => r.date).map((r) => monthKey(r.date))),
+        )
+          .sort()
+          .reverse();
+        fillSelect("f_month", ["", ...months], (v) =>
+          v ? prettyYM(v) : "All months",
+        );
+        const assigns = Array.from(
+          new Set(rows.map((r) => r.assign_to).filter(Boolean)),
+        ).sort();
+        fillSelect("f_assign", ["", ...assigns], (v) => v || "All assignees");
+        const cats = Array.from(
+          new Set(rows.map((r) => r.category?.name).filter(Boolean)),
+        ).sort();
+        fillSelect("f_category", ["", ...cats], (v) => v || "All categories");
+      }
+      function fillSelect(id, values, labelMap) {
+        const sel = document.getElementById(id);
+        sel.innerHTML = values
+          .map(
+            (v) => `<option value="${escapeAttr(v)}">${labelMap(v)}</option>`,
+          )
+          .join("");
+      }
+      function getFilters() {
+        return {
+          month: document.getElementById("f_month").value.trim(),
+          assign: document.getElementById("f_assign").value.trim(),
+          category: document.getElementById("f_category").value.trim(),
+          status: document.getElementById("f_status").value.trim(), // "", "charged", "Unpaid"
+          q: document.getElementById("q").value.trim().toLowerCase(),
+        };
+      }
+      function applyFilters(rows) {
+        const f = getFilters();
+        return rows.filter((r) => {
+          if (f.month && monthKey(r.date) !== f.month) return false;
+          if (f.assign && (r.assign_to || "") !== f.assign) return false;
+          if (f.category && (r.category?.name || "") !== f.category)
+            return false;
+          if (f.status === "charged" && !r.is_charged) return false;
+          if (f.status === "Unpaid" && r.is_charged) return false;
+          if (f.q) {
+            const hay = [r.name, r.assign_to, r.category?.name]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+            if (!hay.includes(f.q)) return false;
+          }
+          return true;
+        });
+      }
+
+      // ===== Repaint =====
+      function repaint() {
+        const rows = applyFilters(ROWS);
+        kpis(rows);
+        renderTable(rows);
+        drawLine(rows);
+        agenda(rows);
+        topCats(rows);
+        renderTxnList(rows);
+        widgetCompletion(rows);
+        widgetAtRisk(rows);
+        widgetAssignee(rows);
+        widgetUpcoming(rows);
+        widgetFilters();
+        widgetCatMix(rows);
+
+        // Animate on every repaint
+        animIn(".dash-mini-stats .mini-stat");
+        animIn(".dash-bento .card, .dash-hero-side .card");
+        animIn("#tbody tr");
+        animIn("#txnList .txn-row, #topCats .cat-mini, #agenda .agenda-row");
+        const chart = document.getElementById("lineChart");
+        chart.classList.remove("in");
+        void chart.offsetWidth;
+        chart.classList.add("in");
+      }
+
+      function setHeroTrend(text, neg) {
+        const el = document.getElementById("heroTrend");
+        if (!el) return;
+        el.textContent = text;
+        el.classList.toggle("neg", !!neg);
+      }
+
+      // ===== KPI =====
+      function kpis(rows) {
+        const total = rows.length;
+        const doneRows = rows.filter((r) => r.is_charged);
+        const done = doneRows.length;
+        const pending = total - done;
+        const revenue = sum(doneRows.map((r) => +r.price || 0));
+        set("#k_total", total);
+        set("#k_done", done);
+        set("#k_pending", pending);
+
+        const fMonth = document.getElementById("f_month")?.value?.trim();
+        if (!fMonth) {
+          set("#bigRevenue", formatVND(revenue));
+          set("#bigRevenueNote", "All months (filtered)");
+          set("#k_total_delta", "All");
+          set("#k_done_delta", `${done}/${total}`);
+          setHeroTrend("—", false);
+          return;
+        }
+
+        const { from, prevFrom } = rangeDates();
+        const cur = doneRows.filter((r) => inRange(r.date, from, new Date()));
+        const prev = doneRows.filter((r) => inRange(r.date, prevFrom, from));
+        const curRev = sum(cur.map((r) => +r.price || 0)),
+          prevRev = sum(prev.map((r) => +r.price || 0));
+        const delta = prevRev
+          ? (((curRev - prevRev) / prevRev) * 100).toFixed(1) + "%"
+          : curRev > 0
+            ? "+∞"
+            : "0%";
+        set("#bigRevenue", formatVND(curRev));
+        set("#bigRevenueNote", `vs prev. period ${delta}`);
+        set("#k_total_delta", `${RANGE}`);
+        set("#k_done_delta", `${done}/${total}`);
+        const neg = prevRev > 0 && curRev < prevRev;
+        setHeroTrend(delta, neg);
+      }
+
+      // ===== Table =====
+      function renderTable(rows) {
+        const tb = document.getElementById("tbody");
+        tb.innerHTML = "";
+        const list = rows; // luôn hiển thị tất cả sau khi đã filter
+        list.forEach((r, i) => {
+          const tr = document.createElement("tr");
+          tr.className = "anim";
+          tr.style.setProperty("--d", i * 40 + "ms");
+          tr.innerHTML = `
+          <td class="mono">#${(r.id || "").slice(0, 6)}</td>
+          <td><a href="detail.html?id=${encodeURIComponent(r.id)}">${escapeHtml(
+            r.name || "",
+          )}</a></td>
+          <td>${fmtDate(r.date)}</td>
+          <td class="money">${formatVND(r.price)}</td>
+          <td>${escapeHtml(r.category?.name || "—")}</td>
+          <td>
+            ${
+              r.is_charged
+                ? `<span class="state ok btnlike" data-toggle-charged data-id="${escapeAttr(
+                    r.id,
+                  )}" data-val="true" title="Nhấn để đổi sang Chưa">Completed</span>`
+                : `<span class="state no btnlike" data-toggle-charged data-id="${escapeAttr(
+                    r.id,
+                  )}" data-val="false" title="Nhấn để đổi sang Đã charge">Unpaid</span>`
+            }
+          </td>`;
+          tb.appendChild(tr);
+        });
+      }
+
+      // Toggle charged inline
+      document.getElementById("tbody").addEventListener("click", async (e) => {
+        const el = e.target.closest("[data-toggle-charged]");
+        if (!el) return;
+        const id = el.getAttribute("data-id");
+        const oldVal = el.getAttribute("data-val") === "true";
+        const newVal = !oldVal;
+        const oldHtml = el.innerHTML;
+        el.textContent = "…";
+        el.classList.add("muted");
+        try {
+          const url = `${BASE}/task?id=eq.${encodeURIComponent(id)}`;
+          const res = await fetch(url, {
+            method: "PATCH",
+            headers: {
+              ...HEADERS,
+              "Content-Type": "application/json",
+              Prefer: "return=representation",
+            },
+            body: JSON.stringify({ is_charged: newVal }),
+          });
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || `HTTP ${res.status}`);
+          }
+          const [updated] = await res.json();
+          const i = ROWS.findIndex((r) => String(r.id) === String(id));
+          if (i >= 0) ROWS[i] = { ...ROWS[i], ...updated };
+          repaint();
+        } catch (err) {
+          console.error(err);
+          el.innerHTML = oldHtml;
+          el.classList.remove("muted");
+          alert(
+            "Cập nhật thất bại: " + err.message + "\nKiểm tra RLS/KEY/Policy.",
+          );
+        }
+      });
+
+      // ===== Right widgets =====
+      function agenda(rows) {
+        const host = document.getElementById("agenda");
+        host.innerHTML = "";
+        const today = new Date().toISOString().slice(0, 10);
+        const list = rows
+          .filter((r) => (r.date || "").slice(0, 10) === today)
+          .slice(0, 4);
+        if (!list.length) {
+          host.innerHTML = '<div class="muted">No schedule today</div>';
+          return;
+        }
+        list.forEach((r, i) => {
+          const div = document.createElement("div");
+          div.className = "agenda-row anim";
+          div.style.setProperty("--d", i * 60 + "ms");
+          div.innerHTML = `<div><b>${escapeHtml(
+            r.name || "",
+          )}</b><div class="muted">${escapeHtml(
+            r.category?.name || "",
+          )}</div></div><div class="money">${formatVND(r.price)}</div>`;
+          host.appendChild(div);
+        });
+      }
+      function topCats(rows) {
+        const host = document.getElementById("topCats");
+        host.innerHTML = "";
+        const m = new Map();
+        for (const r of rows) {
+          const k = r.category?.name || "Uncategorized";
+          m.set(k, (m.get(k) || 0) + (+r.price || 0));
+        }
+        [...m.entries()]
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .forEach(([k, v], i) => {
+            const row = document.createElement("div");
+            row.className = "cat-mini anim";
+            row.style.setProperty("--d", i * 60 + "ms");
+            row.innerHTML = `<span>${escapeHtml(k)}</span><b>${formatVND(
+              v,
+            )}</b>`;
+            host.appendChild(row);
+          });
+      }
+
+      function renderTxnList(rows) {
+        const host = document.getElementById("txnList");
+        if (!host) return;
+        host.innerHTML = "";
+        const list = [...rows]
+          .sort((a, b) =>
+            String(b.date || "").localeCompare(String(a.date || "")),
+          )
+          .slice(0, 8);
+        const hues = [
+          "#3b82f6",
+          "#8b5cf6",
+          "#10b981",
+          "#f59e0b",
+          "#ec4899",
+          "#06b6d4",
+          "#64748b",
+          "#ef4444",
+        ];
+        if (!list.length) {
+          host.innerHTML =
+            '<div class="muted" style="padding:12px">No transactions</div>';
+          return;
+        }
+        list.forEach((r, i) => {
+          const div = document.createElement("div");
+          div.className = "txn-row anim";
+          div.style.setProperty("--d", i * 40 + "ms");
+          const letter = (r.name || "?").slice(0, 1).toUpperCase();
+          const hue = hues[i % hues.length];
+          div.innerHTML = `<div class="txn-row__ic" style="background:${hue}">${escapeHtml(
+            letter,
+          )}</div><div class="txn-row__body"><div class="txn-row__name">${escapeHtml(
+            r.name || "—",
+          )}</div><div class="txn-row__meta">${escapeHtml(
+            r.category?.name || "",
+          )} · ${fmtDate(r.date)}</div></div><div class="txn-row__amt">${formatVND(
+            r.price,
+          )}</div>`;
+          host.appendChild(div);
+        });
+      }
+
+      function widgetCompletion(rows) {
+        const el = document.getElementById("widgetCompletion");
+        if (!el) return;
+        const total = rows.length;
+        const done = rows.filter((r) => r.is_charged).length;
+        const pct = total ? Math.round((done / total) * 100) : 0;
+        el.innerHTML = `<div class="wprog"><div class="wprog__pct">${pct}%</div><div class="wprog__bar"><span style="width:${pct}%"></span></div><div class="muted wprog__sub">${done} / ${total} task completed</div></div>`;
+      }
+
+      function widgetAtRisk(rows) {
+        const el = document.getElementById("widgetAtRisk");
+        if (!el) return;
+        const unpaid = rows.filter((r) => !r.is_charged);
+        const s = sum(unpaid.map((r) => +r.price || 0));
+        el.innerHTML = `<div class="wrisk__amt">${formatVND(s)}</div><div class="muted">${unpaid.length} task chưa charge</div>`;
+      }
+
+      function widgetAssignee(rows) {
+        const el = document.getElementById("widgetAssignee");
+        if (!el) return;
+        const m = new Map();
+        rows.forEach((r) => {
+          const k = r.assign_to || "—";
+          m.set(k, (m.get(k) || 0) + 1);
+        });
+        const top = [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+        const max = Math.max(1, ...top.map((x) => x[1]));
+        el.innerHTML = top.length
+          ? top
+              .map(
+                ([name, n]) =>
+                  `<div class="wbar-row"><span class="wbar-row__lbl">${escapeHtml(
+                    name,
+                  )}</span><div class="wbar-row__track"><span style="width:${(n / max) * 100}%"></span></div><span class="wbar-row__n">${n}</span></div>`,
+              )
+              .join("")
+          : '<div class="muted">Không có dữ liệu</div>';
+      }
+
+      function widgetUpcoming(rows) {
+        const el = document.getElementById("widgetUpcoming");
+        if (!el) return;
+        const t0 = new Date().toISOString().slice(0, 10);
+        const t7 = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
+        const list = rows
+          .filter((r) => {
+            const ds = (r.date || "").slice(0, 10);
+            return ds.length >= 10 && ds >= t0 && ds <= t7;
+          })
+          .sort((a, b) =>
+            String(a.date || "").localeCompare(String(b.date || "")),
+          )
+          .slice(0, 5);
+        el.innerHTML = list.length
+          ? list
+              .map(
+                (r) =>
+                  `<a class="wup-row" href="detail.html?id=${encodeURIComponent(r.id)}"><span class="wup-row__d">${fmtDate(r.date)}</span><span class="wup-row__n">${escapeHtml(r.name || "—")}</span><span class="wup-row__p money">${formatVND(r.price)}</span></a>`,
+              )
+              .join("")
+          : '<div class="muted">Không có deadline trong 7 ngày</div>';
+      }
+
+      function widgetFilters() {
+        const el = document.getElementById("widgetFilters");
+        if (!el) return;
+        const f = getFilters();
+        const chips = [];
+        if (f.month) chips.push(`Tháng: ${f.month}`);
+        if (f.assign) chips.push(`Assign: ${f.assign}`);
+        if (f.category) chips.push(`Category: ${f.category}`);
+        if (f.status) chips.push(`Status: ${f.status}`);
+        if (f.q) chips.push(`Tìm: “${f.q}”`);
+        el.innerHTML = chips.length
+          ? chips
+              .map((c) => `<span class="fchip">${escapeHtml(c)}</span>`)
+              .join("")
+          : '<span class="muted">Không có bộ lọc — toàn bộ dữ liệu khớp</span>';
+      }
+
+      function widgetCatMix(rows) {
+        const el = document.getElementById("widgetCatMix");
+        if (!el) return;
+        const charged = rows.filter((r) => r.is_charged);
+        const m = new Map();
+        charged.forEach((r) => {
+          const k = r.category?.name || "Khác";
+          m.set(k, (m.get(k) || 0) + (+r.price || 0));
+        });
+        const top = [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6);
+        const tot = top.reduce((a, [, v]) => a + v, 0) || 1;
+        const colors = [
+          "#16a34a",
+          "#3b82f6",
+          "#8b5cf6",
+          "#f59e0b",
+          "#ec4899",
+          "#64748b",
+        ];
+        el.innerHTML = top.length
+          ? top
+              .map(
+                ([k, v], i) =>
+                  `<div class="catmix-row"><span class="catmix-row__k">${escapeHtml(k)}</span><div class="catmix-row__bar"><span style="width:${(v / tot) * 100}%;background:${colors[i % colors.length]}"></span></div><span class="catmix-row__v money">${formatVND(v)}</span></div>`,
+              )
+              .join("")
+          : '<div class="muted">Không có doanh thu đã charge</div>';
+      }
+
+      function miniSparklinePoly(sel, vals, stroke) {
+        const svg = document.querySelector(sel);
+        if (!svg) return;
+        const W = 72,
+          H = 28,
+          P = 2;
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svg.innerHTML = "";
+        const n = vals.length;
+        if (!n) return;
+        const mx = Math.max(1, ...vals);
+        const pts = vals
+          .map((v, i) => {
+            const x = P + (n <= 1 ? 0 : (i / (n - 1)) * (W - 2 * P));
+            const y = H - P - (v / mx) * (H - 2 * P);
+            return `${x},${y}`;
+          })
+          .join(" ");
+        svg.insertAdjacentHTML(
+          "beforeend",
+          `<polyline fill="none" stroke="${stroke}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" points="${pts}" />`,
+        );
+      }
+
+      function miniSparkline(sel, vals, stroke) {
+        const svg = document.querySelector(sel);
+        if (!svg) return;
+        const W = 140,
+          H = 44,
+          P = 4;
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svg.innerHTML = "";
+        const n = vals.length;
+        if (!n) return;
+        const mx = Math.max(1, ...vals);
+        const pts = vals
+          .map((v, i) => {
+            const x = P + (n <= 1 ? 0 : (i / (n - 1)) * (W - 2 * P));
+            const y = H - P - (v / mx) * (H - 2 * P);
+            return `${x},${y}`;
+          })
+          .join(" ");
+        svg.insertAdjacentHTML(
+          "beforeend",
+          `<polyline fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts}" />`,
+        );
+      }
+
+      // ===== Charts =====
+      function drawLine(rows) {
+        const { from } = rangeDates();
+        const days = daysBetween(from, new Date());
+        const labels = days.labels;
+        const rev = days.map.map((d) =>
+          sum(
+            rows
+              .filter((r) => sameDay(r.date, d) && r.is_charged)
+              .map((r) => +r.price || 0),
+          ),
+        );
+        const cnt = days.map.map(
+          (d) => rows.filter((r) => sameDay(r.date, d)).length,
+        );
+        candlestickChart("#lineChart", rev, cnt, labels);
+        const tail = rev.slice(-14);
+        miniSparkline(
+          "#sparkHero",
+          tail.length ? tail : [0],
+          "rgba(134, 239, 172, 0.95)",
+        );
+        const cntCharged = days.map.map(
+          (d) => rows.filter((r) => sameDay(r.date, d) && r.is_charged).length,
+        );
+        const cntAll = days.map.map(
+          (d) => rows.filter((r) => sameDay(r.date, d)).length,
+        );
+        const cntUnpaid = cntAll.map((t, i) => Math.max(0, t - cntCharged[i]));
+        miniSparklinePoly("#sparkMini1", cntAll, "rgba(22, 163, 74, 0.85)");
+        miniSparklinePoly("#sparkMini2", cntCharged, "rgba(234, 88, 12, 0.9)");
+        miniSparklinePoly("#sparkMini3", cntUnpaid, "rgba(37, 99, 235, 0.9)");
+      }
+      /** Nến tổng hợp từ doanh thu ngày (open = ngày trước); cột dưới = số task */
+      function candlestickChart(sel, seriesRev, seriesCnt, labels) {
+        const svg = document.querySelector(sel);
+        const W = 700;
+        const H = 260;
+        const P = 36;
+        const splitY = 198;
+        const volTop = 208;
+        const volBot = H - 22;
+        const n = seriesRev.length;
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svg.innerHTML = "";
+        if (n === 0) return;
+
+        const ohlc = seriesRev.map((c, i) => {
+          const o = i > 0 ? seriesRev[i - 1] : c;
+          const h = Math.max(o, c) * 1.03 + (Math.max(o, c) === 0 ? 1 : 0);
+          const l = Math.max(0, Math.min(o, c) * 0.97);
+          return { o, c, h, l };
+        });
+        const maxH = Math.max(1, ...ohlc.map((x) => x.h));
+        const maxVol = Math.max(1, ...seriesCnt);
+
+        const xAt = (i) =>
+          P + (n <= 1 ? (W - P * 2) / 2 : (i / (n - 1)) * (W - P * 2));
+        const yPrice = (v) => splitY - 10 - (v / maxH) * (splitY - P - 18);
+        const yVolBase = (v) => volBot - (v / maxVol) * (volBot - volTop);
+
+        for (let g = 0; g <= 4; g++) {
+          const y = P + ((splitY - P - 18) * g) / 4;
+          svg.insertAdjacentHTML(
+            "beforeend",
+            `<line class="grid-line" x1="${P}" y1="${y}" x2="${
+              W - P
+            }" y2="${y}" />`,
+          );
+        }
+        svg.insertAdjacentHTML(
+          "beforeend",
+          `<line class="vol-axis" x1="${P}" y1="${volBot}" x2="${
+            W - P
+          }" y2="${volBot}" />`,
+        );
+
+        const slot = n <= 1 ? W - P * 2 : (W - P * 2) / (n - 1);
+        const cw = Math.min(11, slot * 0.52);
+
+        ohlc.forEach((x, i) => {
+          const cx = xAt(i);
+          const yHi = yPrice(x.h);
+          const yLo = yPrice(x.l);
+          const yO = yPrice(x.o);
+          const yC = yPrice(x.c);
+          const top = Math.min(yO, yC);
+          const bot = Math.max(yO, yC);
+          const up = x.c >= x.o;
+          const cls = up ? "candle-up" : "candle-down";
+          svg.insertAdjacentHTML(
+            "beforeend",
+            `<line class="wick" x1="${cx}" y1="${yHi}" x2="${cx}" y2="${yLo}" />`,
+          );
+          const bh = Math.max(2.5, bot - top);
+          svg.insertAdjacentHTML(
+            "beforeend",
+            `<rect class="${cls}" x="${cx - cw / 2}" y="${top}" width="${cw}" height="${bh}" rx="1.5" />`,
+          );
+          const vb = yVolBase(seriesCnt[i]);
+          const vh = volBot - vb;
+          svg.insertAdjacentHTML(
+            "beforeend",
+            `<rect class="vol-bar" x="${cx - cw / 2}" y="${vb}" width="${cw}" height="${vh}" rx="1" />`,
+          );
+        });
+
+        const step = Math.max(1, Math.ceil(labels.length / 12));
+        labels.forEach((lab, i) => {
+          if (i % step === 0) {
+            const x = xAt(i);
+            svg.insertAdjacentHTML(
+              "beforeend",
+              `<text x="${x}" y="${
+                H - 5
+              }" text-anchor="middle" font-size="9" fill="#8b8499">${lab}</text>`,
+            );
+          }
+        });
+      }
+
+      // ===== Export =====
+      function exportCSV() {
+        const rows = applyFilters(ROWS);
+        const header = ["id", "name", "date", "price", "category", "charged"];
+        const csv = [header.join(",")]
+          .concat(
+            rows.map((r) =>
+              [
+                escCsv(r.id),
+                escCsv(r.name),
+                escCsv(r.date),
+                escCsv(r.price),
+                escCsv(r.category?.name),
+                r.is_charged ? 1 : 0,
+              ].join(","),
+            ),
+          )
+          .join("\n");
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "transactions.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      // ===== Utils =====
+      function set(sel, v) {
+        const el = document.querySelector(sel);
+        if (el) el.textContent = v;
+      }
+      function sum(a) {
+        return a.reduce((x, y) => x + y, 0);
+      }
+      function fmtDate(d) {
+        if (!d) return "";
+        const dt = new Date(d + (String(d).length > 10 ? "" : "T00:00:00"));
+        return isNaN(dt) ? d : dt.toLocaleDateString("vi-VN");
+      }
+      function escapeHtml(s) {
+        return String(s ?? "").replace(
+          /[&<>\"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[m] || m,
+        );
+      }
+      function escapeAttr(s) {
+        return String(s ?? "").replace(/\"/g, "&quot;");
+      }
+      function escCsv(v) {
+        return '"' + String(v ?? "").replaceAll('"', '""') + '"';
+      }
+      function sameDay(d1, d2) {
+        const a = new Date(d1 + (String(d1).length > 10 ? "" : "T00:00:00"));
+        const b = new Date(d2);
+        return (
+          a.getFullYear() === b.getFullYear() &&
+          a.getMonth() === b.getMonth() &&
+          a.getDate() === b.getDate()
+        );
+      }
+      function daysBetween(start, end) {
+        const s = new Date(
+          start.getFullYear(),
+          start.getMonth(),
+          start.getDate(),
+        );
+        const e = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+        const labels = [],
+          days = [];
+        let d = s;
+        while (d <= e) {
+          labels.push(
+            `${String(d.getDate()).padStart(2, "0")}/${String(
+              d.getMonth() + 1,
+            ).padStart(2, "0")}`,
+          );
+          days.push(new Date(d));
+          d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+        }
+        const map = { map: (fn) => days.map(fn) };
+        return { labels, map };
+      }
+      function rangeDates() {
+        const now = new Date();
+        const fMonth = document.getElementById("f_month").value;
+        if (fMonth) {
+          const [y, m] = fMonth.split("-").map(Number);
+          const from = new Date(y, m - 1, 1);
+          const prevFrom = new Date(y, m - 2, 1);
+          return { from, prevFrom };
+        }
+        if (RANGE === "7d") {
+          const from = new Date(now);
+          from.setDate(from.getDate() - 6);
+          const prevFrom = new Date(from);
+          prevFrom.setDate(prevFrom.getDate() - 7);
+          return { from, prevFrom };
+        }
+        if (RANGE === "30d") {
+          const from = new Date(now);
+          from.setDate(from.getDate() - 29);
+          const prevFrom = new Date(from);
+          prevFrom.setDate(prevFrom.getDate() - 30);
+          return { from, prevFrom };
+        }
+        if (RANGE === "90d") {
+          const from = new Date(now);
+          from.setDate(from.getDate() - 89);
+          const prevFrom = new Date(from);
+          prevFrom.setDate(prevFrom.getDate() - 90);
+          return { from, prevFrom };
+        }
+        const from = new Date(now.getFullYear(), 0, 1);
+        const prevFrom = new Date(now.getFullYear() - 1, 0, 1);
+        return { from, prevFrom };
+      }
+      function inRange(dateStr, from, to) {
+        const d = new Date(
+          dateStr + (String(dateStr).length > 10 ? "" : "T00:00:00"),
+        );
+        return d >= from && d <= to;
+      }
+
+      const _VND_FORMATTER = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        maximumFractionDigits: 0,
+      });
+      function formatVND(n) {
+        if (n == null || n === "") return "₫0";
+        const v = +n || 0;
+        return _VND_FORMATTER.format(v);
+      }
+
+      function setStatus(t) {
+        const el = document.getElementById("status");
+        if (el) el.textContent = t;
+      }
+    </script>
+  </body>
+</html>

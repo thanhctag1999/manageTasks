@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Task Dashboard</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="app-theme.css" />
+
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="side app-sidebar">
+        <div class="app-sidebar__brand">Synchro</div>
+        <div class="side-user app-sidebar__user">
+          <div class="side-user__avatar" aria-hidden="true">TO</div>
+          <div class="side-user__meta">
+            <b class="side-user__name">The One</b>
+            <span class="side-user__email">theone@workspace.local</span>
+          </div>
+        </div>
+        <a href="task-new.html" class="btn-create">+ Create Task</a>
+        <nav class="nav nav--stack app-nav">
+          <a href="index.html"
+            ><span class="nav__ic" aria-hidden="true">⌂</span> Dashboard</a
+          >
+          <a href="task.html"
+            ><span class="nav__ic" aria-hidden="true">□</span> My Task</a
+          >
+          <a class="active" href="task.html"
+            ><span class="nav__ic" aria-hidden="true">✉</span> Inbox</a
+          >
+          <a href="analytics.html"
+            ><span class="nav__ic" aria-hidden="true">▤</span> Reporting</a
+          >
+          <h4>Favourite</h4>
+          <a href="index.html"
+            ><span class="nav__ic" aria-hidden="true">★</span> Overview</a
+          >
+        </nav>
+        <div class="side-foot">
+          <a href="mailto:" class="side-foot__link"
+            ><span class="nav__ic" aria-hidden="true">?</span> Help Center</a
+          >
+        </div>
+      </aside>
+
+      <main class="content content--task">
+        <div class="app-topbar">
+          <div class="app-topbar__crumb">
+            Synchro › <b>Inbox</b>
+          </div>
+          <input
+            id="search"
+            class="app-topbar__search"
+            type="search"
+            placeholder="Search task, note, assignee…"
+            aria-label="Search tasks" />
+        </div>
+        <header class="page-head">
+          <div>
+            <div class="breadcrumbs muted" style="font-size: 12px">
+              All Inbox
+            </div>
+            <div class="title">
+              <h1 class="page-head__title">Task Inbox</h1>
+              <span class="chip" id="countChip">0 items</span>
+            </div>
+          </div>
+          <div class="toolbar">
+            <button id="reload" class="btn">↻ Reload</button>
+            <a class="btn primary" href="task-new.html">+ New</a>
+          </div>
+        </header>
+
+        <div class="taskmail-shell">
+          <section class="taskmail-center card" aria-live="polite">
+            <div class="hd">
+              <b>Task list</b>
+              <span class="muted"><span id="tkShown">0</span> visible</span>
+            </div>
+            <div class="bd taskmail-center-bd">
+              <div class="taskmail-merge-controls">
+                <div class="taskmail-tabs-row">
+                  <div class="tabs taskmail-tabs">
+                    <button type="button" class="active" data-tab="all">All</button>
+                    <button type="button" data-tab="charged">Charged</button>
+                    <button type="button" data-tab="Unpaid">Unpaid</button>
+                  </div>
+                  <div class="taskmail-tabs-actions">
+                    <button type="button" id="f_reset" class="btn">Reset</button>
+                    <button type="button" id="btnExportUnpaid" class="btn">
+                      Export
+                    </button>
+                    <button type="button" id="btnExportCsv" class="btn">
+                      Export CSV
+                    </button>
+                  </div>
+                </div>
+                <div class="filters taskmail-filters taskmail-filters--merged">
+                  <select id="f_month">
+                    <option value="">All months</option>
+                  </select>
+                  <select id="f_assign">
+                    <option value="">All assignees</option>
+                  </select>
+                  <select id="f_category">
+                    <option value="">All categories</option>
+                  </select>
+                  <select id="f_status">
+                    <option value="">All status</option>
+                    <option value="charged">Charged</option>
+                    <option value="Unpaid">Unpaid</option>
+                  </select>
+                </div>
+                <div class="muted" id="status">Loading…</div>
+              </div>
+              <div id="grid" class="taskmail-list"></div>
+              <div id="table" class="table-wrap hidden">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Task</th>
+                      <th>Category</th>
+                      <th>Date</th>
+                      <th>Price</th>
+                      <th>Charged?</th>
+                      <th>Assign To</th>
+                      <th>Note</th>
+                      <th>Link</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <aside class="taskmail-right card">
+            <div class="hd"><b>Preview</b></div>
+            <div class="bd taskmail-preview" id="taskPreview">
+              <div class="muted">Chọn một task từ danh sách để xem chi tiết.</div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="seg hidden" role="tablist" aria-label="View switch">
+          <button id="btnGrid" aria-pressed="true" title="Grid view">Grid</button>
+          <button id="btnTable" aria-pressed="false" title="Table view">Table</button>
+        </div>
+        <section class="task-kpi-strip hidden" aria-live="polite">
+          <div class="task-kpi"><span class="task-kpi__lbl">Đã charge</span><b id="tkCharged">0</b></div>
+          <div class="task-kpi"><span class="task-kpi__lbl">Unpaid</span><b id="tkUnpaid">0</b></div>
+          <div class="task-kpi"><span class="task-kpi__lbl">Tổng giá trị (lọc)</span><b id="tkValue">₫0</b></div>
+        </section>
+      </main>
+    </div>
+    <!-- Popup Export Unpaid -->
+    <dialog id="dlgExport" class="export-dlg">
+      <div class="export-dlg__head">
+        <b>Unpaid Report</b>
+        <div class="toolbar" style="margin: 0">
+          <button id="btnCompleteUnpaid" class="btn primary">Complete</button>
+          <button id="btnCopyExport" class="btn">Copy</button>
+          <button id="btnCloseExport" class="btn">Close</button>
+        </div>
+      </div>
+      <div class="export-dlg__body">
+        <pre id="exportContent"></pre>
+      </div>
+    </dialog>
+
+    <!-- Loader -->
+    <div id="loader" class="loader" aria-live="polite" aria-busy="true">
+      <div class="box">
+        <div class="ring"></div>
+        <div class="txt">Đang tải dữ liệu…</div>
+      </div>
+    </div>
+
+    <script>
+      // ====== CONFIG ======
+      const PROJECT_URL = "https://zuitnapveubnhjumvdnt.supabase.co";
+      const ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aXRuYXB2ZXVibmhqdW12ZG50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMTcwMjEsImV4cCI6MjA3NTY5MzAyMX0.rjhf7gSNaATuKCuVBYBgVA8wmUisSyTcM25Qeexj5Gg";
+      const BASE = `${PROJECT_URL}/rest/v1`;
+      const HEADERS = { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` };
+
+      let RAW = [];
+      let VIEW = "grid"; // grid | table
+      let TAB = "all"; // all | charged | Unpaid
+      let CURRENT_PREVIEW_ID = "";
+
+      // Restore view
+      try {
+        VIEW = localStorage.getItem("view") || "grid";
+      } catch {}
+      document
+        .getElementById("btnGrid")
+        .setAttribute("aria-pressed", VIEW === "grid");
+      document
+        .getElementById("btnTable")
+        .setAttribute("aria-pressed", VIEW === "table");
+      setView(VIEW);
+
+      // First load
+      load();
+      // Export button -> mở popup với nội dung unpaid theo format
+      document
+        .getElementById("btnExportUnpaid")
+        .addEventListener("click", () => {
+          // dùng RAW gốc, nhưng nếu bạn muốn theo trạng thái filter hiện tại,
+          // có thể thay bằng "getRowsAfterApply()" tuỳ thiết kế. Ở đây xuất theo toàn bộ Unpaid.
+          const txt = buildUnpaidExportText(RAW);
+          openExportModal(txt);
+        });
+
+      document
+        .getElementById("btnCloseExport")
+        .addEventListener("click", () => {
+          const dlg = document.getElementById("dlgExport");
+          dlg.close?.();
+          dlg.removeAttribute("open");
+        });
+
+      document
+        .getElementById("btnCopyExport")
+        .addEventListener("click", async () => {
+          const pre = document.getElementById("exportContent");
+          try {
+            await navigator.clipboard.writeText(pre.textContent || "");
+            alert("Đã copy vào clipboard!");
+          } catch {
+            // fallback: chọn và copy
+            const range = document.createRange();
+            range.selectNodeContents(pre);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            document.execCommand("copy");
+            sel.removeAllRanges();
+            alert("Đã copy vào clipboard!");
+          }
+        });
+      document
+        .getElementById("btnCompleteUnpaid")
+        .addEventListener("click", completeAllUnpaid);
+
+      // ====== Export CSV (Task, Category, Date, Note, Link) ======
+      function escapeCsvField(val) {
+        const s = String(val ?? "").trim();
+        if (/[",\r\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+        return s;
+      }
+      function buildCsv(rows) {
+        const header = "Task,Category,Date,Note,Link";
+        const lines = rows.map((r) => {
+          const task = escapeCsvField(r.name);
+          const category = escapeCsvField(r.category?.name);
+          const date = escapeCsvField(fmtDate(r.date));
+          const note = escapeCsvField(r.note);
+          const link = escapeCsvField(r.link);
+          return [task, category, date, note, link].join(",");
+        });
+        return [header, ...lines].join("\r\n");
+      }
+      document.getElementById("btnExportCsv").addEventListener("click", () => {
+        const rows = getFilteredRows();
+        const csv = buildCsv(rows);
+        const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "tasks_" + new Date().toISOString().slice(0, 10) + ".csv";
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      // ====== Loader helpers ======
+      function showLoader(on) {
+        const L = document.getElementById("loader");
+        L.classList.toggle("show", !!on);
+        setStatus(on ? "Loading…" : "Ready");
+        if (on) renderSkeleton(); // show skeleton while loading
+      }
+
+      function renderSkeleton() {
+        // Grid skeleton
+        const grid = document.getElementById("grid");
+        grid.innerHTML = "";
+        if (!grid.classList.contains("hidden")) {
+          for (let i = 0; i < 8; i++) {
+            const card = document.createElement("article");
+            card.className = "card";
+            card.innerHTML = `
+              <div class="skel" style="width:80px;height:22px;border-radius:999px"></div>
+              <div class="skel" style="margin-top:10px;width:70%;height:18px"></div>
+              <div class="skel" style="margin-top:6px;width:95%;height:14px"></div>
+              <div style="display:flex;justify-content:space-between;gap:10px;margin-top:12px">
+                <div class="skel" style="width:120px;height:14px"></div>
+                <div class="skel" style="width:90px;height:14px"></div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:10px">
+                <div class="skel" style="width:56px;height:26px;border-radius:9px"></div>
+                <div class="skel" style="width:74px;height:26px;border-radius:999px"></div>
+              </div>
+            `;
+            grid.appendChild(card);
+          }
+        }
+        // Table skeleton
+        const tb = document.getElementById("tbody");
+        tb.innerHTML = "";
+        if (!document.getElementById("table").classList.contains("hidden")) {
+          for (let i = 0; i < 8; i++) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td><div class="skel" style="height:14px;width:180px"></div></td>
+              <td><div class="skel" style="height:14px;width:120px"></div></td>
+              <td><div class="skel" style="height:14px;width:90px"></div></td>
+              <td><div class="skel" style="height:14px;width:80px"></div></td>
+              <td><div class="skel" style="height:24px;width:110px;border-radius:999px"></div></td>
+              <td><div class="skel" style="height:14px;width:120px"></div></td>
+              <td><div class="skel" style="height:14px;width:220px"></div></td>
+              <td><div class="skel" style="height:14px;width:36px"></div></td>`;
+            tb.appendChild(tr);
+          }
+        }
+      }
+
+      // ====== Fetch data ======
+      async function load() {
+        showLoader(true);
+        try {
+          const url = new URL(`${BASE}/task`);
+          url.searchParams.set(
+            "select",
+            "id,name,link,date,price,is_charged,assign_to,note,category:category(name)",
+          );
+          url.searchParams.set("order", "date.desc");
+          const res = await fetch(url, { headers: HEADERS });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          RAW = await res.json();
+
+          buildFilterOptions(RAW);
+          document.getElementById("countChip").textContent =
+            `${RAW.length} items`;
+
+          apply();
+          setStatus("Ready");
+          appear("#grid > .taskmail-item, #tbody > tr");
+        } catch (e) {
+          setStatus("❌ API error: " + e.message + " · Kiểm tra URL/KEY/RLS");
+        } finally {
+          showLoader(false);
+        }
+      }
+
+      // ====== Filters ======
+      function monthKey(d) {
+        if (!d) return "";
+        const dt = new Date(d + (String(d).length > 10 ? "" : "T00:00:00"));
+        if (isNaN(dt)) return "";
+        return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(
+          2,
+          "0",
+        )}`;
+      }
+      function prettyYM(key) {
+        const [y, m] = key.split("-");
+        return `${m}/${y}`;
+      }
+      function buildFilterOptions(rows) {
+        const months = Array.from(
+          new Set(rows.filter((r) => r.date).map((r) => monthKey(r.date))),
+        )
+          .sort()
+          .reverse();
+        fillSelect("f_month", ["", ...months], (v) =>
+          v ? prettyYM(v) : "All months",
+        );
+        const assigns = Array.from(
+          new Set(rows.map((r) => r.assign_to).filter(Boolean)),
+        ).sort();
+        fillSelect("f_assign", ["", ...assigns], (v) => v || "All assignees");
+        const cats = Array.from(
+          new Set(rows.map((r) => r.category?.name).filter(Boolean)),
+        ).sort();
+        fillSelect("f_category", ["", ...cats], (v) => v || "All categories");
+
+        ["f_month", "f_assign", "f_category", "f_status"].forEach((id) => {
+          document.getElementById(id).addEventListener("change", apply);
+        });
+        document.getElementById("f_reset").addEventListener("click", () => {
+          ["f_month", "f_assign", "f_category", "f_status", "search"].forEach(
+            (id) => (document.getElementById(id).value = ""),
+          );
+          apply();
+        });
+      }
+      function fillSelect(id, values, label) {
+        const el = document.getElementById(id);
+        el.innerHTML = values
+          .map((v) => `<option value="${escapeAttr(v)}">${label(v)}</option>`)
+          .join("");
+      }
+      function getFilters() {
+        return {
+          month: document.getElementById("f_month").value.trim(),
+          assign: document.getElementById("f_assign").value.trim(),
+          category: document.getElementById("f_category").value.trim(),
+          status: document.getElementById("f_status").value.trim(),
+          q: document.getElementById("search").value.trim().toLowerCase(),
+        };
+      }
+
+      // ====== Apply filters & View ======
+      function getFilteredRows() {
+        const f = getFilters();
+        return RAW.filter((r) => {
+          if (TAB === "charged" && !r.is_charged) return false;
+          if (TAB === "Unpaid" && r.is_charged) return false;
+          if (f.month && monthKey(r.date) !== f.month) return false;
+          if (f.assign && (r.assign_to || "") !== f.assign) return false;
+          if (f.category && (r.category?.name || "") !== f.category)
+            return false;
+          if (f.status === "charged" && !r.is_charged) return false;
+          if (f.status === "Unpaid" && r.is_charged) return false;
+          if (f.q) {
+            const hay = [r.name, r.note, r.assign_to, r.link, r.category?.name]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+            if (!hay.includes(f.q)) return false;
+          }
+          return true;
+        });
+      }
+
+      function apply() {
+        const rows = getFilteredRows();
+        paintTaskKpis(rows);
+        paintRail(rows);
+        if (VIEW === "grid") renderGrid(rows);
+        else renderTable(rows);
+        syncPreview(rows);
+        appear("#grid > .taskmail-item, #tbody > tr");
+      }
+
+      function paintTaskKpis(rows) {
+        const charged = rows.filter((r) => r.is_charged).length;
+        const unpaid = rows.length - charged;
+        const val = rows.reduce((a, r) => a + (+r.price || 0), 0);
+        const s = document.getElementById("tkShown");
+        const c = document.getElementById("tkCharged");
+        const u = document.getElementById("tkUnpaid");
+        const v = document.getElementById("tkValue");
+        const chip = document.getElementById("countChip");
+        if (s) s.textContent = rows.length;
+        if (c) c.textContent = charged;
+        if (u) u.textContent = unpaid;
+        if (v) v.textContent = fmtMoney(val);
+        if (chip) chip.textContent = `${rows.length} hiển thị`;
+      }
+
+      function paintRail(rows) {
+        const catEl = document.getElementById("railByCat");
+        if (catEl) {
+          const m = new Map();
+          rows.forEach((r) => {
+            const k = r.category?.name || "Khác";
+            m.set(k, (m.get(k) || 0) + 1);
+          });
+          const top = [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6);
+          const max = Math.max(1, ...top.map((x) => x[1]));
+          catEl.innerHTML = top.length
+            ? top
+                .map(
+                  ([name, n]) =>
+                    `<div class="wbar-row"><span class="wbar-row__lbl">${escapeHtml(
+                      name,
+                    )}</span><div class="wbar-row__track"><span style="width:${(n / max) * 100}%"></span></div><span class="wbar-row__n">${n}</span></div>`,
+                )
+                .join("")
+            : '<div class="muted">—</div>';
+        }
+        const upEl = document.getElementById("railUnpaid");
+        if (upEl) {
+          const ups = rows
+            .filter((r) => !r.is_charged && (+r.price || 0) > 0)
+            .sort((a, b) => (+b.price || 0) - (+a.price || 0))
+            .slice(0, 6);
+          upEl.innerHTML = ups.length
+            ? ups
+                .map(
+                  (r) =>
+                    `<a class="rail-item" href="detail.html?id=${encodeURIComponent(r.id)}"><div><div class="rail-item__t">${escapeHtml(r.name || "—")}</div><div class="rail-item__m">${escapeHtml(r.category?.name || "")}</div></div><span class="rail-item__p money">${fmtMoney(r.price)}</span></a>`,
+                )
+                .join("")
+            : '<div class="muted" style="padding:4px 0">Không có unpaid có giá</div>';
+        }
+      }
+
+      // ====== Renderers ======
+      function renderGrid(rows) {
+        const el = document.getElementById("grid");
+        const fmt = (d) =>
+          !d
+            ? ""
+            : new Date(
+                d + (String(d).length > 10 ? "" : "T00:00:00"),
+              ).toLocaleDateString("vi-VN");
+        el.innerHTML = rows
+          .map((r, i) => {
+            const cat = r.category?.name || "General";
+            const charged = r.is_charged
+              ? '<span class="state ok">Charged</span>'
+              : '<span class="state no">Unpaid</span>';
+            const isActive = String(r.id) === String(CURRENT_PREVIEW_ID);
+            return `<article class="taskmail-item anim ${
+              isActive ? "active" : ""
+            }" style="--d:${i * 30}ms" data-preview-id="${escapeAttr(r.id)}">
+            <div class="taskmail-item__top">
+              <div>
+                <p class="taskmail-item__name">${escapeHtml(r.name || "—")}</p>
+                <div class="taskmail-item__meta">${escapeHtml(
+                  r.assign_to || "Unassigned",
+                )} · ${fmt(r.date)}</div>
+              </div>
+              ${charged}
+            </div>
+            <div class="taskmail-item__note">${escapeHtml(
+              r.note || "No note",
+            )}</div>
+            <div class="taskmail-item__bottom">
+              <span class="badge ${badgeToneClass(cat)}">${escapeHtml(cat)}</span>
+              <b class="money">${fmtMoney(r.price)}</b>
+            </div>
+          </article>`;
+          })
+          .join("");
+      }
+
+      function syncPreview(rows) {
+        const host = document.getElementById("taskPreview");
+        if (!host) return;
+        if (!rows.length) {
+          CURRENT_PREVIEW_ID = "";
+          host.innerHTML =
+            '<div class="muted">Không có task phù hợp bộ lọc hiện tại.</div>';
+          return;
+        }
+        let cur = rows.find((r) => String(r.id) === String(CURRENT_PREVIEW_ID));
+        if (!cur) {
+          cur = rows[0];
+          CURRENT_PREVIEW_ID = cur.id;
+        }
+        renderPreview(cur);
+        document.querySelectorAll("[data-preview-id]").forEach((node) => {
+          node.classList.toggle(
+            "active",
+            String(node.getAttribute("data-preview-id")) ===
+              String(CURRENT_PREVIEW_ID),
+          );
+        });
+      }
+
+      function renderPreview(r) {
+        const host = document.getElementById("taskPreview");
+        if (!host || !r) return;
+        const link = r.link && /^https?:\/\//i.test(r.link) ? r.link : "";
+        const catName = r.category?.name || "General";
+        host.innerHTML = `
+          <h3 class="taskmail-preview__title">${escapeHtml(r.name || "—")}</h3>
+          <span class="badge ${badgeToneClass(catName)}">${escapeHtml(catName)}</span>
+          <div class="taskmail-preview__info">
+            <div class="taskmail-preview__row"><span class="taskmail-preview__label">Assignee</span><b>${escapeHtml(r.assign_to || "—")}</b></div>
+            <div class="taskmail-preview__row"><span class="taskmail-preview__label">Date</span><b>${fmtDate(r.date)}</b></div>
+            <div class="taskmail-preview__row"><span class="taskmail-preview__label">Price</span><b class="money">${fmtMoney(r.price)}</b></div>
+            <div class="taskmail-preview__row"><span class="taskmail-preview__label">State</span>${
+              r.is_charged
+                ? '<span class="state ok">Charged</span>'
+                : '<span class="state no">Unpaid</span>'
+            }</div>
+          </div>
+          <div class="taskmail-preview__note">${escapeHtml(r.note || "Không có ghi chú.")}</div>
+          <div class="taskmail-preview__actions">
+            <a class="btn btn--sm" href="detail.html?id=${encodeURIComponent(
+              r.id,
+            )}">Mở chi tiết</a>
+            ${
+              link
+                ? `<a class="btn btn--sm" href="${escapeAttr(
+                    link,
+                  )}" target="_blank" rel="noopener">Open link</a>`
+                : ""
+            }
+          </div>`;
+      }
+
+      function renderTable(rows) {
+        const tb = document.getElementById("tbody");
+        tb.innerHTML = "";
+
+        // render từng row
+        rows.forEach((r, i) => {
+          const chargedChip = r.is_charged
+            ? `<span class="state ok btnlike" data-toggle-charged data-id="${escapeAttr(
+                r.id,
+              )}" data-val="true" title="Nhấn để chuyển sang Unpaid">Completed</span>`
+            : `<span class="state no btnlike" data-toggle-charged data-id="${escapeAttr(
+                r.id,
+              )}" data-val="false" title="Nhấn để chuyển sang Completed">Unpaid</span>`;
+
+          const idQ = encodeURIComponent(r.id);
+          const tr = document.createElement("tr");
+          tr.className = "anim tr--detail";
+          tr.dataset.detailId = String(r.id);
+          tr.style.setProperty("--d", i * 35 + "ms");
+          tr.innerHTML = `
+      <td><strong><a class="table-task-link" href="detail.html?id=${idQ}">${escapeHtml(r.name || "")}</a></strong></td>
+      <td class="muted">${escapeHtml(r.category?.name || "")}</td>
+      <td>${fmtDate(r.date)}</td>
+      <td class="money">${fmtMoney(r.price)}</td>
+      <td>${chargedChip}</td>
+      <td>${escapeHtml(r.assign_to || "")}</td>
+      <td>${escapeHtml(r.note || "")}</td>
+      <td>${
+        r.link
+          ? `<a href="${escapeAttr(
+              r.link,
+            )}" target="_blank" rel="noopener">open</a> <a href="#" data-copy-link="${escapeAttr(
+              r.link,
+            )}" title="Copy link">📋</a>`
+          : ""
+      }</td>`;
+          tb.appendChild(tr);
+        });
+
+        // ==== hàng tổng ở cuối (sum theo rows đang hiển thị) ====
+        const total = rows.reduce((acc, r) => acc + (+r.price || 0), 0);
+
+        const trTotal = document.createElement("tr");
+        trTotal.className = "total-row anim";
+        trTotal.style.setProperty("--d", rows.length * 35 + "ms");
+        trTotal.innerHTML = `
+    <td class="total-label" colspan="3">Tổng</td>
+    <td class="money">${fmtMoney(total)}</td>
+    <td colspan="4"></td>
+  `;
+        tb.appendChild(trTotal);
+      }
+
+      // ====== Table row → detail; toggle charged ======
+      document.getElementById("tbody").addEventListener("click", async (e) => {
+        const el = e.target.closest("[data-toggle-charged]");
+        if (el) {
+          const id = el.getAttribute("data-id");
+          const oldVal = el.getAttribute("data-val") === "true";
+          const newVal = !oldVal;
+
+          const keep = el.innerHTML;
+          el.textContent = "…";
+          el.classList.add("muted");
+
+          try {
+            const res = await fetch(
+              `${BASE}/task?id=eq.${encodeURIComponent(id)}`,
+              {
+                method: "PATCH",
+                headers: {
+                  ...HEADERS,
+                  "Content-Type": "application/json",
+                  Prefer: "return=representation",
+                },
+                body: JSON.stringify({ is_charged: newVal }),
+              },
+            );
+            if (!res.ok) {
+              const t = await res.text();
+              throw new Error(t || `HTTP ${res.status}`);
+            }
+
+            const [rowUpd] = await res.json();
+            const idx = RAW.findIndex((r) => String(r.id) === String(id));
+            if (idx >= 0) RAW[idx] = { ...RAW[idx], ...rowUpd };
+
+            apply();
+          } catch (err) {
+            console.error(err);
+            el.innerHTML = keep;
+            el.classList.remove("muted");
+            alert(
+              "Cập nhật thất bại: " + err.message + "\nKiểm tra RLS/KEY/Policy.",
+            );
+          }
+          return;
+        }
+        if (e.target.closest("a")) return;
+        const tr = e.target.closest("tr[data-detail-id]");
+        const did = tr?.dataset?.detailId;
+        if (did) {
+          window.location.href = `detail.html?id=${encodeURIComponent(did)}`;
+        }
+      });
+
+      // ====== View / Tabs / Events ======
+      function setView(v) {
+        VIEW = v;
+        try {
+          localStorage.setItem("view", v);
+        } catch {}
+        document
+          .getElementById("grid")
+          .classList.toggle("hidden", v !== "grid");
+        document
+          .getElementById("table")
+          .classList.toggle("hidden", v !== "table");
+        document
+          .getElementById("btnGrid")
+          .setAttribute("aria-pressed", v === "grid");
+        document
+          .getElementById("btnTable")
+          .setAttribute("aria-pressed", v === "table");
+      }
+
+      document.querySelectorAll(".tabs button").forEach((b) => {
+        b.addEventListener("click", () => {
+          document
+            .querySelectorAll(".tabs button")
+            .forEach((x) => x.classList.remove("active"));
+          b.classList.add("active");
+          TAB = b.dataset.tab;
+          apply();
+        });
+      });
+
+      document.getElementById("search").addEventListener("input", apply);
+      document.getElementById("reload").addEventListener("click", load);
+      document.getElementById("btnGrid").addEventListener("click", () => {
+        setView("grid");
+        apply();
+      });
+      document.getElementById("btnTable").addEventListener("click", () => {
+        setView("table");
+        apply();
+      });
+
+      document.getElementById("grid").addEventListener("click", (e) => {
+        const item = e.target.closest("[data-preview-id]");
+        if (!item) return;
+        CURRENT_PREVIEW_ID = item.getAttribute("data-preview-id") || "";
+        apply();
+      });
+
+      // ====== Copy link (delegated) ======
+      document.addEventListener("click", async (e) => {
+        const el = e.target.closest("[data-copy-link]");
+        if (!el) return;
+        e.preventDefault();
+        const url = el.getAttribute("data-copy-link") || "";
+        if (!url) return;
+        const ok = await copyText(url);
+        flashCopied(el, ok ? "Copied" : "Copy failed");
+      });
+
+      async function copyText(text) {
+        try {
+          await navigator.clipboard.writeText(text);
+          return true;
+        } catch {
+          try {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            return true;
+          } catch {
+            return false;
+          }
+        }
+      }
+      function flashCopied(el, msg) {
+        const old = el.textContent;
+        el.textContent = msg;
+        el.classList.add("muted");
+        el.style.pointerEvents = "none";
+        setTimeout(() => {
+          el.textContent = old;
+          el.classList.remove("muted");
+          el.style.pointerEvents = "";
+        }, 900);
+      }
+
+      // ====== Small utils ======
+      function setStatus(t) {
+        const el = document.getElementById("status");
+        if (el) el.textContent = t;
+      }
+      /** Màu badge ổn định theo chuỗi (vd. category) — 8 tone xoay vòng */
+      function badgeToneClass(label) {
+        const s = String(label ?? "General");
+        let h = 0;
+        for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+        return `badge--tone-${Math.abs(h) % 8}`;
+      }
+      function escapeHtml(s) {
+        const map = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        };
+        return String(s ?? "").replace(/[&<>"']/g, (ch) => map[ch] || ch);
+      }
+      function escapeAttr(s) {
+        return String(s ?? "").replace(/\"/g, "&quot;");
+      }
+      function fmtDate(d) {
+        if (!d) return "";
+        const dt = new Date(d + (String(d).length > 10 ? "" : "T00:00:00"));
+        return isNaN(dt) ? d : dt.toLocaleDateString("vi-VN");
+      }
+      function fmtMoney(n) {
+        if (n == null || n === "") return "";
+        const v = +n || 0;
+        return new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+          maximumFractionDigits: 0,
+        }).format(v);
+      }
+
+      function appear(selector) {
+        const els = document.querySelectorAll(selector);
+        els.forEach((el) => {
+          el.classList.remove("in");
+          void el.offsetWidth; // restart animation
+          el.classList.add("in");
+        });
+      }
+
+      // ==== Export Unpaid ====
+      function buildUnpaidExportText(rows) {
+        // Lọc Unpaid có price > 0 (phục vụ báo cáo thanh toán)
+        const unpaid = rows.filter((r) => !r.is_charged && (+r.price || 0) > 0);
+        const isAccount = (r) => (r.category?.name || "") === "Account";
+
+        const tasks = unpaid.filter((r) => !isAccount(r));
+        const resources = unpaid.filter((r) => isAccount(r));
+
+        const sum = (arr) => arr.reduce((acc, r) => acc + (+r.price || 0), 0);
+        const sumTasks = sum(tasks);
+        const sumRes = sum(resources);
+        const grand = sumTasks + sumRes;
+
+        const moneyText = (n) => String(fmtMoney(n)).replace(/\s*₫/, " đ"); // đổi ký hiệu thành "đ"
+
+        function groupByCategory(arr) {
+          const map = new Map();
+          for (const r of arr) {
+            const key = r.category?.name || "Uncategorized";
+            if (!map.has(key)) map.set(key, []);
+            map.get(key).push(r);
+          }
+          return map;
+        }
+
+        function sortedCategoryKeys(map) {
+          return [...map.keys()].sort((a, b) => {
+            if (a === "Uncategorized") return 1;
+            if (b === "Uncategorized") return -1;
+            return a.localeCompare(b, "vi");
+          });
+        }
+
+        let lines = [];
+
+        // Tiền task — nhóm theo category
+        lines.push(`+ Tiền task:`);
+        lines.push("");
+        const tasksByCat = groupByCategory(tasks);
+        for (const cat of sortedCategoryKeys(tasksByCat)) {
+          const items = tasksByCat.get(cat);
+          lines.push(`[${cat}]`);
+          items.forEach((r, idx) => {
+            const name = r.name || "—";
+            const link = r.link ? r.link : "";
+            const amt = moneyText(r.price);
+            lines.push(
+              `${idx + 1}. - ${name}: ${link}${link ? " " : ""}( ${amt} )`,
+            );
+          });
+          lines.push(`=====> Tổng [${cat}]: ${moneyText(sum(items))}`);
+          lines.push("");
+        }
+        lines.push(`=====> Tổng tiền task: ${moneyText(sumTasks)}`);
+        lines.push(""); // dòng trống
+
+        // Tiền tài nguyên (chỉ category "Account") — vẫn nhóm theo category cho đồng nhất
+        lines.push(`+ Tiền tài nguyên:`);
+        lines.push("");
+        const resByCat = groupByCategory(resources);
+        for (const cat of sortedCategoryKeys(resByCat)) {
+          const items = resByCat.get(cat);
+          lines.push(`[${cat}]`);
+          items.forEach((r, idx) => {
+            const name = r.name || "—";
+            const amt = moneyText(r.price);
+            lines.push(`${idx + 1}. - ${name}: ${amt}`);
+          });
+          lines.push(`=====> Tổng [${cat}]: ${moneyText(sum(items))}`);
+          lines.push("");
+        }
+        lines.push(`=====> Tổng tiền tài nguyên: ${moneyText(sumRes)}`);
+        lines.push(""); // dòng trống
+
+        // Tổng cuối
+        lines.push(`=====> Tổng tiền cần thanh toán: ${moneyText(grand)}`);
+
+        return lines.join("\n");
+      }
+
+      function openExportModal(text) {
+        const dlg = document.getElementById("dlgExport");
+        const pre = document.getElementById("exportContent");
+        pre.textContent = text || "Không có dữ liệu Unpaid.";
+        if (typeof dlg.showModal === "function") dlg.showModal();
+        else dlg.setAttribute("open", "open"); // fallback rất cũ
+      }
+
+      // ====== Complete all unpaid ======
+      async function completeAllUnpaid() {
+        const unpaidCount = RAW.filter((r) => !r.is_charged).length;
+        if (!unpaidCount) {
+          alert("Không có task Unpaid nào.");
+          return;
+        }
+        if (
+          !confirm(
+            `Xác nhận chuyển ${unpaidCount} task Unpaid sang Completed? Thao tác áp dụng cho TẤT CẢ Unpaid.`
+          )
+        ) {
+          return;
+        }
+        showLoader(true);
+        try {
+          const res = await fetch(`${BASE}/task?is_charged=eq.false`, {
+            method: "PATCH",
+            headers: {
+              ...HEADERS,
+              "Content-Type": "application/json",
+              Prefer: "return=representation",
+            },
+            body: JSON.stringify({ is_charged: true }),
+          });
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || `HTTP ${res.status}`);
+          }
+          const updated = await res.json();
+          // Reload full dataset to reflect changes
+          await load();
+          // Close dialog if open
+          const dlg = document.getElementById("dlgExport");
+          dlg.close?.();
+          dlg.removeAttribute("open");
+          alert(`Đã chuyển ${updated.length} task sang Completed.`);
+        } catch (e) {
+          console.error(e);
+          alert("Lỗi cập nhật: " + e.message);
+        } finally {
+          showLoader(false);
+        }
+      }
+    </script>
+  </body>
+</html>

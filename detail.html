@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+    default-src 'self';
+    connect-src 'self' https://zuitnapveubnhjumvdnt.supabase.co https://*.supabase.co http://127.0.0.1:5500 ws://127.0.0.1:5500;
+    img-src 'self' data: https:;
+    style-src 'self' 'unsafe-inline' https:;
+    script-src 'self' 'unsafe-inline' https:;
+    font-src 'self' https: data:;
+  " />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Task · Detail & Edit</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="app-theme.css" />
+
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="side app-sidebar">
+        <div class="app-sidebar__brand">Synchro</div>
+        <div class="side-user app-sidebar__user">
+          <div class="side-user__avatar" aria-hidden="true">TO</div>
+          <div class="side-user__meta">
+            <b class="side-user__name">The One</b>
+            <span class="side-user__email">theone@workspace.local</span>
+          </div>
+        </div>
+        <a href="task-new.html" class="btn-create">+ Create Task</a>
+        <nav class="nav nav--stack app-nav">
+          <a href="index.html"
+            ><span class="nav__ic" aria-hidden="true">⌂</span> Dashboard</a
+          >
+          <a class="active" href="task.html"
+            ><span class="nav__ic" aria-hidden="true">□</span> My Task</a
+          >
+          <a href="task.html"
+            ><span class="nav__ic" aria-hidden="true">✉</span> Inbox</a
+          >
+          <a href="analytics.html"
+            ><span class="nav__ic" aria-hidden="true">▤</span> Reporting</a
+          >
+          <h4>Favourite</h4>
+          <a href="index.html"
+            ><span class="nav__ic" aria-hidden="true">★</span> Overview</a
+          >
+        </nav>
+        <div class="side-foot">
+          <a href="mailto:" class="side-foot__link"
+            ><span class="nav__ic" aria-hidden="true">?</span> Help Center</a
+          >
+        </div>
+      </aside>
+
+      <main class="content">
+        <div class="app-topbar">
+          <div class="app-topbar__crumb">
+            Synchro › Tasks › <b>Detail</b>
+          </div>
+          <input
+            class="app-topbar__search"
+            type="search"
+            placeholder="Search…"
+            aria-label="Search"
+            disabled />
+        </div>
+        <header class="page-head">
+          <div>
+            <div class="breadcrumbs">Projects / Task / <b>Detail</b></div>
+            <div class="title">
+              <h1 class="page-head__title" id="pageTitle">Task Detail</h1>
+              <span id="chipState" class="chip">—</span>
+            </div>
+          </div>
+          <div class="inline">
+            <a class="btn" href="task.html">← Back to List</a>
+            <a class="btn" href="index.html">🏠 Dashboard</a>
+          </div>
+        </header>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <b id="headTitle">—</b>
+              <div class="muted" style="font-size: 12px">
+                ID: <span id="id" class="mono">—</span>
+              </div>
+            </div>
+            <div class="inline">
+              <button id="btnEdit" class="btn">✏️ Edit</button>
+              <button id="btnSave" class="btn primary hidden">💾 Save</button>
+              <button id="btnCancel" class="btn hidden">↩ Cancel</button>
+              <button id="btnDelete" class="btn danger">🗑 Delete</button>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <form id="form">
+              <div class="row-1">
+                <label for="name">Task name *</label>
+                <input
+                  id="name"
+                  required
+                  placeholder="VD: Thiết kế UI Task Board"
+                  disabled />
+              </div>
+
+              <div>
+                <label for="category">Category *</label>
+                <div class="inline" style="align-items: stretch">
+                  <select id="category" required disabled></select>
+                  <button
+                    id="btnAddCat"
+                    type="button"
+                    class="btn hidden"
+                    title="Add new category">
+                    + New
+                  </button>
+                </div>
+                <div class="hint">Chọn hoặc tạo mới nhanh.</div>
+              </div>
+
+              <div>
+                <label for="date">Date</label>
+                <input id="date" type="date" disabled />
+              </div>
+
+              <div>
+                <label for="price">Price (VND)</label>
+                <input
+                  id="price"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  placeholder="VD: 1.500.000"
+                  class="money-input"
+                  disabled />
+                <div class="hint">
+                  Xem nhanh: <b class="money" id="pricePreview">₫0</b>
+                </div>
+              </div>
+
+              <div>
+                <label for="assign">Assign to</label>
+                <select id="assign" disabled>
+                  <option value="The One">The One</option>
+                  <option value="Piecesi">Piecesi</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="charged">Charged?</label>
+                <select id="charged" disabled>
+                  <option value="false">Chưa</option>
+                  <option value="true">Đã charge</option>
+                </select>
+              </div>
+
+              <div class="row-1">
+                <label for="link">Link</label>
+                <div class="inline" style="align-items: stretch">
+                  <input
+                    id="link"
+                    type="text"
+                    placeholder="https://…"
+                    disabled />
+                  <a
+                    id="openLink"
+                    class="btn"
+                    href="#"
+                    target="_blank"
+                    rel="noopener"
+                    >Open</a
+                  >
+                </div>
+                <div class="hint">Dán URL nếu có; nút Open sẽ mở tab mới.</div>
+              </div>
+
+              <div class="row-1">
+                <label for="note">Note</label>
+                <textarea
+                  id="note"
+                  placeholder="Ghi chú thêm…"
+                  disabled></textarea>
+              </div>
+            </form>
+
+            <div id="error" class="hidden" style="margin-top: 10px">
+              <p>
+                ❌ Không tải được task. Kiểm tra tham số
+                <code>?id=...</code> hoặc quyền truy cập.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Dialog Add Category -->
+    <dialog id="dlgCat">
+      <h3 style="margin: 0 0 10px">New Category</h3>
+      <label for="catName" class="muted" style="font-size: 12px">Name</label>
+      <input id="catName" placeholder="VD: Work" />
+      <div class="inline" style="justify-content: flex-end; margin-top: 10px">
+        <button id="catCancel" class="btn">Cancel</button>
+        <button id="catSave" class="btn primary">Save</button>
+      </div>
+    </dialog>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      // ====== CONFIG ======
+      const PROJECT_URL = "https://zuitnapveubnhjumvdnt.supabase.co";
+      const ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aXRuYXB2ZXVibmhqdW12ZG50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMTcwMjEsImV4cCI6MjA3NTY5MzAyMX0.rjhf7gSNaATuKCuVBYBgVA8wmUisSyTcM25Qeexj5Gg"; // thay bằng key thực tế hoặc JWT user nếu RLS bật
+      const BASE = `${PROJECT_URL}/rest/v1`;
+      const HEADERS_JSON = {
+        apikey: ANON_KEY,
+        Authorization: `Bearer ${ANON_KEY}`,
+        "Content-Type": "application/json",
+      };
+      const HEADERS = { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` };
+
+      // ====== MONEY (VND) ======
+      const _VND_FORMATTER = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        maximumFractionDigits: 0,
+      });
+      function formatVND(n) {
+        if (n == null || n === "") return "₫0";
+        const v = +n || 0;
+        return _VND_FORMATTER.format(v);
+      }
+
+      const priceGroupFmt = new Intl.NumberFormat("vi-VN", {
+        maximumFractionDigits: 0,
+      });
+
+      // ====== STATE ======
+      const els = {
+        pageTitle: document.getElementById("pageTitle"),
+        chipState: document.getElementById("chipState"),
+        headTitle: document.getElementById("headTitle"),
+        id: document.getElementById("id"),
+        form: document.getElementById("form"),
+        name: document.getElementById("name"),
+        category: document.getElementById("category"),
+        date: document.getElementById("date"),
+        price: document.getElementById("price"),
+        pricePreview: document.getElementById("pricePreview"),
+        assign: document.getElementById("assign"),
+        charged: document.getElementById("charged"),
+        link: document.getElementById("link"),
+        openLink: document.getElementById("openLink"),
+        note: document.getElementById("note"),
+        btnEdit: document.getElementById("btnEdit"),
+        btnSave: document.getElementById("btnSave"),
+        btnCancel: document.getElementById("btnCancel"),
+        btnDelete: document.getElementById("btnDelete"),
+        btnAddCat: document.getElementById("btnAddCat"),
+        toast: document.getElementById("toast"),
+        dlgCat: document.getElementById("dlgCat"),
+        catName: document.getElementById("catName"),
+        catSave: document.getElementById("catSave"),
+        catCancel: document.getElementById("catCancel"),
+        error: document.getElementById("error"),
+      };
+
+      // ====== ID parsing (có fallback) ======
+      const qs = new URLSearchParams(location.search);
+      let taskId = qs.get("id");
+      if (!taskId && location.hash) {
+        const h = new URLSearchParams(location.hash.slice(1));
+        taskId = h.get("id");
+      }
+
+      // ====== INIT ======
+      let ORIG = null; // bản gốc để so sánh/cancel
+      let CATS = []; // category list
+
+      init();
+      async function init() {
+        if (!taskId) return showError("Thiếu tham số id");
+        try {
+          await loadCategories();
+          const row = await fetchTask(taskId);
+          ORIG = row;
+          fillForm(row);
+          setViewMode(true);
+        } catch (e) {
+          showError(e.message || String(e));
+        }
+        wireEvents();
+      }
+
+      function wireEvents() {
+        els.btnEdit.addEventListener("click", () => setViewMode(false));
+        els.btnCancel.addEventListener("click", () => {
+          fillForm(ORIG);
+          setViewMode(true);
+        });
+        els.btnSave.addEventListener("click", onSave);
+        els.btnDelete.addEventListener("click", onDelete);
+
+        els.price.addEventListener("input", () => {
+          const dig = els.price.value.replace(/\D/g, "");
+          if (!dig) {
+            els.price.value = "";
+            els.pricePreview.textContent = formatVND(0);
+            return;
+          }
+          const n = parseInt(dig, 10);
+          if (!Number.isFinite(n)) {
+            els.price.value = "";
+            els.pricePreview.textContent = formatVND(0);
+            return;
+          }
+          els.price.value = priceGroupFmt.format(n);
+          els.pricePreview.textContent = formatVND(n);
+        });
+
+        els.link.addEventListener("input", () => {
+          const v = els.link.value.trim();
+          els.openLink.href = v && /^https?:\/\//i.test(v) ? v : "#";
+        });
+
+        // Add new category
+        els.btnAddCat.addEventListener("click", () => {
+          els.catName.value = "";
+          els.dlgCat.showModal();
+          setTimeout(() => els.catName.focus(), 30);
+        });
+        els.catCancel.addEventListener("click", () => els.dlgCat.close());
+        els.catSave.addEventListener("click", createCategory);
+      }
+
+      // ====== LOADERS ======
+      async function loadCategories() {
+        const url = new URL(`${BASE}/category`);
+        url.searchParams.set("select", "id,name");
+        url.searchParams.set("order", "name.asc");
+        const res = await fetch(url, { headers: HEADERS });
+        if (!res.ok) throw new Error("Không tải được category");
+        CATS = await res.json();
+        els.category.innerHTML = CATS.map(
+          (c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`,
+        ).join("");
+      }
+
+      async function fetchTask(id) {
+        const url = new URL(`${BASE}/task`);
+        url.searchParams.set(
+          "select",
+          "id,name,link,date,price,is_charged,assign_to,note,category_id,category:category(name)",
+        );
+        url.searchParams.set("id", `eq.${id}`);
+        url.searchParams.set("limit", "1");
+        const res = await fetch(url, { headers: HEADERS });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const rows = await res.json();
+        if (!rows.length) throw new Error("Không tìm thấy task");
+        return rows[0];
+      }
+
+      // ====== RENDER ======
+      function fillForm(r) {
+        els.pageTitle.textContent = r.name || "Task Detail";
+        els.headTitle.textContent = r.name || "—";
+        els.id.textContent = r.id;
+        drawStateChip(r.is_charged === true);
+
+        els.name.value = r.name || "";
+        els.category.value = r.category_id || "";
+        els.date.value = normalizeDateInput(r.date);
+        const pv = r.price;
+        if (pv != null && pv !== "" && Number.isFinite(+pv)) {
+          const n = Math.round(+pv);
+          els.price.value = priceGroupFmt.format(n);
+          els.pricePreview.textContent = formatVND(n);
+        } else {
+          els.price.value = "";
+          els.pricePreview.textContent = formatVND(0);
+        }
+        els.assign.value = r.assign_to || "The One";
+        els.charged.value = r.is_charged === true ? "true" : "false";
+        els.link.value = r.link || "";
+        els.openLink.href =
+          r.link && /^https?:\/\//i.test(r.link) ? r.link : "#";
+        els.note.value = r.note || "";
+      }
+
+      function normalizeDateInput(d) {
+        if (!d) return "";
+        const s = String(d);
+        if (s.length >= 10) return s.slice(0, 10);
+        try {
+          const dt = new Date(d);
+          if (isNaN(dt)) return "";
+          const pad = (n) => String(n).padStart(2, "0");
+          return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(
+            dt.getDate(),
+          )}`;
+        } catch {
+          return "";
+        }
+      }
+
+      function drawStateChip(isCharged) {
+        els.chipState.textContent = isCharged ? "Charged" : "Unpaid";
+        els.chipState.style.background = isCharged
+          ? "rgba(16,185,129,.12)"
+          : "#fee2e2";
+        els.chipState.style.color = isCharged ? "#059669" : "#991b1b";
+      }
+
+      function setViewMode(viewOnly) {
+        // viewOnly = true -> disable inputs, show Edit button
+        const inputs = [
+          els.name,
+          els.category,
+          els.date,
+          els.price,
+          els.assign,
+          els.charged,
+          els.link,
+          els.note,
+        ];
+        inputs.forEach((i) => (i.disabled = viewOnly));
+        els.btnSave.classList.toggle("hidden", viewOnly);
+        els.btnCancel.classList.toggle("hidden", viewOnly);
+        els.btnAddCat.classList.toggle("hidden", viewOnly);
+        els.btnEdit.classList.toggle("hidden", !viewOnly);
+      }
+
+      // ====== ACTIONS ======
+      async function onSave() {
+        // Validate
+        const body = {
+          name: els.name.value.trim(),
+          category_id: els.category.value || null,
+          date: els.date.value || null,
+          price: (() => {
+            const dig = els.price.value.replace(/\D/g, "");
+            return dig ? parseInt(dig, 10) : null;
+          })(),
+          assign_to: els.assign.value || null,
+          is_charged: els.charged.value === "true",
+          link: els.link.value.trim() || null,
+          note: els.note.value.trim() || null,
+        };
+        if (!body.name) return notify("Thiếu tên task", true);
+        if (body.link && !/^https?:\/\//i.test(body.link))
+          return notify("Link phải bắt đầu bằng http(s)", true);
+
+        // PATCH
+        try {
+          els.btnSave.disabled = true;
+          els.btnSave.textContent = "Saving…";
+          const res = await fetch(
+            `${BASE}/task?id=eq.${encodeURIComponent(taskId)}`,
+            {
+              method: "PATCH",
+              headers: { ...HEADERS_JSON, Prefer: "return=representation" },
+              body: JSON.stringify(body),
+            },
+          );
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || "HTTP " + res.status);
+          }
+          const [row] = await res.json();
+          ORIG = row; // cập nhật bản gốc
+          fillForm(row);
+          setViewMode(true);
+          drawStateChip(row.is_charged === true);
+          notify("Đã lưu thay đổi ✔️");
+        } catch (e) {
+          notify("Lỗi lưu: " + (e.message || e), true);
+        } finally {
+          els.btnSave.disabled = false;
+          els.btnSave.textContent = "💾 Save";
+        }
+      }
+
+      async function onDelete() {
+        if (!confirm("Xóa task này? Hành động không thể hoàn tác.")) return;
+        try {
+          const res = await fetch(
+            `${BASE}/task?id=eq.${encodeURIComponent(taskId)}`,
+            {
+              method: "DELETE",
+              headers: HEADERS,
+            },
+          );
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || "HTTP " + res.status);
+          }
+          notify("Đã xóa task", false);
+          setTimeout(() => (location.href = "task.html"), 700);
+        } catch (e) {
+          notify("Lỗi xóa: " + (e.message || e), true);
+        }
+      }
+
+      async function createCategory() {
+        const name = els.catName.value.trim();
+        if (!name) return notify("Nhập tên category", true);
+        try {
+          const res = await fetch(`${BASE}/category`, {
+            method: "POST",
+            headers: { ...HEADERS_JSON, Prefer: "return=representation" },
+            body: JSON.stringify({ name }),
+          });
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || "HTTP " + res.status);
+          }
+          const [row] = await res.json();
+          els.dlgCat.close();
+          await loadCategories();
+          els.category.value = row.id;
+          notify("Đã tạo category");
+        } catch (e) {
+          notify("Lỗi tạo category: " + (e.message || e), true);
+        }
+      }
+
+      // ====== UTILS ======
+      function notify(msg, isErr = false) {
+        els.toast.textContent = msg;
+        els.toast.className = "toast " + (isErr ? "err" : "ok");
+        els.toast.style.display = "block";
+        clearTimeout(window.__t);
+        window.__t = setTimeout(() => (els.toast.style.display = "none"), 2600);
+      }
+      function escapeHtml(s) {
+        return String(s ?? "").replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[m],
+        );
+      }
+      function showError(msg) {
+        els.error.classList.remove("hidden");
+        els.error.innerHTML = `<p>❌ ${escapeHtml(msg)}</p>`;
+      }
+    </script>
+  </body>
+</html>

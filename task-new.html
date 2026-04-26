@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Create Task</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="app-theme.css" />
+
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="side app-sidebar">
+        <div class="app-sidebar__brand">Synchro</div>
+        <div class="side-user app-sidebar__user">
+          <div class="side-user__avatar" aria-hidden="true">TO</div>
+          <div class="side-user__meta">
+            <b class="side-user__name">The One</b>
+            <span class="side-user__email">theone@workspace.local</span>
+          </div>
+        </div>
+        <a href="task-new.html" class="btn-create">+ Create Task</a>
+        <nav class="nav nav--stack app-nav">
+          <a href="index.html"
+            ><span class="nav__ic" aria-hidden="true">⌂</span> Dashboard</a
+          >
+          <a href="task.html"
+            ><span class="nav__ic" aria-hidden="true">□</span> My Task</a
+          >
+          <a href="task.html"
+            ><span class="nav__ic" aria-hidden="true">✉</span> Inbox</a
+          >
+          <a href="analytics.html"
+            ><span class="nav__ic" aria-hidden="true">▤</span> Reporting</a
+          >
+          <h4>Favourite</h4>
+          <a href="index.html"
+            ><span class="nav__ic" aria-hidden="true">★</span> Overview</a
+          >
+        </nav>
+        <div class="side-foot">
+          <a href="mailto:" class="side-foot__link"
+            ><span class="nav__ic" aria-hidden="true">?</span> Help Center</a
+          >
+        </div>
+      </aside>
+
+      <main class="content">
+        <div class="app-topbar">
+          <div class="app-topbar__crumb">
+            Synchro › Tasks › <b>Create</b>
+          </div>
+          <input
+            class="app-topbar__search"
+            type="search"
+            placeholder="Search…"
+            aria-label="Search"
+            disabled />
+        </div>
+        <header class="page-head">
+          <div>
+            <div class="breadcrumbs">Tasks / <b>Create</b></div>
+            <div class="title">
+              <h1 class="page-head__title">
+                Create Task <span class="chip" id="env">Draft</span>
+              </h1>
+            </div>
+          </div>
+          <div class="toolbar">
+            <a class="btn" href="task.html">← Back to Task List</a>
+          </div>
+        </header>
+
+        <section class="panel">
+          <div class="panel-head">
+            <b>New Task</b>
+            <span class="hint">Điền thông tin và lưu lại</span>
+          </div>
+          <div class="panel-body">
+            <form id="form">
+              <div class="row-1">
+                <label for="name">Task name *</label>
+                <input
+                  id="name"
+                  required
+                  placeholder="VD: Thiết kế UI Task Board" />
+              </div>
+
+              <div>
+                <label for="category">Category *</label>
+                <div style="display: flex; gap: 8px; align-items: stretch">
+                  <select id="category" required></select>
+                  <button
+                    id="btnAddCat"
+                    type="button"
+                    class="btn"
+                    title="Add new category">
+                    + New
+                  </button>
+                </div>
+                <div class="hint">Chọn hoặc tạo mới nhanh.</div>
+              </div>
+
+              <div>
+                <label for="date">Date</label>
+                <input id="date" type="date" />
+              </div>
+
+              <div>
+                <label for="price">Price (VND)</label>
+                <input
+                  id="price"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  placeholder="VD: 1.500.000"
+                  class="money-input" />
+                <div class="hint">Nhập số — hiển thị định dạng VND khi gõ.</div>
+              </div>
+
+              <div>
+                <label for="assign">Assign to</label>
+                <select id="assign">
+                  <option value="The One" selected>The One</option>
+                  <option value="Piecesi">Piecesi</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="charged">Charged?</label>
+                <select id="charged">
+                  <option value="false" selected>Unpaid</option>
+                  <option value="true">Completed</option>
+                </select>
+              </div>
+
+              <div class="row-1">
+                <label for="link">Link</label>
+                <div class="link-row">
+                  <input id="link" type="text" placeholder="https://…" />
+                  <a
+                    id="openLink"
+                    class="btn"
+                    href="#"
+                    target="_blank"
+                    rel="noopener"
+                    >Open</a
+                  >
+                </div>
+                <div class="hint">Dán URL nếu có; nút Open sẽ mở tab mới.</div>
+              </div>
+
+              <div class="row-1">
+                <label for="note">Note</label>
+                <textarea id="note" placeholder="Ghi chú thêm…"></textarea>
+              </div>
+
+              <div class="sep"></div>
+              <div class="actions">
+                <button type="reset" class="btn">Reset</button>
+                <button id="submit" type="submit" class="btn primary">
+                  Save Task
+                </button>
+              </div>
+            </form>
+            <div class="hint" style="margin-top: 8px">
+              Lưu ý: Nếu bạn bật RLS và có cột <code>owner_id</code>, cần đăng
+              nhập Supabase và dùng JWT thay vì anon key.
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Dialog Add Category -->
+    <dialog id="dlgCat">
+      <h3 style="margin: 0 0 10px">New Category</h3>
+      <label for="catName" class="small muted">Name</label>
+      <input id="catName" placeholder="VD: Work" />
+      <div
+        style="
+          display: flex;
+          gap: 8px;
+          justify-content: flex-end;
+          margin-top: 10px;
+        ">
+        <button id="catCancel" class="btn">Cancel</button>
+        <button id="catSave" class="btn primary">Save</button>
+      </div>
+    </dialog>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      // ====== CONFIG ======
+      const PROJECT_URL = "https://zuitnapveubnhjumvdnt.supabase.co";
+      const ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aXRuYXB2ZXVibmhqdW12ZG50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMTcwMjEsImV4cCI6MjA3NTY5MzAyMX0.rjhf7gSNaATuKCuVBYBgVA8wmUisSyTcM25Qeexj5Gg"; // thay bằng key thực tế
+      const BASE = `${PROJECT_URL}/rest/v1`;
+      const HEADERS = {
+        apikey: ANON_KEY,
+        Authorization: `Bearer ${ANON_KEY}`,
+        "Content-Type": "application/json",
+      };
+
+      const els = {
+        form: document.getElementById("form"),
+        name: document.getElementById("name"),
+        category: document.getElementById("category"),
+        date: document.getElementById("date"),
+        price: document.getElementById("price"),
+        assign: document.getElementById("assign"),
+        charged: document.getElementById("charged"),
+        link: document.getElementById("link"),
+        openLink: document.getElementById("openLink"),
+        note: document.getElementById("note"),
+        submit: document.getElementById("submit"),
+        toast: document.getElementById("toast"),
+        dlgCat: document.getElementById("dlgCat"),
+        catName: document.getElementById("catName"),
+        catSave: document.getElementById("catSave"),
+        catCancel: document.getElementById("catCancel"),
+      };
+
+      // Defaults
+      (function setDefaults() {
+        const now = new Date();
+        const pad = (n) => String(n).padStart(2, "0");
+        els.date.value = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
+          now.getDate(),
+        )}`;
+        const v = els.link.value.trim();
+        els.openLink.href = v && /^https?:\/\//i.test(v) ? v : "#";
+        // Auto-fill task name from link's last segment if name is empty
+        if (!els.name.value.trim()) {
+          const s = extractLastSegment(v);
+          if (s) els.name.value = s;
+        }
+      })();
+
+      // Helper: get last path segment after '/'
+      function extractLastSegment(input) {
+        const raw = String(input || "").trim();
+        if (!raw) return "";
+        try {
+          // Support both absolute and relative inputs
+          const u = new URL(raw, "http://x");
+          const pathname = u.pathname.replace(/\/+$/, ""); // trim trailing slashes
+          const parts = pathname.split("/").filter(Boolean);
+          const last = parts.pop() || "";
+          return decodeURIComponent(last);
+        } catch {
+          // Fallback simple parser
+          const cleaned = raw.split(/[?#]/)[0].replace(/\/+$/, "");
+          const parts = cleaned.split("/").filter(Boolean);
+          return decodeURIComponent(parts.pop() || "");
+        }
+      }
+
+      // Init
+      loadCategories();
+      els.link.addEventListener("input", () => {
+        const v = els.link.value.trim();
+        els.openLink.href = v && /^https?:\/\//i.test(v) ? v : "#";
+        // Auto-fill name only when it's currently empty
+        if (!els.name.value.trim()) {
+          const s = extractLastSegment(v);
+          if (s) els.name.value = s;
+        }
+      });
+
+      const priceFmt = new Intl.NumberFormat("vi-VN", {
+        maximumFractionDigits: 0,
+      });
+      els.price.addEventListener("input", () => {
+        const dig = els.price.value.replace(/\D/g, "");
+        if (!dig) {
+          els.price.value = "";
+          return;
+        }
+        const n = parseInt(dig, 10);
+        if (!Number.isFinite(n)) {
+          els.price.value = "";
+          return;
+        }
+        els.price.value = priceFmt.format(n);
+      });
+
+      els.form.addEventListener("submit", onSubmit);
+      document.getElementById("btnAddCat").addEventListener("click", () => {
+        els.catName.value = "";
+        els.dlgCat.showModal();
+        setTimeout(() => els.catName.focus(), 50);
+      });
+      els.catCancel.addEventListener("click", () => els.dlgCat.close());
+      els.catSave.addEventListener("click", createCategory);
+
+      async function loadCategories() {
+        try {
+          const url = new URL(`${BASE}/category`);
+          url.searchParams.set("select", "id,name");
+          url.searchParams.set("order", "name.asc");
+          const res = await fetch(url, {
+            headers: { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` },
+          });
+          if (!res.ok) throw new Error("load category: " + res.status);
+          const cats = await res.json();
+          els.category.innerHTML = cats
+            .map(
+              (c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`,
+            )
+            .join("");
+        } catch (e) {
+          notify("Không tải được category: " + e.message, true);
+        }
+      }
+
+      async function createCategory() {
+        const name = els.catName.value.trim();
+        if (!name) return notify("Nhập tên category", true);
+        try {
+          const res = await fetch(`${BASE}/category`, {
+            method: "POST",
+            headers: { ...HEADERS, Prefer: "return=representation" },
+            body: JSON.stringify({ name }),
+          });
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || "HTTP " + res.status);
+          }
+          const [row] = await res.json();
+          els.dlgCat.close();
+          await loadCategories();
+          els.category.value = row.id;
+          notify("Đã tạo category");
+        } catch (err) {
+          notify("Lỗi tạo category: " + err.message, true);
+        }
+      }
+
+      async function onSubmit(e) {
+        e.preventDefault();
+        els.submit.disabled = true;
+        els.submit.textContent = "Saving…";
+        try {
+          const body = {
+            name: els.name.value.trim(),
+            link: els.link.value.trim() || null,
+            category_id: els.category.value || null,
+            date: els.date.value || null,
+            price: (() => {
+              const dig = els.price.value.replace(/\D/g, "");
+              return dig ? parseInt(dig, 10) : null;
+            })(),
+            is_charged: els.charged.value === "true",
+            assign_to: els.assign.value || null,
+            note: els.note.value.trim() || null,
+          };
+          if (!body.name) throw new Error("Thiếu tên task");
+          if (body.link && !/^https?:\/\//i.test(body.link))
+            throw new Error("Link phải bắt đầu bằng http(s)");
+
+          const res = await fetch(`${BASE}/task`, {
+            method: "POST",
+            headers: { ...HEADERS, Prefer: "return=representation" },
+            body: JSON.stringify(body),
+          });
+          if (!res.ok) {
+            const t = await res.text();
+            throw new Error(t || "HTTP " + res.status);
+          }
+          const out = await res.json();
+          notify("Đã lưu task ✔️");
+          els.form.reset();
+          const now = new Date();
+          const pad = (n) => String(n).padStart(2, "0");
+          els.date.value = `${now.getFullYear()}-${pad(
+            now.getMonth() + 1,
+          )}-${pad(now.getDate())}`;
+          els.assign.value = "The One";
+        } catch (err) {
+          notify("Lỗi lưu: " + err.message, true);
+        } finally {
+          els.submit.disabled = false;
+          els.submit.textContent = "Save Task";
+        }
+      }
+
+      function notify(msg, isErr = false) {
+        els.toast.textContent = msg;
+        els.toast.className = "toast " + (isErr ? "err" : "ok");
+        els.toast.style.display = "block";
+        clearTimeout(window.__t);
+        window.__t = setTimeout(() => (els.toast.style.display = "none"), 3000);
+      }
+      function escapeHtml(s) {
+        return String(s ?? "").replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[m],
+        );
+      }
+    </script>
+  </body>
+</html>
