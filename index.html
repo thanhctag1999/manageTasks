@@ -4,12 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Dashboard · Overview</title>
-
+    <link rel="icon" href="data:," />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet" />
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="app-theme.css" />
   </head>
   <body>
@@ -23,47 +24,99 @@
             <span class="side-user__email">theone@workspace.local</span>
           </div>
         </div>
-        <a href="task-new.html" class="btn-create">+ Create Task</a>
+        <a href="task-new.html" class="btn-create"
+          ><span class="btn-create__icon" aria-hidden="true"
+            ><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg></span
+          ><span class="btn-create__label">Create Task</span></a
+        >
         <nav class="nav nav--stack app-nav">
           <a class="active" href="index.html"
-            ><span class="nav__ic" aria-hidden="true">⌂</span> Dashboard</a
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M4 10.5 12 4l8 6.5" />
+                <path d="M6.5 10v8.5h11V10" />
+                <path d="M10 18.5v-5h4v5" /></svg></span
+            >Dashboard</a
           >
           <a href="task.html"
-            ><span class="nav__ic" aria-hidden="true">□</span> My Task</a
-          >
-          <a href="task.html"
-            ><span class="nav__ic" aria-hidden="true">✉</span> Inbox</a
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <rect x="5" y="4.5" width="14" height="15" rx="3" />
+                <path d="m8.5 12 2.2 2.2 4.8-5" /></svg></span
+            >My Task</a
           >
           <a href="analytics.html"
-            ><span class="nav__ic" aria-hidden="true">▤</span> Reporting</a
-          >
-          <h4>Favourite</h4>
-          <a href="index.html"
-            ><span class="nav__ic" aria-hidden="true">★</span> Overview</a
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M5 19V9" />
+                <path d="M12 19V5" />
+                <path d="M19 19v-7" />
+                <path d="M4 19.5h16" /></svg></span
+            >Reporting</a
           >
         </nav>
         <div class="side-foot">
           <a href="mailto:" class="side-foot__link"
-            ><span class="nav__ic" aria-hidden="true">?</span> Help Center</a
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8" />
+                <path
+                  d="M9.8 9.7a2.3 2.3 0 1 1 3.6 1.9c-.9.6-1.4 1.1-1.4 2.1"
+                />
+                <path d="M12 17h.01" /></svg></span
+            >Help Center</a
           >
         </div>
       </aside>
 
       <main class="content content--split">
-        <div class="app-topbar">
-          <div class="app-topbar__crumb">Synchro › <b>Dashboard</b></div>
-          <input
-            id="q"
-            class="app-topbar__search"
-            type="search"
-            placeholder="Search tasks…"
-            aria-label="Search tasks" />
+        <div class="app-topbar app-topbar--dashboard">
+          <a
+            class="topbar-brand"
+            href="index.html"
+            aria-label="ManageTasks dashboard"
+          >
+            <span class="topbar-brand__mark" aria-hidden="true">M</span>
+            <span
+              ><strong>ManageTasks</strong><small>Productivity OS</small></span
+            >
+          </a>
+          <nav class="topbar-nav" aria-label="Primary">
+            <a class="active" href="index.html">Overview</a>
+            <a href="task.html">Activity</a>
+            <a href="task.html">Manage</a>
+            <a href="task-new.html">Folders</a>
+            <a href="analytics.html">Documents</a>
+          </nav>
+          <div class="topbar-actions">
+            <label class="topbar-search" for="q">
+              <span aria-hidden="true">⌕</span>
+              <input
+                id="q"
+                class="app-topbar__search"
+                type="search"
+                placeholder="Search tasks..."
+                aria-label="Search tasks"
+              />
+            </label>
+            <button type="button" class="icon-btn" aria-label="Notifications">
+              !
+            </button>
+            <div class="profile-pill" aria-label="Profile">TO</div>
+          </div>
         </div>
+
         <div class="dash-main">
-          <header class="dash-header">
-            <h1 class="dash-header__hello">
-              Hello <span id="who">The One</span> 👋
-            </h1>
+          <header class="dash-header welcome-section">
+            <div>
+              <div class="breadcrumbs muted">
+                Good morning, <span id="who">The One</span>
+              </div>
+              <h1 class="dash-header__hello">Your productivity dashboard</h1>
+              <p class="welcome-section__subtitle">
+                Stay on top of your tasks, monitor progress, and track status.
+              </p>
+            </div>
             <div class="dash-header__center">
               <select id="f_month" class="select-account" aria-label="Period">
                 <option value="">All months</option>
@@ -75,7 +128,8 @@
                 class="icon-btn"
                 id="btnFocusSearch"
                 aria-label="Focus search"
-                title="Search">
+                title="Search"
+              >
                 🔍
               </button>
               <button type="button" class="icon-btn" aria-hidden="true">
@@ -84,6 +138,15 @@
               <a class="btn primary" href="task-new.html">＋ Add Task</a>
             </div>
           </header>
+
+          <section class="announce-banner" aria-label="Product update">
+            <div class="announce-banner__icon" aria-hidden="true">AI</div>
+            <div class="announce-banner__copy">
+              <b>AI assistant is now available.</b>
+              <span>Manage your tasks faster with smart suggestions.</span>
+            </div>
+            <a class="btn btn--special" href="task-new.html">View Details</a>
+          </section>
 
           <div class="filters" id="filters">
             <select id="f_assign">
@@ -104,6 +167,7 @@
             <section class="hero-card">
               <div class="hero-card__top">
                 <div>
+                  <img class="hero-card__visa" src="assets/visa.png" alt="" />
                   <div class="hero-card__label">Charged revenue (balance)</div>
                   <div class="hero-card__balance" id="bigRevenue">₫0</div>
                   <div class="hero-card__sub" id="bigRevenueNote">
@@ -116,17 +180,15 @@
                     id="sparkHero"
                     viewBox="0 0 140 44"
                     preserveAspectRatio="none"
-                    aria-hidden="true"></svg>
+                    aria-hidden="true"
+                  ></svg>
                 </div>
               </div>
               <div class="hero-card__actions">
-                <a class="btn btn--hero-light" href="task-new.html"
+                <a class="btn btn--hero-light btn--special" href="task-new.html"
                   >＋ Thêm task</a
                 >
-                <button
-                  type="button"
-                  class="btn btn--hero-ghost"
-                  id="btnCSVHero">
+                <button type="button" class="btn btn--special" id="btnCSVHero">
                   Xuất CSV
                 </button>
               </div>
@@ -153,7 +215,8 @@
                 id="sparkMini1"
                 viewBox="0 0 72 28"
                 preserveAspectRatio="none"
-                aria-hidden="true"></svg>
+                aria-hidden="true"
+              ></svg>
             </div>
             <div class="mini-stat mini-stat--peach anim">
               <div class="mini-stat__label">Completed</div>
@@ -164,7 +227,8 @@
                 id="sparkMini2"
                 viewBox="0 0 72 28"
                 preserveAspectRatio="none"
-                aria-hidden="true"></svg>
+                aria-hidden="true"
+              ></svg>
             </div>
             <div class="mini-stat mini-stat--sky anim">
               <div class="mini-stat__label">Unpaid</div>
@@ -175,7 +239,8 @@
                 id="sparkMini3"
                 viewBox="0 0 72 28"
                 preserveAspectRatio="none"
-                aria-hidden="true"></svg>
+                aria-hidden="true"
+              ></svg>
             </div>
           </section>
 
@@ -185,46 +250,52 @@
               <div class="bd" id="widgetAssignee"></div>
             </section>
             <section class="card">
-              <div class="hd"><b>Deadline 7 ngày tới</b></div>
-              <div class="bd" id="widgetUpcoming"></div>
-            </section>
-            <section class="card">
-              <div class="hd"><b>Bộ lọc hiện tại</b></div>
-              <div class="bd" id="widgetFilters"></div>
-            </section>
-            <section class="card">
               <div class="hd"><b>Doanh thu · category (đã charge)</b></div>
               <div class="bd" id="widgetCatMix"></div>
             </section>
           </div>
 
-          <section class="panel">
-            <div class="panel-head">
+          <section class="panel performance-chart-card">
+            <div class="performance-chart-card__head">
               <div>
-                <b>Money flow</b>
-                <div class="muted" style="font-size: 12px">
-                  Candlestick: revenue · bars: task count
+                <b>Performance Chart</b>
+                <p>Track results and watch your progress rise.</p>
+                <div class="chart-legend">
+                  <span><i class="theory"></i> Revenue</span>
+                  <span><i class="practice"></i> Task count</span>
+                  <span><i class="lexicon"></i> Activity range</span>
                 </div>
               </div>
-              <div class="tabs" id="rangeTabs">
-                <button type="button" data-range="7d" class="active">7d</button>
-                <button type="button" data-range="30d">30d</button>
-                <button type="button" data-range="90d">90d</button>
-                <button type="button" data-range="YTD">YTD</button>
+              <div class="performance-chart-card__actions">
+                <div class="tabs performance-tabs" id="rangeTabs">
+                  <button type="button" data-range="7d">Week</button>
+                  <button type="button" data-range="30d" class="active">
+                    Month
+                  </button>
+                  <button type="button" data-range="YTD">Year</button>
+                </div>
+                <button
+                  type="button"
+                  class="chart-expand-btn"
+                  aria-label="Expand chart"
+                  title="Expand chart"
+                >
+                  ⤢
+                </button>
               </div>
             </div>
-            <div class="panel-body">
-              <svg
-                id="lineChart"
-                class="chart chart-anim"
-                viewBox="0 0 700 260"
-                preserveAspectRatio="xMidYMid meet"
-                role="img"
-                aria-label="Revenue and task chart"></svg>
-              <div class="chart-legend">
-                <span><i></i> Revenue (nến)</span>
-                <span><i class="sec"></i> Task count</span>
+            <div class="performance-chart-card__body">
+              <div class="chart-stage">
+                <svg
+                  id="lineChart"
+                  class="chart chart-anim performance-chart"
+                  viewBox="0 0 900 360"
+                  preserveAspectRatio="xMidYMid meet"
+                  role="img"
+                  aria-label="Revenue and task performance chart"
+                ></svg>
               </div>
+              <div class="chart-range" aria-hidden="true"><span></span></div>
             </div>
           </section>
 
@@ -286,14 +357,6 @@
       </main>
     </div>
 
-    <!-- Loader overlay -->
-    <div id="loading" class="loader" aria-live="polite" aria-busy="true">
-      <div class="box">
-        <div class="ring"></div>
-        <div class="txt">Loading data…</div>
-      </div>
-    </div>
-
     <script>
       // ====== CONFIG ======
       const PROJECT_URL = "https://zuitnapveubnhjumvdnt.supabase.co";
@@ -302,52 +365,24 @@
       const BASE = `${PROJECT_URL}/rest/v1`;
       const HEADERS = { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` };
 
+      // Currency formatter used by formatVND()
+      const VND = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        maximumFractionDigits: 0,
+      });
+
       let ROWS = [];
-      let RANGE = "7d";
+      let RANGE = "30d";
+      let DASHBOARD_LOADING_RAF = 0;
+      let DASHBOARD_LOADING_STARTED = 0;
 
-      // ===== Loader / Anim helper =====
-      function setLoading(on) {
-        const L = document.getElementById("loading");
-        if (!L) return;
-        if (on) {
-          showTableSkeleton();
-        }
-        L.classList.toggle("show", !!on);
-        setStatus(on ? "Loading…" : "Ready");
-      }
-      function showTableSkeleton() {
-        const tb = document.getElementById("tbody");
-        if (!tb) return;
-        tb.innerHTML = "";
-        for (let i = 0; i < 6; i++) {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-          <td><div class="skel" style="height:14px;width:60px"></div></td>
-          <td><div class="skel" style="height:14px;width:200px"></div></td>
-          <td><div class="skel" style="height:14px;width:90px"></div></td>
-          <td><div class="skel" style="height:14px;width:80px"></div></td>
-          <td><div class="skel" style="height:14px;width:120px"></div></td>
-          <td><div class="skel" style="height:22px;width:96px;border-radius:999px"></div></td>`;
-          tb.appendChild(tr);
-        }
-      }
-      function animIn(selector) {
-        const els = document.querySelectorAll(selector);
-        els.forEach((el, i) => {
-          el.classList.remove("in");
-          void el.offsetWidth;
-          el.style.setProperty("--d", i * 50 + "ms");
-          el.classList.add("in");
-        });
-      }
-
-      // ===== Init =====
+      setupTypingHello();
       init();
+
       async function init() {
         document.getElementById("todayStr").textContent =
           new Date().toLocaleDateString("vi-VN");
-
-        // Range tabs
         document.getElementById("rangeTabs").addEventListener("click", (e) => {
           const b = e.target.closest("button");
           if (!b) return;
@@ -357,8 +392,6 @@
             .forEach((x) => x.classList.toggle("active", x === b));
           repaint();
         });
-
-        // Filters bind
         ["f_month", "f_assign", "f_category", "f_status", "q"].forEach((id) => {
           document.getElementById(id).addEventListener("input", repaint);
           document.getElementById(id).addEventListener("change", repaint);
@@ -369,8 +402,6 @@
           );
           repaint();
         });
-
-        // CSV
         document.getElementById("btnCSV").addEventListener("click", exportCSV);
         document
           .getElementById("btnCSVHero")
@@ -381,7 +412,6 @@
             document.getElementById("q").focus(),
           );
 
-        // Fetch data
         try {
           setLoading(true);
           const url = new URL(`${BASE}/task`);
@@ -397,32 +427,271 @@
           repaint();
         } catch (e) {
           console.error(e);
-          setStatus("❌ API error: " + e.message);
+          setStatus("API error: " + e.message);
         } finally {
           setLoading(false);
-          // Animate initial paint
-          animIn(".dash-mini-stats .mini-stat");
-          animIn(".dash-bento .card, .dash-hero-side .card");
-          animIn("#tbody tr");
-          animIn("#txnList .txn-row, #topCats .cat-mini, #agenda .agenda-row");
-          const chart = document.getElementById("lineChart");
-          chart.classList.remove("in");
-          void chart.offsetWidth;
-          chart.classList.add("in");
         }
       }
 
-      // ===== Filters =====
+      function setLoading(on) {
+        document.body.classList.toggle("dashboard-loading", !!on);
+        if (on) {
+          renderDashboardSkeleton();
+          startDashboardLoadingNumbers();
+        } else {
+          stopDashboardLoadingNumbers();
+        }
+        setStatus(on ? "Syncing dashboard…" : "Ready");
+      }
+
+      function setupTypingHello() {
+        const hello = document.querySelector(".dash-header__hello");
+        if (!hello) return;
+        hello.style.setProperty(
+          "--typing-ch",
+          Math.max(1, hello.textContent.trim().length),
+        );
+        hello.classList.add("is-typing");
+      }
+
+      function renderDashboardSkeleton() {
+        set("#bigRevenueNote", "Syncing workspace");
+        set("#k_total_delta", "Live loading");
+        set("#k_done_delta", "Preparing");
+        set("#heroTrend", "+0%");
+        renderDashboardTableSkeleton();
+        renderDashboardWidgetSkeletons();
+        renderDashboardChartSkeleton();
+        miniSparklinePoly(
+          "#sparkMini1",
+          [2, 4, 3, 7, 5, 8],
+          "rgba(22, 163, 74, 0.85)",
+        );
+        miniSparklinePoly(
+          "#sparkMini2",
+          [1, 3, 2, 5, 4, 6],
+          "rgba(234, 88, 12, 0.9)",
+        );
+        miniSparklinePoly(
+          "#sparkMini3",
+          [4, 5, 3, 6, 4, 7],
+          "rgba(37, 99, 235, 0.9)",
+        );
+        miniSparkline(
+          "#sparkHero",
+          [12, 18, 14, 24, 21, 32, 28],
+          "rgba(134, 239, 172, 0.95)",
+        );
+      }
+
+      function renderDashboardTableSkeleton() {
+        const tb = document.getElementById("tbody");
+        tb.innerHTML = "";
+        for (let i = 0; i < 6; i++) {
+          const tr = document.createElement("tr");
+          tr.className = "dashboard-skeleton-row";
+          tr.innerHTML = `
+            <td><div class="skel" style="height:14px;width:60px"></div></td>
+            <td><div class="skel" style="height:14px;width:200px"></div></td>
+            <td><div class="skel" style="height:14px;width:90px"></div></td>
+            <td><div class="skel" style="height:14px;width:80px"></div></td>
+            <td><div class="skel" style="height:14px;width:120px"></div></td>
+            <td><div class="skel" style="height:22px;width:96px;border-radius:999px"></div></td>`;
+          tb.appendChild(tr);
+        }
+      }
+
+      function renderDashboardWidgetSkeletons() {
+        document.getElementById("widgetCompletion").innerHTML = `
+          <div class="wprog dashboard-widget-loading">
+            <div class="wprog__pct loading-number" data-loading-counter data-min="18" data-max="92" data-format="percent">0%</div>
+            <div class="wprog__bar"><span id="loadingCompletionBar" style="width:24%"></span></div>
+            <div class="muted wprog__sub"><span data-loading-counter data-min="8" data-max="64">0</span> / <span data-loading-counter data-min="40" data-max="128">0</span> task completed</div>
+          </div>`;
+        document.getElementById("widgetAtRisk").innerHTML = `
+          <div class="dashboard-widget-loading">
+            <div class="wrisk__amt loading-number" data-loading-counter data-min="1800000" data-max="46000000" data-format="vnd">₫0</div>
+            <div class="muted"><span data-loading-counter data-min="6" data-max="38">0</span> task chưa charge</div>
+          </div>`;
+        document.getElementById("widgetAssignee").innerHTML = [
+          ["The One", 84],
+          ["Design", 63],
+          ["Ops", 46],
+          ["Review", 72],
+        ]
+          .map(
+            ([name, width], i) =>
+              `<div class="wbar-row dashboard-widget-loading"><span class="wbar-row__lbl">${name}</span><div class="wbar-row__track"><span style="width:${width}%"></span></div><span class="wbar-row__n loading-number" data-loading-counter data-min="${8 + i * 3}" data-max="${38 + i * 7}">0</span></div>`,
+          )
+          .join("");
+        document.getElementById("widgetCatMix").innerHTML = [
+          ["Product", 78, "#16a34a"],
+          ["Marketing", 55, "#3b82f6"],
+          ["Research", 68, "#8b5cf6"],
+          ["Finance", 44, "#f59e0b"],
+        ]
+          .map(
+            ([name, width, color], i) =>
+              `<div class="catmix-row dashboard-widget-loading"><span class="catmix-row__k">${name}</span><div class="catmix-row__bar"><span style="width:${width}%;background:${color}"></span></div><span class="catmix-row__v money loading-number" data-loading-counter data-min="${1200000 + i * 700000}" data-max="${14000000 + i * 4800000}" data-format="vnd">₫0</span></div>`,
+          )
+          .join("");
+        document.getElementById("txnList").innerHTML = Array.from(
+          { length: 6 },
+          (_, i) =>
+            `<div class="txn-row dashboard-widget-loading"><div class="txn-row__ic">${String.fromCharCode(65 + i)}</div><div class="txn-row__body"><div class="txn-row__name">Syncing task ${i + 1}</div><div class="txn-row__meta">Live workspace · loading</div></div><div class="txn-row__amt loading-number" data-loading-counter data-min="${900000 + i * 300000}" data-max="${9000000 + i * 1400000}" data-format="vnd">₫0</div></div>`,
+        ).join("");
+        document.getElementById("topCats").innerHTML = Array.from(
+          { length: 3 },
+          (_, i) =>
+            `<div class="cat-mini dashboard-widget-loading"><span>${["Product", "Ops", "Growth"][i]}</span><b class="loading-number" data-loading-counter data-min="${5 + i * 4}" data-max="${42 + i * 12}" data-suffix="%">0%</b></div>`,
+        ).join("");
+        document.getElementById("agenda").innerHTML = Array.from(
+          { length: 3 },
+          (_, i) =>
+            `<div class="agenda-row dashboard-widget-loading"><div><b>Preparing schedule</b><div class="muted">Today queue</div></div><div class="money loading-number" data-loading-counter data-min="${500000 + i * 450000}" data-max="${6000000 + i * 1200000}" data-format="vnd">₫0</div></div>`,
+        ).join("");
+      }
+
+      function renderDashboardChartSkeleton() {
+        const svg = document.getElementById("lineChart");
+        if (!svg) return;
+        svg.setAttribute("viewBox", "0 0 900 360");
+        const bars = Array.from({ length: 42 }, (_, i) => {
+          const x = 54 + i * 19;
+          const h = 52 + ((i * 37) % 136);
+          const y = 304 - h;
+          const fill =
+            i % 2 ? "url(#dashLoadingBarPink)" : "url(#dashLoadingBarPurple)";
+          return `<rect class="dashboard-loading-bar" x="${x}" y="${y}" width="5" height="${h}" rx="3" fill="${fill}" />`;
+        }).join("");
+        svg.innerHTML = `
+          <defs>
+            <linearGradient id="dashLoadingBarPurple" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b8a4ff" stop-opacity=".68"/><stop offset="100%" stop-color="#b8a4ff" stop-opacity=".08"/></linearGradient>
+            <linearGradient id="dashLoadingBarPink" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f7a8c7" stop-opacity=".7"/><stop offset="100%" stop-color="#f7a8c7" stop-opacity=".08"/></linearGradient>
+          </defs>
+          <path class="dashboard-loading-grid" d="M54 88H866M54 142H866M54 196H866M54 250H866M54 304H866" />
+          ${bars}
+          <path class="dashboard-loading-line dashboard-loading-line--one" d="M54 244 C150 172, 240 218, 330 150 C442 66, 526 210, 622 138 C715 68, 780 150, 866 104" />
+          <path class="dashboard-loading-line dashboard-loading-line--two" d="M54 276 C164 230, 238 260, 330 206 C430 146, 528 246, 624 190 C714 136, 784 204, 866 156" />
+        `;
+      }
+
+      function startDashboardLoadingNumbers() {
+        stopDashboardLoadingNumbers();
+        DASHBOARD_LOADING_STARTED = performance.now();
+
+        const tick = (now) => {
+          const elapsed = now - DASHBOARD_LOADING_STARTED;
+          const total = loadingWave(elapsed, 48, 186, 0, 1600);
+          const done = loadingWave(
+            elapsed,
+            18,
+            Math.max(28, total - 8),
+            0.23,
+            1800,
+          );
+          const pending = Math.max(0, total - done);
+          const revenue = loadingWave(elapsed, 4200000, 98000000, 0.41, 2200);
+          const pct = Math.min(
+            99,
+            Math.round((done / Math.max(1, total)) * 100),
+          );
+
+          set("#k_total", total);
+          set("#k_done", done);
+          set("#k_pending", pending);
+          set("#bigRevenue", formatVND(revenue));
+          set("#heroTrend", `+${loadingWave(elapsed, 4, 38, 0.55, 1500)}%`);
+          const bar = document.getElementById("loadingCompletionBar");
+          if (bar) bar.style.width = `${pct}%`;
+
+          document
+            .querySelectorAll("[data-loading-counter]")
+            .forEach((el, i) => {
+              const min = Number(el.dataset.min || 0);
+              const max = Number(el.dataset.max || 100);
+              const value = loadingWave(
+                elapsed,
+                min,
+                max,
+                i * 0.17,
+                1200 + i * 87,
+              );
+              const suffix = el.dataset.suffix || "";
+              if (el.dataset.format === "vnd") {
+                el.textContent = formatVND(value);
+              } else if (el.dataset.format === "percent") {
+                el.textContent = `${value}%`;
+              } else {
+                el.textContent = `${value.toLocaleString("vi-VN")}${suffix}`;
+              }
+            });
+
+          DASHBOARD_LOADING_RAF = requestAnimationFrame(tick);
+        };
+
+        DASHBOARD_LOADING_RAF = requestAnimationFrame(tick);
+      }
+
+      function stopDashboardLoadingNumbers() {
+        if (DASHBOARD_LOADING_RAF) cancelAnimationFrame(DASHBOARD_LOADING_RAF);
+        DASHBOARD_LOADING_RAF = 0;
+      }
+
+      function loadingWave(elapsed, min, max, phase = 0, duration = 1400) {
+        const cycle = ((elapsed / duration + phase) % 1) * Math.PI * 2;
+        const eased = 0.5 - Math.cos(cycle) / 2;
+        return Math.round(min + eased * (max - min));
+      }
+
+      function repaint() {
+        const rows = applyFilters(ROWS);
+        kpis(rows);
+        renderTable(rows);
+        drawLine(rows);
+        agenda(rows);
+        topCats(rows);
+        renderTxnList(rows);
+        widgetCompletion(rows);
+        widgetAtRisk(rows);
+        widgetAssignee(rows);
+        widgetCatMix(rows);
+        animateDashboard();
+      }
+
+      function animateDashboard() {
+        animIn(".dash-mini-stats .mini-stat");
+        animIn(".dash-bento .card, .dash-hero-side .card");
+        animIn("#tbody tr");
+        animIn("#txnList .txn-row, #topCats .cat-mini, #agenda .agenda-row");
+        const chart = document.getElementById("lineChart");
+        chart.classList.remove("in");
+        void chart.offsetWidth;
+        chart.classList.add("in");
+      }
+
+      function animIn(selector) {
+        document.querySelectorAll(selector).forEach((el, i) => {
+          el.classList.remove("in");
+          void el.offsetWidth;
+          el.style.setProperty("--d", i * 50 + "ms");
+          el.classList.add("in");
+        });
+      }
+
       function monthKey(d) {
+        if (!d) return "";
         const dt = new Date(d + (String(d).length > 10 ? "" : "T00:00:00"));
         return isNaN(dt)
           ? ""
           : `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
       }
+
       function prettyYM(key) {
         const [y, m] = key.split("-");
         return `${m}/${y}`;
       }
+
       function buildFilterOptions(rows) {
         const months = Array.from(
           new Set(rows.filter((r) => r.date).map((r) => monthKey(r.date))),
@@ -432,32 +701,46 @@
         fillSelect("f_month", ["", ...months], (v) =>
           v ? prettyYM(v) : "All months",
         );
-        const assigns = Array.from(
-          new Set(rows.map((r) => r.assign_to).filter(Boolean)),
-        ).sort();
-        fillSelect("f_assign", ["", ...assigns], (v) => v || "All assignees");
-        const cats = Array.from(
-          new Set(rows.map((r) => r.category?.name).filter(Boolean)),
-        ).sort();
-        fillSelect("f_category", ["", ...cats], (v) => v || "All categories");
+        fillSelect(
+          "f_assign",
+          [
+            "",
+            ...Array.from(
+              new Set(rows.map((r) => r.assign_to).filter(Boolean)),
+            ).sort(),
+          ],
+          (v) => v || "All assignees",
+        );
+        fillSelect(
+          "f_category",
+          [
+            "",
+            ...Array.from(
+              new Set(rows.map((r) => r.category?.name).filter(Boolean)),
+            ).sort(),
+          ],
+          (v) => v || "All categories",
+        );
       }
+
       function fillSelect(id, values, labelMap) {
-        const sel = document.getElementById(id);
-        sel.innerHTML = values
+        document.getElementById(id).innerHTML = values
           .map(
             (v) => `<option value="${escapeAttr(v)}">${labelMap(v)}</option>`,
           )
           .join("");
       }
+
       function getFilters() {
         return {
           month: document.getElementById("f_month").value.trim(),
           assign: document.getElementById("f_assign").value.trim(),
           category: document.getElementById("f_category").value.trim(),
-          status: document.getElementById("f_status").value.trim(), // "", "charged", "Unpaid"
+          status: document.getElementById("f_status").value.trim(),
           q: document.getElementById("q").value.trim().toLowerCase(),
         };
       }
+
       function applyFilters(rows) {
         const f = getFilters();
         return rows.filter((r) => {
@@ -478,41 +761,6 @@
         });
       }
 
-      // ===== Repaint =====
-      function repaint() {
-        const rows = applyFilters(ROWS);
-        kpis(rows);
-        renderTable(rows);
-        drawLine(rows);
-        agenda(rows);
-        topCats(rows);
-        renderTxnList(rows);
-        widgetCompletion(rows);
-        widgetAtRisk(rows);
-        widgetAssignee(rows);
-        widgetUpcoming(rows);
-        widgetFilters();
-        widgetCatMix(rows);
-
-        // Animate on every repaint
-        animIn(".dash-mini-stats .mini-stat");
-        animIn(".dash-bento .card, .dash-hero-side .card");
-        animIn("#tbody tr");
-        animIn("#txnList .txn-row, #topCats .cat-mini, #agenda .agenda-row");
-        const chart = document.getElementById("lineChart");
-        chart.classList.remove("in");
-        void chart.offsetWidth;
-        chart.classList.add("in");
-      }
-
-      function setHeroTrend(text, neg) {
-        const el = document.getElementById("heroTrend");
-        if (!el) return;
-        el.textContent = text;
-        el.classList.toggle("neg", !!neg);
-      }
-
-      // ===== KPI =====
       function kpis(rows) {
         const total = rows.length;
         const doneRows = rows.filter((r) => r.is_charged);
@@ -522,107 +770,96 @@
         set("#k_total", total);
         set("#k_done", done);
         set("#k_pending", pending);
-
-        const fMonth = document.getElementById("f_month")?.value?.trim();
-        if (!fMonth) {
-          set("#bigRevenue", formatVND(revenue));
-          set("#bigRevenueNote", "All months (filtered)");
-          set("#k_total_delta", "All");
-          set("#k_done_delta", `${done}/${total}`);
-          setHeroTrend("—", false);
-          return;
-        }
+        set("#bigRevenue", formatVND(revenue));
+        set(
+          "#bigRevenueNote",
+          getFilters().month ? "Selected month" : "All months (filtered)",
+        );
+        set("#k_total_delta", getFilters().month || RANGE);
+        set("#k_done_delta", `${done}/${total || 0}`);
 
         const { from, prevFrom } = rangeDates();
-        const cur = doneRows.filter((r) => inRange(r.date, from, new Date()));
+        const now = new Date();
+        const cur = doneRows.filter((r) => inRange(r.date, from, now));
         const prev = doneRows.filter((r) => inRange(r.date, prevFrom, from));
-        const curRev = sum(cur.map((r) => +r.price || 0)),
-          prevRev = sum(prev.map((r) => +r.price || 0));
-        const delta = prevRev
-          ? (((curRev - prevRev) / prevRev) * 100).toFixed(1) + "%"
-          : curRev > 0
-            ? "+∞"
-            : "0%";
-        set("#bigRevenue", formatVND(curRev));
-        set("#bigRevenueNote", `vs prev. period ${delta}`);
-        set("#k_total_delta", `${RANGE}`);
-        set("#k_done_delta", `${done}/${total}`);
-        const neg = prevRev > 0 && curRev < prevRev;
-        setHeroTrend(delta, neg);
+        const curRev = sum(cur.map((r) => +r.price || 0));
+        const prevRev = sum(prev.map((r) => +r.price || 0));
+        const delta = prevRev ? ((curRev - prevRev) / prevRev) * 100 : 0;
+        setHeroTrend(
+          prevRev ? `${delta >= 0 ? "+" : ""}${delta.toFixed(1)}%` : "—",
+          prevRev > 0 && curRev < prevRev,
+        );
       }
 
-      // ===== Table =====
+      function setHeroTrend(text, neg) {
+        const el = document.getElementById("heroTrend");
+        el.textContent = text;
+        el.classList.toggle("neg", !!neg);
+      }
+
       function renderTable(rows) {
         const tb = document.getElementById("tbody");
         tb.innerHTML = "";
-        const list = rows; // luôn hiển thị tất cả sau khi đã filter
-        list.forEach((r, i) => {
+        rows.forEach((r, i) => {
           const tr = document.createElement("tr");
-          tr.className = "anim";
-          tr.style.setProperty("--d", i * 40 + "ms");
+          tr.className = "anim tr--detail";
+          tr.dataset.detailId = String(r.id);
+          tr.style.setProperty("--d", i * 35 + "ms");
+          const charged = r.is_charged
+            ? `<span class="state ok btnlike" data-toggle-charged data-id="${escapeAttr(r.id)}" data-val="true">Charged</span>`
+            : `<span class="state no btnlike" data-toggle-charged data-id="${escapeAttr(r.id)}" data-val="false">Unpaid</span>`;
           tr.innerHTML = `
-          <td class="mono">#${(r.id || "").slice(0, 6)}</td>
-          <td><a href="detail.html?id=${encodeURIComponent(r.id)}">${escapeHtml(
-            r.name || "",
-          )}</a></td>
-          <td>${fmtDate(r.date)}</td>
-          <td class="money">${formatVND(r.price)}</td>
-          <td>${escapeHtml(r.category?.name || "—")}</td>
-          <td>
-            ${
-              r.is_charged
-                ? `<span class="state ok btnlike" data-toggle-charged data-id="${escapeAttr(
-                    r.id,
-                  )}" data-val="true" title="Nhấn để đổi sang Chưa">Completed</span>`
-                : `<span class="state no btnlike" data-toggle-charged data-id="${escapeAttr(
-                    r.id,
-                  )}" data-val="false" title="Nhấn để đổi sang Đã charge">Unpaid</span>`
-            }
-          </td>`;
+            <td class="mono">#${escapeHtml(String(r.id || "").slice(0, 6))}</td>
+            <td><a class="table-task-link" href="detail.html?id=${encodeURIComponent(r.id)}">${escapeHtml(r.name || "—")}</a></td>
+            <td>${fmtDate(r.date)}</td>
+            <td class="money">${formatVND(r.price)}</td>
+            <td>${escapeHtml(r.category?.name || "")}</td>
+            <td>${charged}</td>`;
           tb.appendChild(tr);
         });
       }
 
-      // Toggle charged inline
       document.getElementById("tbody").addEventListener("click", async (e) => {
         const el = e.target.closest("[data-toggle-charged]");
-        if (!el) return;
-        const id = el.getAttribute("data-id");
-        const oldVal = el.getAttribute("data-val") === "true";
-        const newVal = !oldVal;
-        const oldHtml = el.innerHTML;
-        el.textContent = "…";
-        el.classList.add("muted");
-        try {
-          const url = `${BASE}/task?id=eq.${encodeURIComponent(id)}`;
-          const res = await fetch(url, {
-            method: "PATCH",
-            headers: {
-              ...HEADERS,
-              "Content-Type": "application/json",
-              Prefer: "return=representation",
-            },
-            body: JSON.stringify({ is_charged: newVal }),
-          });
-          if (!res.ok) {
-            const t = await res.text();
-            throw new Error(t || `HTTP ${res.status}`);
+        if (el) {
+          const id = el.getAttribute("data-id");
+          const newVal = el.getAttribute("data-val") !== "true";
+          const oldHtml = el.innerHTML;
+          el.textContent = "…";
+          el.classList.add("muted");
+          try {
+            const res = await fetch(
+              `${BASE}/task?id=eq.${encodeURIComponent(id)}`,
+              {
+                method: "PATCH",
+                headers: {
+                  ...HEADERS,
+                  "Content-Type": "application/json",
+                  Prefer: "return=representation",
+                },
+                body: JSON.stringify({ is_charged: newVal }),
+              },
+            );
+            if (!res.ok)
+              throw new Error((await res.text()) || `HTTP ${res.status}`);
+            const [updated] = await res.json();
+            const idx = ROWS.findIndex((r) => String(r.id) === String(id));
+            if (idx >= 0) ROWS[idx] = { ...ROWS[idx], ...updated };
+            repaint();
+          } catch (err) {
+            console.error(err);
+            el.innerHTML = oldHtml;
+            el.classList.remove("muted");
+            alert("Cập nhật thất bại: " + err.message);
           }
-          const [updated] = await res.json();
-          const i = ROWS.findIndex((r) => String(r.id) === String(id));
-          if (i >= 0) ROWS[i] = { ...ROWS[i], ...updated };
-          repaint();
-        } catch (err) {
-          console.error(err);
-          el.innerHTML = oldHtml;
-          el.classList.remove("muted");
-          alert(
-            "Cập nhật thất bại: " + err.message + "\nKiểm tra RLS/KEY/Policy.",
-          );
+          return;
         }
+        if (e.target.closest("a")) return;
+        const tr = e.target.closest("tr[data-detail-id]");
+        if (tr)
+          window.location.href = `detail.html?id=${encodeURIComponent(tr.dataset.detailId)}`;
       });
 
-      // ===== Right widgets =====
       function agenda(rows) {
         const host = document.getElementById("agenda");
         host.innerHTML = "";
@@ -638,14 +875,11 @@
           const div = document.createElement("div");
           div.className = "agenda-row anim";
           div.style.setProperty("--d", i * 60 + "ms");
-          div.innerHTML = `<div><b>${escapeHtml(
-            r.name || "",
-          )}</b><div class="muted">${escapeHtml(
-            r.category?.name || "",
-          )}</div></div><div class="money">${formatVND(r.price)}</div>`;
+          div.innerHTML = `<div><b>${escapeHtml(r.name || "")}</b><div class="muted">${escapeHtml(r.category?.name || "")}</div></div><div class="money">${formatVND(r.price)}</div>`;
           host.appendChild(div);
         });
       }
+
       function topCats(rows) {
         const host = document.getElementById("topCats");
         host.innerHTML = "";
@@ -661,22 +895,14 @@
             const row = document.createElement("div");
             row.className = "cat-mini anim";
             row.style.setProperty("--d", i * 60 + "ms");
-            row.innerHTML = `<span>${escapeHtml(k)}</span><b>${formatVND(
-              v,
-            )}</b>`;
+            row.innerHTML = `<span>${escapeHtml(k)}</span><b>${formatVND(v)}</b>`;
             host.appendChild(row);
           });
       }
 
       function renderTxnList(rows) {
         const host = document.getElementById("txnList");
-        if (!host) return;
         host.innerHTML = "";
-        const list = [...rows]
-          .sort((a, b) =>
-            String(b.date || "").localeCompare(String(a.date || "")),
-          )
-          .slice(0, 8);
         const hues = [
           "#3b82f6",
           "#8b5cf6",
@@ -684,9 +910,12 @@
           "#f59e0b",
           "#ec4899",
           "#06b6d4",
-          "#64748b",
-          "#ef4444",
         ];
+        const list = [...rows]
+          .sort((a, b) =>
+            String(b.date || "").localeCompare(String(a.date || "")),
+          )
+          .slice(0, 8);
         if (!list.length) {
           host.innerHTML =
             '<div class="muted" style="padding:12px">No transactions</div>';
@@ -697,103 +926,44 @@
           div.className = "txn-row anim";
           div.style.setProperty("--d", i * 40 + "ms");
           const letter = (r.name || "?").slice(0, 1).toUpperCase();
-          const hue = hues[i % hues.length];
-          div.innerHTML = `<div class="txn-row__ic" style="background:${hue}">${escapeHtml(
-            letter,
-          )}</div><div class="txn-row__body"><div class="txn-row__name">${escapeHtml(
-            r.name || "—",
-          )}</div><div class="txn-row__meta">${escapeHtml(
-            r.category?.name || "",
-          )} · ${fmtDate(r.date)}</div></div><div class="txn-row__amt">${formatVND(
-            r.price,
-          )}</div>`;
+          div.innerHTML = `<div class="txn-row__ic" style="background:${hues[i % hues.length]}">${escapeHtml(letter)}</div><div class="txn-row__body"><div class="txn-row__name">${escapeHtml(r.name || "—")}</div><div class="txn-row__meta">${escapeHtml(r.category?.name || "")} · ${fmtDate(r.date)}</div></div><div class="txn-row__amt">${formatVND(r.price)}</div>`;
           host.appendChild(div);
         });
       }
 
       function widgetCompletion(rows) {
-        const el = document.getElementById("widgetCompletion");
-        if (!el) return;
         const total = rows.length;
         const done = rows.filter((r) => r.is_charged).length;
         const pct = total ? Math.round((done / total) * 100) : 0;
-        el.innerHTML = `<div class="wprog"><div class="wprog__pct">${pct}%</div><div class="wprog__bar"><span style="width:${pct}%"></span></div><div class="muted wprog__sub">${done} / ${total} task completed</div></div>`;
+        document.getElementById("widgetCompletion").innerHTML =
+          `<div class="wprog"><div class="wprog__pct">${pct}%</div><div class="wprog__bar"><span style="width:${pct}%"></span></div><div class="muted wprog__sub">${done} / ${total} task completed</div></div>`;
       }
 
       function widgetAtRisk(rows) {
-        const el = document.getElementById("widgetAtRisk");
-        if (!el) return;
         const unpaid = rows.filter((r) => !r.is_charged);
-        const s = sum(unpaid.map((r) => +r.price || 0));
-        el.innerHTML = `<div class="wrisk__amt">${formatVND(s)}</div><div class="muted">${unpaid.length} task chưa charge</div>`;
+        document.getElementById("widgetAtRisk").innerHTML =
+          `<div class="wrisk__amt">${formatVND(sum(unpaid.map((r) => +r.price || 0)))}</div><div class="muted">${unpaid.length} task chưa charge</div>`;
       }
 
       function widgetAssignee(rows) {
         const el = document.getElementById("widgetAssignee");
-        if (!el) return;
         const m = new Map();
-        rows.forEach((r) => {
-          const k = r.assign_to || "—";
-          m.set(k, (m.get(k) || 0) + 1);
-        });
+        rows.forEach((r) =>
+          m.set(r.assign_to || "—", (m.get(r.assign_to || "—") || 0) + 1),
+        );
         const top = [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
         const max = Math.max(1, ...top.map((x) => x[1]));
         el.innerHTML = top.length
           ? top
               .map(
                 ([name, n]) =>
-                  `<div class="wbar-row"><span class="wbar-row__lbl">${escapeHtml(
-                    name,
-                  )}</span><div class="wbar-row__track"><span style="width:${(n / max) * 100}%"></span></div><span class="wbar-row__n">${n}</span></div>`,
+                  `<div class="wbar-row"><span class="wbar-row__lbl">${escapeHtml(name)}</span><div class="wbar-row__track"><span style="width:${(n / max) * 100}%"></span></div><span class="wbar-row__n">${n}</span></div>`,
               )
               .join("")
           : '<div class="muted">Không có dữ liệu</div>';
       }
 
-      function widgetUpcoming(rows) {
-        const el = document.getElementById("widgetUpcoming");
-        if (!el) return;
-        const t0 = new Date().toISOString().slice(0, 10);
-        const t7 = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
-        const list = rows
-          .filter((r) => {
-            const ds = (r.date || "").slice(0, 10);
-            return ds.length >= 10 && ds >= t0 && ds <= t7;
-          })
-          .sort((a, b) =>
-            String(a.date || "").localeCompare(String(b.date || "")),
-          )
-          .slice(0, 5);
-        el.innerHTML = list.length
-          ? list
-              .map(
-                (r) =>
-                  `<a class="wup-row" href="detail.html?id=${encodeURIComponent(r.id)}"><span class="wup-row__d">${fmtDate(r.date)}</span><span class="wup-row__n">${escapeHtml(r.name || "—")}</span><span class="wup-row__p money">${formatVND(r.price)}</span></a>`,
-              )
-              .join("")
-          : '<div class="muted">Không có deadline trong 7 ngày</div>';
-      }
-
-      function widgetFilters() {
-        const el = document.getElementById("widgetFilters");
-        if (!el) return;
-        const f = getFilters();
-        const chips = [];
-        if (f.month) chips.push(`Tháng: ${f.month}`);
-        if (f.assign) chips.push(`Assign: ${f.assign}`);
-        if (f.category) chips.push(`Category: ${f.category}`);
-        if (f.status) chips.push(`Status: ${f.status}`);
-        if (f.q) chips.push(`Tìm: “${f.q}”`);
-        el.innerHTML = chips.length
-          ? chips
-              .map((c) => `<span class="fchip">${escapeHtml(c)}</span>`)
-              .join("")
-          : '<span class="muted">Không có bộ lọc — toàn bộ dữ liệu khớp</span>';
-      }
-
       function widgetCatMix(rows) {
-        const el = document.getElementById("widgetCatMix");
-        if (!el) return;
         const charged = rows.filter((r) => r.is_charged);
         const m = new Map();
         charged.forEach((r) => {
@@ -810,7 +980,7 @@
           "#ec4899",
           "#64748b",
         ];
-        el.innerHTML = top.length
+        document.getElementById("widgetCatMix").innerHTML = top.length
           ? top
               .map(
                 ([k, v], i) =>
@@ -820,55 +990,6 @@
           : '<div class="muted">Không có doanh thu đã charge</div>';
       }
 
-      function miniSparklinePoly(sel, vals, stroke) {
-        const svg = document.querySelector(sel);
-        if (!svg) return;
-        const W = 72,
-          H = 28,
-          P = 2;
-        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-        svg.innerHTML = "";
-        const n = vals.length;
-        if (!n) return;
-        const mx = Math.max(1, ...vals);
-        const pts = vals
-          .map((v, i) => {
-            const x = P + (n <= 1 ? 0 : (i / (n - 1)) * (W - 2 * P));
-            const y = H - P - (v / mx) * (H - 2 * P);
-            return `${x},${y}`;
-          })
-          .join(" ");
-        svg.insertAdjacentHTML(
-          "beforeend",
-          `<polyline fill="none" stroke="${stroke}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" points="${pts}" />`,
-        );
-      }
-
-      function miniSparkline(sel, vals, stroke) {
-        const svg = document.querySelector(sel);
-        if (!svg) return;
-        const W = 140,
-          H = 44,
-          P = 4;
-        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-        svg.innerHTML = "";
-        const n = vals.length;
-        if (!n) return;
-        const mx = Math.max(1, ...vals);
-        const pts = vals
-          .map((v, i) => {
-            const x = P + (n <= 1 ? 0 : (i / (n - 1)) * (W - 2 * P));
-            const y = H - P - (v / mx) * (H - 2 * P);
-            return `${x},${y}`;
-          })
-          .join(" ");
-        svg.insertAdjacentHTML(
-          "beforeend",
-          `<polyline fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts}" />`,
-        );
-      }
-
-      // ===== Charts =====
       function drawLine(rows) {
         const { from } = rangeDates();
         const days = daysBetween(from, new Date());
@@ -901,95 +1022,132 @@
         miniSparklinePoly("#sparkMini2", cntCharged, "rgba(234, 88, 12, 0.9)");
         miniSparklinePoly("#sparkMini3", cntUnpaid, "rgba(37, 99, 235, 0.9)");
       }
-      /** Nến tổng hợp từ doanh thu ngày (open = ngày trước); cột dưới = số task */
+
       function candlestickChart(sel, seriesRev, seriesCnt, labels) {
         const svg = document.querySelector(sel);
-        const W = 700;
-        const H = 260;
-        const P = 36;
-        const splitY = 198;
-        const volTop = 208;
-        const volBot = H - 22;
+        if (!svg) return;
+        const W = 900,
+          H = 360;
+        const pad = { top: 54, right: 34, bottom: 58, left: 54 };
+        const plotW = W - pad.left - pad.right;
+        const plotH = H - pad.top - pad.bottom;
         const n = seriesRev.length;
         svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
         svg.innerHTML = "";
-        if (n === 0) return;
-
-        const ohlc = seriesRev.map((c, i) => {
-          const o = i > 0 ? seriesRev[i - 1] : c;
-          const h = Math.max(o, c) * 1.03 + (Math.max(o, c) === 0 ? 1 : 0);
-          const l = Math.max(0, Math.min(o, c) * 0.97);
-          return { o, c, h, l };
-        });
-        const maxH = Math.max(1, ...ohlc.map((x) => x.h));
-        const maxVol = Math.max(1, ...seriesCnt);
-
+        if (!n) return;
         const xAt = (i) =>
-          P + (n <= 1 ? (W - P * 2) / 2 : (i / (n - 1)) * (W - P * 2));
-        const yPrice = (v) => splitY - 10 - (v / maxH) * (splitY - P - 18);
-        const yVolBase = (v) => volBot - (v / maxVol) * (volBot - volTop);
-
-        for (let g = 0; g <= 4; g++) {
-          const y = P + ((splitY - P - 18) * g) / 4;
-          svg.insertAdjacentHTML(
-            "beforeend",
-            `<line class="grid-line" x1="${P}" y1="${y}" x2="${
-              W - P
-            }" y2="${y}" />`,
-          );
-        }
+          pad.left + (n <= 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+        const maxRev = Math.max(1, ...seriesRev);
+        const maxCnt = Math.max(1, ...seriesCnt);
+        const yRev = (v) => pad.top + plotH - (v / maxRev) * plotH * 0.82;
+        const yCnt = (v) => pad.top + plotH - (v / maxCnt) * plotH * 0.72;
+        const revPts = seriesRev.map((v, i) => ({ x: xAt(i), y: yRev(v) }));
+        const cntPts = seriesCnt.map((v, i) => ({ x: xAt(i), y: yCnt(v) }));
+        const barW = Math.max(3, Math.min(7, plotW / Math.max(42, n * 1.8)));
+        const smoothPath = (pts) => {
+          if (!pts.length) return "";
+          let d = `M ${pts[0].x} ${pts[0].y}`;
+          for (let i = 0; i < pts.length - 1; i++) {
+            const p0 = pts[i],
+              p1 = pts[i + 1],
+              midX = (p0.x + p1.x) / 2;
+            d += ` C ${midX} ${p0.y}, ${midX} ${p1.y}, ${p1.x} ${p1.y}`;
+          }
+          return d;
+        };
+        const prevRev = sum(seriesRev.slice(0, Math.floor(n / 2)));
+        const curRev = sum(seriesRev.slice(Math.floor(n / 2)));
+        const pct = Math.max(
+          -99,
+          Math.min(
+            999,
+            Math.round(prevRev ? ((curRev - prevRev) / prevRev) * 100 : 24),
+          ),
+        );
+        const hi = Math.min(n - 1, Math.max(0, Math.floor(n * 0.56)));
+        const hiPt = revPts[hi] || { x: W / 2, y: H / 2 };
+        const tipX = Math.max(pad.left + 10, Math.min(W - 234, hiPt.x - 105));
+        const tipY = Math.max(24, hiPt.y - 104);
         svg.insertAdjacentHTML(
           "beforeend",
-          `<line class="vol-axis" x1="${P}" y1="${volBot}" x2="${
-            W - P
-          }" y2="${volBot}" />`,
+          `<defs><linearGradient id="perfBarPurple" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b8a4ff" stop-opacity=".72"/><stop offset="100%" stop-color="#b8a4ff" stop-opacity=".08"/></linearGradient><linearGradient id="perfBarPink" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f7a8c7" stop-opacity=".7"/><stop offset="100%" stop-color="#f7a8c7" stop-opacity=".08"/></linearGradient><linearGradient id="perfTooltip" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffd9e8"/><stop offset="100%" stop-color="#f8a8c7"/></linearGradient><filter id="perfTipShadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="18" stdDeviation="15" flood-color="#ec4899" flood-opacity=".18"/></filter></defs>`,
         );
-
-        const slot = n <= 1 ? W - P * 2 : (W - P * 2) / (n - 1);
-        const cw = Math.min(11, slot * 0.52);
-
-        ohlc.forEach((x, i) => {
-          const cx = xAt(i);
-          const yHi = yPrice(x.h);
-          const yLo = yPrice(x.l);
-          const yO = yPrice(x.o);
-          const yC = yPrice(x.c);
-          const top = Math.min(yO, yC);
-          const bot = Math.max(yO, yC);
-          const up = x.c >= x.o;
-          const cls = up ? "candle-up" : "candle-down";
+        for (let g = 0; g <= 4; g++) {
+          const y = pad.top + (plotH * g) / 4;
           svg.insertAdjacentHTML(
             "beforeend",
-            `<line class="wick" x1="${cx}" y1="${yHi}" x2="${cx}" y2="${yLo}" />`,
+            `<line class="perf-grid" x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" />`,
           );
-          const bh = Math.max(2.5, bot - top);
+        }
+        seriesCnt.forEach((v, i) => {
+          const cx = xAt(i),
+            h = Math.max(16, (v / maxCnt) * plotH * 0.82),
+            y = pad.top + plotH - h;
+          const fill =
+            i % 3 === 1 ? "url(#perfBarPink)" : "url(#perfBarPurple)";
           svg.insertAdjacentHTML(
             "beforeend",
-            `<rect class="${cls}" x="${cx - cw / 2}" y="${top}" width="${cw}" height="${bh}" rx="1.5" />`,
-          );
-          const vb = yVolBase(seriesCnt[i]);
-          const vh = volBot - vb;
-          svg.insertAdjacentHTML(
-            "beforeend",
-            `<rect class="vol-bar" x="${cx - cw / 2}" y="${vb}" width="${cw}" height="${vh}" rx="1" />`,
+            `<rect class="perf-bar" x="${cx - barW / 2}" y="${y}" width="${barW}" height="${h}" rx="${barW / 2}" fill="${fill}" />`,
           );
         });
-
-        const step = Math.max(1, Math.ceil(labels.length / 12));
+        svg.insertAdjacentHTML(
+          "beforeend",
+          `<path class="perf-line perf-line--practice" d="${smoothPath(cntPts)}" /><path class="perf-line perf-line--theory" d="${smoothPath(revPts)}" /><circle class="perf-point perf-point--halo" cx="${hiPt.x}" cy="${hiPt.y}" r="12" /><circle class="perf-point" cx="${hiPt.x}" cy="${hiPt.y}" r="5" /><rect class="perf-tooltip" x="${tipX}" y="${tipY}" width="210" height="76" rx="22" /><text class="perf-tooltip__pct" x="${tipX + 22}" y="${tipY + 32}">${pct >= 0 ? "+" : ""}${pct}%</text><text class="perf-tooltip__sub" x="${tipX + 22}" y="${tipY + 56}">Recent tasks this range: ${sum(seriesCnt)}</text>`,
+        );
+        const step = Math.max(1, Math.ceil(labels.length / 8));
         labels.forEach((lab, i) => {
-          if (i % step === 0) {
-            const x = xAt(i);
+          if (i % step === 0)
             svg.insertAdjacentHTML(
               "beforeend",
-              `<text x="${x}" y="${
-                H - 5
-              }" text-anchor="middle" font-size="9" fill="#8b8499">${lab}</text>`,
+              `<text class="perf-label" x="${xAt(i)}" y="${H - 20}" text-anchor="middle">${lab}</text>`,
             );
-          }
         });
       }
 
-      // ===== Export =====
+      function miniSparklinePoly(sel, vals, stroke) {
+        const svg = document.querySelector(sel);
+        if (!svg) return;
+        const W = 72,
+          H = 28,
+          P = 2;
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svg.innerHTML = "";
+        if (!vals.length) return;
+        const mx = Math.max(1, ...vals);
+        const pts = vals
+          .map(
+            (v, i) =>
+              `${P + (vals.length <= 1 ? 0 : (i / (vals.length - 1)) * (W - 2 * P))},${H - P - (v / mx) * (H - 2 * P)}`,
+          )
+          .join(" ");
+        svg.insertAdjacentHTML(
+          "beforeend",
+          `<polyline fill="none" stroke="${stroke}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" points="${pts}" />`,
+        );
+      }
+
+      function miniSparkline(sel, vals, stroke) {
+        const svg = document.querySelector(sel);
+        if (!svg) return;
+        const W = 140,
+          H = 44,
+          P = 4;
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svg.innerHTML = "";
+        if (!vals.length) return;
+        const mx = Math.max(1, ...vals);
+        const pts = vals
+          .map(
+            (v, i) =>
+              `${P + (vals.length <= 1 ? 0 : (i / (vals.length - 1)) * (W - 2 * P))},${H - P - (v / mx) * (H - 2 * P)}`,
+          )
+          .join(" ");
+        svg.insertAdjacentHTML(
+          "beforeend",
+          `<polyline fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts}" />`,
+        );
+      }
+
       function exportCSV() {
         const rows = applyFilters(ROWS);
         const header = ["id", "name", "date", "price", "category", "charged"];
@@ -1016,77 +1174,15 @@
         URL.revokeObjectURL(url);
       }
 
-      // ===== Utils =====
-      function set(sel, v) {
-        const el = document.querySelector(sel);
-        if (el) el.textContent = v;
-      }
-      function sum(a) {
-        return a.reduce((x, y) => x + y, 0);
-      }
-      function fmtDate(d) {
-        if (!d) return "";
-        const dt = new Date(d + (String(d).length > 10 ? "" : "T00:00:00"));
-        return isNaN(dt) ? d : dt.toLocaleDateString("vi-VN");
-      }
-      function escapeHtml(s) {
-        return String(s ?? "").replace(
-          /[&<>\"']/g,
-          (m) =>
-            ({
-              "&": "&amp;",
-              "<": "&lt;",
-              ">": "&gt;",
-              '"': "&quot;",
-              "'": "&#39;",
-            })[m] || m,
-        );
-      }
-      function escapeAttr(s) {
-        return String(s ?? "").replace(/\"/g, "&quot;");
-      }
-      function escCsv(v) {
-        return '"' + String(v ?? "").replaceAll('"', '""') + '"';
-      }
-      function sameDay(d1, d2) {
-        const a = new Date(d1 + (String(d1).length > 10 ? "" : "T00:00:00"));
-        const b = new Date(d2);
-        return (
-          a.getFullYear() === b.getFullYear() &&
-          a.getMonth() === b.getMonth() &&
-          a.getDate() === b.getDate()
-        );
-      }
-      function daysBetween(start, end) {
-        const s = new Date(
-          start.getFullYear(),
-          start.getMonth(),
-          start.getDate(),
-        );
-        const e = new Date(end.getFullYear(), end.getMonth(), end.getDate());
-        const labels = [],
-          days = [];
-        let d = s;
-        while (d <= e) {
-          labels.push(
-            `${String(d.getDate()).padStart(2, "0")}/${String(
-              d.getMonth() + 1,
-            ).padStart(2, "0")}`,
-          );
-          days.push(new Date(d));
-          d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
-        }
-        const map = { map: (fn) => days.map(fn) };
-        return { labels, map };
-      }
       function rangeDates() {
         const now = new Date();
         const fMonth = document.getElementById("f_month").value;
         if (fMonth) {
           const [y, m] = fMonth.split("-").map(Number);
-          const from = new Date(y, m - 1, 1);
-          const prevFrom = new Date(y, m - 2, 1);
-          return { from, prevFrom };
+          return {
+            from: new Date(y, m - 1, 1),
+            prevFrom: new Date(y, m - 2, 1),
+          };
         }
         if (RANGE === "7d") {
           const from = new Date(now);
@@ -1102,38 +1198,94 @@
           prevFrom.setDate(prevFrom.getDate() - 30);
           return { from, prevFrom };
         }
-        if (RANGE === "90d") {
-          const from = new Date(now);
-          from.setDate(from.getDate() - 89);
-          const prevFrom = new Date(from);
-          prevFrom.setDate(prevFrom.getDate() - 90);
-          return { from, prevFrom };
-        }
         const from = new Date(now.getFullYear(), 0, 1);
         const prevFrom = new Date(now.getFullYear() - 1, 0, 1);
         return { from, prevFrom };
       }
+
+      function daysBetween(start, end) {
+        const s = new Date(
+          start.getFullYear(),
+          start.getMonth(),
+          start.getDate(),
+        );
+        const e = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+        const labels = [],
+          days = [];
+        let d = s;
+        while (d <= e) {
+          labels.push(
+            `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`,
+          );
+          days.push(new Date(d));
+          d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+        }
+        return { labels, map: { map: (fn) => days.map(fn) } };
+      }
+
       function inRange(dateStr, from, to) {
+        if (!dateStr) return false;
         const d = new Date(
           dateStr + (String(dateStr).length > 10 ? "" : "T00:00:00"),
         );
         return d >= from && d <= to;
       }
 
-      const _VND_FORMATTER = new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-        maximumFractionDigits: 0,
-      });
+      function sameDay(d1, d2) {
+        if (!d1) return false;
+        const a = new Date(d1 + (String(d1).length > 10 ? "" : "T00:00:00"));
+        const b = new Date(d2);
+        return (
+          a.getFullYear() === b.getFullYear() &&
+          a.getMonth() === b.getMonth() &&
+          a.getDate() === b.getDate()
+        );
+      }
+
       function formatVND(n) {
-        if (n == null || n === "") return "₫0";
-        const v = +n || 0;
-        return _VND_FORMATTER.format(v);
+        return n == null || n === "" ? "₫0" : VND.format(+n || 0);
+      }
+
+      function fmtDate(d) {
+        if (!d) return "";
+        const dt = new Date(d + (String(d).length > 10 ? "" : "T00:00:00"));
+        return isNaN(dt) ? d : dt.toLocaleDateString("vi-VN");
+      }
+
+      function set(sel, v) {
+        const el = document.querySelector(sel);
+        if (el) el.textContent = v;
       }
 
       function setStatus(t) {
         const el = document.getElementById("status");
         if (el) el.textContent = t;
+      }
+
+      function sum(a) {
+        return a.reduce((x, y) => x + y, 0);
+      }
+
+      function escapeHtml(s) {
+        return String(s ?? "").replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[m] || m,
+        );
+      }
+
+      function escapeAttr(s) {
+        return String(s ?? "").replace(/"/g, "&quot;");
+      }
+
+      function escCsv(v) {
+        return '"' + String(v ?? "").replaceAll('"', '""') + '"';
       }
     </script>
   </body>

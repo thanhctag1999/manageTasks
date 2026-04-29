@@ -4,12 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Create Task</title>
-    
+    <link rel="icon" href="data:," />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="app-theme.css" />
-
   </head>
   <body>
     <div class="layout">
@@ -22,43 +25,62 @@
             <span class="side-user__email">theone@workspace.local</span>
           </div>
         </div>
-        <a href="task-new.html" class="btn-create">+ Create Task</a>
+        <a href="task-new.html" class="btn-create"
+          ><span class="btn-create__icon" aria-hidden="true"
+            ><svg viewBox="0 0 24 24">
+              <path d="M12 5v14M5 12h14" /></svg></span
+          ><span class="btn-create__label">Create Task</span></a
+        >
         <nav class="nav nav--stack app-nav">
           <a href="index.html"
-            ><span class="nav__ic" aria-hidden="true">⌂</span> Dashboard</a
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M4 10.5 12 4l8 6.5" />
+                <path d="M6.5 10v8.5h11V10" />
+                <path d="M10 18.5v-5h4v5" /></svg></span
+            >Dashboard</a
           >
-          <a href="task.html"
-            ><span class="nav__ic" aria-hidden="true">□</span> My Task</a
-          >
-          <a href="task.html"
-            ><span class="nav__ic" aria-hidden="true">✉</span> Inbox</a
+          <a class="active" href="task.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <rect x="5" y="4.5" width="14" height="15" rx="3" />
+                <path d="m8.5 12 2.2 2.2 4.8-5" /></svg></span
+            >My Task</a
           >
           <a href="analytics.html"
-            ><span class="nav__ic" aria-hidden="true">▤</span> Reporting</a
-          >
-          <h4>Favourite</h4>
-          <a href="index.html"
-            ><span class="nav__ic" aria-hidden="true">★</span> Overview</a
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M5 19V9" />
+                <path d="M12 19V5" />
+                <path d="M19 19v-7" />
+                <path d="M4 19.5h16" /></svg></span
+            >Reporting</a
           >
         </nav>
         <div class="side-foot">
           <a href="mailto:" class="side-foot__link"
-            ><span class="nav__ic" aria-hidden="true">?</span> Help Center</a
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8" />
+                <path
+                  d="M9.8 9.7a2.3 2.3 0 1 1 3.6 1.9c-.9.6-1.4 1.1-1.4 2.1"
+                />
+                <path d="M12 17h.01" /></svg></span
+            >Help Center</a
           >
         </div>
       </aside>
 
       <main class="content">
         <div class="app-topbar">
-          <div class="app-topbar__crumb">
-            Synchro › Tasks › <b>Create</b>
-          </div>
+          <div class="app-topbar__crumb">Synchro › Tasks › <b>Create</b></div>
           <input
             class="app-topbar__search"
             type="search"
             placeholder="Search…"
             aria-label="Search"
-            disabled />
+            disabled
+          />
         </div>
         <header class="page-head">
           <div>
@@ -86,7 +108,8 @@
                 <input
                   id="name"
                   required
-                  placeholder="VD: Thiết kế UI Task Board" />
+                  placeholder="VD: Thiết kế UI Task Board"
+                />
               </div>
 
               <div>
@@ -97,7 +120,8 @@
                     id="btnAddCat"
                     type="button"
                     class="btn"
-                    title="Add new category">
+                    title="Add new category"
+                  >
                     + New
                   </button>
                 </div>
@@ -117,7 +141,8 @@
                   inputmode="numeric"
                   autocomplete="off"
                   placeholder="VD: 1.500.000"
-                  class="money-input" />
+                  class="money-input"
+                />
                 <div class="hint">Nhập số — hiển thị định dạng VND khi gõ.</div>
               </div>
 
@@ -180,13 +205,25 @@
       <h3 style="margin: 0 0 10px">New Category</h3>
       <label for="catName" class="small muted">Name</label>
       <input id="catName" placeholder="VD: Work" />
+      <label for="catPrice" class="small muted" style="margin-top: 10px"
+        >Price (VND)</label
+      >
+      <input
+        id="catPrice"
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        placeholder="VD: 1.500.000"
+        class="money-input"
+      />
       <div
         style="
           display: flex;
           gap: 8px;
           justify-content: flex-end;
           margin-top: 10px;
-        ">
+        "
+      >
         <button id="catCancel" class="btn">Cancel</button>
         <button id="catSave" class="btn primary">Save</button>
       </div>
@@ -221,9 +258,13 @@
         toast: document.getElementById("toast"),
         dlgCat: document.getElementById("dlgCat"),
         catName: document.getElementById("catName"),
+        catPrice: document.getElementById("catPrice"),
         catSave: document.getElementById("catSave"),
         catCancel: document.getElementById("catCancel"),
       };
+
+      let categories = [];
+      let tasksCache = [];
 
       // Defaults
       (function setDefaults() {
@@ -261,14 +302,77 @@
       }
 
       // Init
-      loadCategories();
-      els.link.addEventListener("input", () => {
+      loadCategories(true);
+      // also load tasks for cross-checking repo -> category
+      loadTasksCache();
+
+      els.link.addEventListener("input", async () => {
         const v = els.link.value.trim();
         els.openLink.href = v && /^https?:\/\//i.test(v) ? v : "#";
         // Auto-fill name only when it's currently empty
         if (!els.name.value.trim()) {
           const s = extractLastSegment(v);
           if (s) els.name.value = s;
+        }
+        // Auto-set category to "Clone" if link contains 'Clone_' (case insensitive)
+        if (v.toLowerCase().includes("clone_")) {
+          const cloneCat = categories.find((c) => c.name === "Clone");
+          if (cloneCat) {
+            els.category.value = cloneCat.id;
+            // Also trigger price fill
+            if (cloneCat.price !== null && cloneCat.price !== undefined) {
+              els.price.value = priceFmt.format(cloneCat.price);
+            }
+          }
+        }
+
+        // If link looks like a GitHub URL, extract the segment after 'github.com/' and before next '/'
+        try {
+          const m =
+            v.match(/github\.com\/(?:[^/]+)\/([^/]+)/i) ||
+            v.match(/github\.com\/([^/]+)/i);
+          // prefer repository name segment (owner/repo -> repo in first capture)
+          const repoSeg = m ? m[1] : null;
+          if (repoSeg) {
+            // ensure tasks cache loaded
+            if (!tasksCache.length) await loadTasksCache();
+            const found = tasksCache.find((t) => {
+              if (!t.link) return false;
+              try {
+                const u = new URL(t.link, "http://x");
+                const path = u.pathname.replace(/(^\/|\/$)/g, "");
+                const parts = path.split("/").filter(Boolean);
+                // check if any path segment equals repoSeg (case-insensitive)
+                return parts.some(
+                  (p) => p.toLowerCase() === repoSeg.toLowerCase(),
+                );
+              } catch {
+                return t.link.toLowerCase().includes(repoSeg.toLowerCase());
+              }
+            });
+            if (found && found.category && found.category.name) {
+              const cat = categories.find(
+                (c) => String(c.name) === String(found.category.name),
+              );
+              if (cat) {
+                els.category.value = cat.id;
+                if (cat.price !== null && cat.price !== undefined)
+                  els.price.value = priceFmt.format(cat.price);
+              }
+            }
+          }
+        } catch (err) {
+          // ignore parsing errors
+          console.debug("repo match error", err);
+        }
+      });
+
+      // Auto-fill price based on category
+      els.category.addEventListener("change", () => {
+        const selectedId = els.category.value;
+        const cat = categories.find((c) => c.id == selectedId);
+        if (cat && cat.price !== null && cat.price !== undefined) {
+          els.price.value = priceFmt.format(cat.price);
         }
       });
 
@@ -292,40 +396,85 @@
       els.form.addEventListener("submit", onSubmit);
       document.getElementById("btnAddCat").addEventListener("click", () => {
         els.catName.value = "";
+        els.catPrice.value = "";
         els.dlgCat.showModal();
         setTimeout(() => els.catName.focus(), 50);
       });
-      els.catCancel.addEventListener("click", () => els.dlgCat.close());
+      els.catCancel.addEventListener("click", () => {
+        els.dlgCat.close();
+        els.catName.value = "";
+        els.catPrice.value = "";
+      });
       els.catSave.addEventListener("click", createCategory);
 
-      async function loadCategories() {
+      // Format catPrice input
+      els.catPrice.addEventListener("input", () => {
+        const dig = els.catPrice.value.replace(/\D/g, "");
+        if (!dig) {
+          els.catPrice.value = "";
+          return;
+        }
+        const n = parseInt(dig, 10);
+        if (!Number.isFinite(n)) {
+          els.catPrice.value = "";
+          return;
+        }
+        els.catPrice.value = priceFmt.format(n);
+      });
+
+      function setLoading(on) {
+        document.body.classList.toggle("task-new-loading", !!on);
+      }
+
+      async function loadCategories(showFullLoader = false) {
+        if (showFullLoader) setLoading(true);
         try {
           const url = new URL(`${BASE}/category`);
-          url.searchParams.set("select", "id,name");
+          url.searchParams.set("select", "id,name,price");
           url.searchParams.set("order", "name.asc");
           const res = await fetch(url, {
             headers: { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` },
           });
           if (!res.ok) throw new Error("load category: " + res.status);
-          const cats = await res.json();
-          els.category.innerHTML = cats
+          categories = await res.json();
+          els.category.innerHTML = categories
             .map(
               (c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`,
             )
             .join("");
         } catch (e) {
           notify("Không tải được category: " + e.message, true);
+        } finally {
+          if (showFullLoader) setLoading(false);
+        }
+      }
+
+      // Load tasks into cache for link-based category inference
+      async function loadTasksCache() {
+        try {
+          const url = new URL(`${BASE}/task`);
+          url.searchParams.set("select", "id,link,category:category(name)");
+          url.searchParams.set("order", "date.desc");
+          const res = await fetch(url, {
+            headers: { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` },
+          });
+          if (!res.ok) throw new Error("load tasks: " + res.status);
+          tasksCache = await res.json();
+        } catch (e) {
+          console.debug("Could not load tasks cache:", e.message || e);
         }
       }
 
       async function createCategory() {
         const name = els.catName.value.trim();
+        const priceDig = els.catPrice.value.replace(/\D/g, "");
+        const price = priceDig ? parseInt(priceDig, 10) : null;
         if (!name) return notify("Nhập tên category", true);
         try {
           const res = await fetch(`${BASE}/category`, {
             method: "POST",
             headers: { ...HEADERS, Prefer: "return=representation" },
-            body: JSON.stringify({ name }),
+            body: JSON.stringify({ name, price }),
           });
           if (!res.ok) {
             const t = await res.text();

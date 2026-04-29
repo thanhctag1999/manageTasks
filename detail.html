@@ -11,15 +11,19 @@
     style-src 'self' 'unsafe-inline' https:;
     script-src 'self' 'unsafe-inline' https:;
     font-src 'self' https: data:;
-  " />
+  "
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Task · Detail & Edit</title>
-    
+    <link rel="icon" href="data:," />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="app-theme.css" />
-
   </head>
   <body>
     <div class="layout">
@@ -32,43 +36,62 @@
             <span class="side-user__email">theone@workspace.local</span>
           </div>
         </div>
-        <a href="task-new.html" class="btn-create">+ Create Task</a>
+        <a href="task-new.html" class="btn-create"
+          ><span class="btn-create__icon" aria-hidden="true"
+            ><svg viewBox="0 0 24 24">
+              <path d="M12 5v14M5 12h14" /></svg></span
+          ><span class="btn-create__label">Create Task</span></a
+        >
         <nav class="nav nav--stack app-nav">
           <a href="index.html"
-            ><span class="nav__ic" aria-hidden="true">⌂</span> Dashboard</a
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M4 10.5 12 4l8 6.5" />
+                <path d="M6.5 10v8.5h11V10" />
+                <path d="M10 18.5v-5h4v5" /></svg></span
+            >Dashboard</a
           >
           <a class="active" href="task.html"
-            ><span class="nav__ic" aria-hidden="true">□</span> My Task</a
-          >
-          <a href="task.html"
-            ><span class="nav__ic" aria-hidden="true">✉</span> Inbox</a
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <rect x="5" y="4.5" width="14" height="15" rx="3" />
+                <path d="m8.5 12 2.2 2.2 4.8-5" /></svg></span
+            >My Task</a
           >
           <a href="analytics.html"
-            ><span class="nav__ic" aria-hidden="true">▤</span> Reporting</a
-          >
-          <h4>Favourite</h4>
-          <a href="index.html"
-            ><span class="nav__ic" aria-hidden="true">★</span> Overview</a
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M5 19V9" />
+                <path d="M12 19V5" />
+                <path d="M19 19v-7" />
+                <path d="M4 19.5h16" /></svg></span
+            >Reporting</a
           >
         </nav>
         <div class="side-foot">
           <a href="mailto:" class="side-foot__link"
-            ><span class="nav__ic" aria-hidden="true">?</span> Help Center</a
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8" />
+                <path
+                  d="M9.8 9.7a2.3 2.3 0 1 1 3.6 1.9c-.9.6-1.4 1.1-1.4 2.1"
+                />
+                <path d="M12 17h.01" /></svg></span
+            >Help Center</a
           >
         </div>
       </aside>
 
       <main class="content">
         <div class="app-topbar">
-          <div class="app-topbar__crumb">
-            Synchro › Tasks › <b>Detail</b>
-          </div>
+          <div class="app-topbar__crumb">Synchro › Tasks › <b>Detail</b></div>
           <input
             class="app-topbar__search"
             type="search"
             placeholder="Search…"
             aria-label="Search"
-            disabled />
+            disabled
+          />
         </div>
         <header class="page-head">
           <div>
@@ -108,7 +131,8 @@
                   id="name"
                   required
                   placeholder="VD: Thiết kế UI Task Board"
-                  disabled />
+                  disabled
+                />
               </div>
 
               <div>
@@ -119,7 +143,8 @@
                     id="btnAddCat"
                     type="button"
                     class="btn hidden"
-                    title="Add new category">
+                    title="Add new category"
+                  >
                     + New
                   </button>
                 </div>
@@ -140,7 +165,8 @@
                   autocomplete="off"
                   placeholder="VD: 1.500.000"
                   class="money-input"
-                  disabled />
+                  disabled
+                />
                 <div class="hint">
                   Xem nhanh: <b class="money" id="pricePreview">₫0</b>
                 </div>
@@ -169,7 +195,8 @@
                     id="link"
                     type="text"
                     placeholder="https://…"
-                    disabled />
+                    disabled
+                  />
                   <a
                     id="openLink"
                     class="btn"
@@ -187,7 +214,8 @@
                 <textarea
                   id="note"
                   placeholder="Ghi chú thêm…"
-                  disabled></textarea>
+                  disabled
+                ></textarea>
               </div>
             </form>
 
@@ -289,6 +317,7 @@
       init();
       async function init() {
         if (!taskId) return showError("Thiếu tham số id");
+        setLoading(true);
         try {
           await loadCategories();
           const row = await fetchTask(taskId);
@@ -297,8 +326,14 @@
           setViewMode(true);
         } catch (e) {
           showError(e.message || String(e));
+        } finally {
+          setLoading(false);
         }
         wireEvents();
+      }
+
+      function setLoading(on) {
+        document.body.classList.toggle("detail-loading", !!on);
       }
 
       function wireEvents() {
