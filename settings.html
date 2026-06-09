@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Settings · ManageTasks</title>
+    <link rel="icon" href="data:," />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="app-theme.css" />
+    <script src="theme.js"></script>
+    <style>
+      .theme-settings {
+        max-width: 920px;
+        margin: 24px auto;
+        padding: 20px;
+      }
+      .theme-section {
+        background: var(--panel);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow);
+      }
+      .theme-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .swatch {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+      }
+      .swatch.selected {
+        outline: 3px solid rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+      }
+      .label {
+        min-width: 160px;
+        font-weight: 600;
+      }
+      .preview {
+        padding: 12px;
+        border-radius: 8px;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), transparent);
+      }
+      .toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-reset {
+        margin-left: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="side app-sidebar">
+        <div class="app-sidebar__brand">Synchro</div>
+        <div class="side-user app-sidebar__user">
+          <div class="side-user__avatar" aria-hidden="true">TO</div>
+          <div class="side-user__meta">
+            <b class="side-user__name">The One</b>
+            <span class="side-user__email">theone@workspace.lc</span>
+          </div>
+        </div>
+        <a href="task-new.html" class="btn-create">＋ Create Task</a>
+        <nav class="nav nav--stack app-nav">
+          <a href="index.html">Dashboard</a>
+          <a href="task.html">My Task</a>
+          <a href="analytics.html">Reporting</a>
+          <a class="active" href="settings.html">Settings</a>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <div class="theme-settings">
+          <h2>Settings</h2>
+
+          <section class="theme-section">
+            <div class="theme-row">
+              <div class="label">Mode</div>
+              <div class="toggle">
+                <label
+                  ><input type="radio" name="mode" value="light" /> Light</label
+                >
+                <label
+                  ><input type="radio" name="mode" value="dark" /> Dark</label
+                >
+              </div>
+              <button class="btn btn-reset" id="resetBtn">Reset</button>
+            </div>
+          </section>
+
+          <section class="theme-section">
+            <div style="margin-bottom: 10px; font-weight: 700">
+              Primary Accent
+            </div>
+            <div class="theme-row" id="accentList"></div>
+          </section>
+
+          <section class="theme-section">
+            <div style="margin-bottom: 10px; font-weight: 700">
+              Sidebar Color
+            </div>
+            <div class="theme-row" id="sidebarList"></div>
+          </section>
+
+          <section class="theme-section preview">
+            <div style="display: flex; gap: 12px; align-items: center">
+              <div
+                style="
+                  width: 56px;
+                  height: 56px;
+                  border-radius: 8px;
+                  background: var(--sidebar-bg);
+                  color: var(--sidebar-ink);
+                  display: grid;
+                  place-items: center;
+                "
+              >
+                TO
+              </div>
+              <div>
+                <div style="font-weight: 700; color: var(--ink)">
+                  Preview Title
+                </div>
+                <div style="color: var(--muted)">Subtitle / small text</div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const { accents: ACCENTS, sidebars: SIDEBARS } = window.ThemeManager;
+      const accentList = document.getElementById("accentList");
+      const sidebarList = document.getElementById("sidebarList");
+
+      function el(tag, cls) {
+        const e = document.createElement(tag);
+        if (cls) e.className = cls;
+        return e;
+      }
+
+      // build swatches
+      ACCENTS.forEach((c) => {
+        const d = el("div", "swatch");
+        d.style.background = c;
+        d.dataset.color = c;
+        d.addEventListener("click", () => {
+          selectAccent(c);
+        });
+        accentList.appendChild(d);
+      });
+      SIDEBARS.forEach((c) => {
+        const d = el("div", "swatch");
+        d.style.background = c;
+        d.dataset.color = c;
+        d.addEventListener("click", () => {
+          selectSidebar(c);
+        });
+        sidebarList.appendChild(d);
+      });
+
+      function selectAccent(c) {
+        document
+          .querySelectorAll("#accentList .swatch")
+          .forEach((s) =>
+            s.classList.toggle("selected", s.dataset.color === c),
+          );
+        const s = window.ThemeManager.load();
+        s.accent = c;
+        window.ThemeManager.apply(s);
+        window.ThemeManager.save(s);
+      }
+      function selectSidebar(c) {
+        document
+          .querySelectorAll("#sidebarList .swatch")
+          .forEach((s) =>
+            s.classList.toggle("selected", s.dataset.color === c),
+          );
+        const s = window.ThemeManager.load();
+        s.sidebar = c;
+        window.ThemeManager.apply(s);
+        window.ThemeManager.save(s);
+      }
+
+      // mode radio
+      document.getElementsByName("mode").forEach((r) =>
+        r.addEventListener("change", (e) => {
+          const s = window.ThemeManager.load();
+          s.mode = e.target.value;
+          window.ThemeManager.apply(s);
+          window.ThemeManager.save(s);
+        }),
+      );
+
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        window.ThemeManager.reset();
+        location.reload();
+      });
+
+      // init
+      (function () {
+        const settings = window.ThemeManager.load();
+        if (settings.mode) {
+          const radio = document.querySelector(
+            'input[name=mode][value="' + settings.mode + '"]',
+          );
+          if (radio) radio.checked = true;
+        } else {
+          document.querySelector('input[name=mode][value="light"]').checked =
+            true;
+        }
+        if (settings.accent) {
+          selectAccent(settings.accent);
+        }
+        if (settings.sidebar) {
+          selectSidebar(settings.sidebar);
+        }
+        window.ThemeManager.apply(settings);
+      })();
+    </script>
+  </body>
+</html>
