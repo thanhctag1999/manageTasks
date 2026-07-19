@@ -13,6 +13,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="app-theme.css" />
+    <script src="app-icons.js"></script>
     <script src="theme.js"></script>
   </head>
   <body>
@@ -94,7 +95,7 @@
           </nav>
           <div class="topbar-actions">
             <label class="topbar-search" for="search">
-              <span aria-hidden="true">⌕</span>
+              <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16.2 16.2 4.3 4.3"/></svg></span>
               <input
                 id="search"
                 class="app-topbar__search"
@@ -104,7 +105,7 @@
               />
             </label>
             <button type="button" class="icon-btn" aria-label="Notifications">
-              !
+              <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 16.5h11"/><path d="M8 16.5V10a4 4 0 1 1 8 0v6.5"/><path d="M10.2 18.5a1.8 1.8 0 0 0 3.6 0"/></svg></span>
             </button>
             <div class="profile-pill" aria-label="Profile">TO</div>
           </div>
@@ -122,8 +123,8 @@
             </p>
           </div>
           <div class="toolbar">
-            <button id="reload" class="btn">↻ Reload</button>
-            <a class="btn primary" href="task-new.html">+ New</a>
+            <button id="reload" class="btn btn--with-ic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 5v4.5H15"/></svg></span> Reload</button>
+            <a class="btn primary btn--with-ic" href="task-new.html"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span> New</a>
           </div>
         </header>
 
@@ -138,7 +139,7 @@
 
         <section class="task-kpi-strip task-summary-grid" aria-live="polite">
           <div class="task-kpi">
-            <span class="task-kpi__icon" aria-hidden="true">Σ</span>
+            <span class="task-kpi__icon" aria-hidden="true"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4.5 9 7.5 4 7.5-4"/><path d="m4.5 13 7.5 4 7.5-4"/><path d="m4.5 17 7.5 4 7.5-4"/></svg></span></span>
             <span class="task-kpi__lbl">Total Tasks</span>
             <b id="tkTotalSummary">0</b>
           </div>
@@ -146,7 +147,7 @@
             <span
               class="task-kpi__icon task-kpi__icon--progress"
               aria-hidden="true"
-              >◐</span
+              ><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4.5a7.5 7.5 0 1 1-5.3 2.2"/><path d="M12 4.5V12"/></svg></span></span
             >
             <span class="task-kpi__lbl">In Progress</span>
             <b id="tkInProgress">0</b>
@@ -155,14 +156,14 @@
             <span
               class="task-kpi__icon task-kpi__icon--review"
               aria-hidden="true"
-              >◇</span
+              ><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5.5 14.8 11l5.7.5-4.3 3.8 1.3 5.5L12 18.2 6.5 20.8l1.3-5.5L3.5 11.5l5.7-.5z"/></svg></span></span
             >
             <span class="task-kpi__lbl">Under Review</span>
             <b id="tkReview">0</b>
           </div>
           <div class="task-kpi">
             <span class="task-kpi__icon task-kpi__icon--done" aria-hidden="true"
-              >✓</span
+              ><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5.5 12.5 4 4 9-10"/></svg></span></span
             >
             <span class="task-kpi__lbl">Completed</span>
             <b id="tkCharged">0</b>
@@ -171,7 +172,7 @@
             <span
               class="task-kpi__icon task-kpi__icon--overdue"
               aria-hidden="true"
-              >!</span
+              ><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v5"/><path d="M12 16.5h.01"/></svg></span></span
             >
             <span class="task-kpi__lbl">Overdue</span>
             <b id="tkOverdue">0</b>
@@ -180,7 +181,7 @@
             <span
               class="task-kpi__icon task-kpi__icon--value"
               aria-hidden="true"
-              >₫</span
+              ><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7.5v9"/><path d="M9.5 10.2c.5-1 1.5-1.5 2.5-1.5s2 .6 2 1.7-.8 1.5-2.5 1.9-2.5.9-2.5 2.1 1.1 1.8 2.5 1.8 2.1-.6 2.6-1.6"/></svg></span></span
             >
             <span class="task-kpi__lbl">Filtered Value</span>
             <b id="tkValue">₫0</b>
@@ -260,6 +261,7 @@
                 <table>
                   <thead>
                     <tr>
+                      <th class="col-stt">#</th>
                       <th>Task</th>
                       <th>Category</th>
                       <th>Date</th>
@@ -424,6 +426,7 @@
           for (let i = 0; i < 8; i++) {
             const tr = document.createElement("tr");
             tr.innerHTML = `
+              <td><div class="skel" style="height:14px;width:28px"></div></td>
               <td><div class="skel" style="height:14px;width:180px"></div></td>
               <td><div class="skel" style="height:14px;width:120px"></div></td>
               <td><div class="skel" style="height:14px;width:90px"></div></td>
@@ -459,7 +462,7 @@
           setStatus("Ready");
           appear("#grid .taskmail-item, #tbody > tr");
         } catch (e) {
-          setStatus("❌ API error: " + e.message + " · Kiểm tra URL/KEY/RLS");
+          setStatus("API error: " + e.message + " · Kiểm tra URL/KEY/RLS");
         } finally {
           showLoader(false);
         }
@@ -820,6 +823,7 @@
           tr.dataset.detailId = String(r.id);
           tr.style.setProperty("--d", i * 35 + "ms");
           tr.innerHTML = `
+      <td class="col-stt muted">${i + 1}</td>
       <td><strong><a class="table-task-link" href="detail.html?id=${idQ}">${escapeHtml(r.name || "")}</a></strong></td>
       <td class="muted">${escapeHtml(r.category?.name || "")}</td>
       <td>${fmtDate(r.date)}</td>
@@ -833,7 +837,7 @@
               r.link,
             )}" target="_blank" rel="noopener">open</a> <a href="#" data-copy-link="${escapeAttr(
               r.link,
-            )}" title="Copy link">📋</a>`
+            )}" title="Copy link" class="ic-link"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="10" height="12" rx="2"/><path d="M6.5 15.5V5.5a2 2 0 0 1 2-2h8"/></svg></span></a>`
           : ""
       }</td>`;
           tb.appendChild(tr);
@@ -846,7 +850,7 @@
         trTotal.className = "total-row anim";
         trTotal.style.setProperty("--d", rows.length * 35 + "ms");
         trTotal.innerHTML = `
-    <td class="total-label" colspan="3">Tổng</td>
+    <td class="total-label" colspan="4">Tổng</td>
     <td class="money">${fmtMoney(total)}</td>
     <td colspan="4"></td>
   `;
@@ -1274,5 +1278,6 @@
         }
       }
     </script>
+      <script src="app-ui.js"></script>
   </body>
 </html>

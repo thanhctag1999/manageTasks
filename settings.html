@@ -7,9 +7,9 @@
     <link rel="icon" href="data:," />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+      rel="stylesheet" />
     <link rel="stylesheet" href="app-theme.css" />
+    <script src="app-icons.js"></script>
     <script src="theme.js"></script>
     <style>
       .theme-settings {
@@ -72,7 +72,11 @@
             <span class="side-user__email">theone@workspace.lc</span>
           </div>
         </div>
-        <a href="task-new.html" class="btn-create">＋ Create Task</a>
+        <a href="task-new.html" class="btn-create"
+          ><span class="btn-create__icon" aria-hidden="true"
+            ><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg></span
+          ><span class="btn-create__label">Create Task</span></a
+        >
         <nav class="nav nav--stack app-nav">
           <a href="index.html">Dashboard</a>
           <a href="task.html">My Task</a>
@@ -125,8 +129,7 @@
                   color: var(--sidebar-ink);
                   display: grid;
                   place-items: center;
-                "
-              >
+                ">
                 TO
               </div>
               <div>
@@ -231,5 +234,6 @@
         window.ThemeManager.apply(settings);
       })();
     </script>
+    <script src="app-ui.js"></script>
   </body>
 </html>

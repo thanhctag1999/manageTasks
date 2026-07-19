@@ -24,6 +24,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="app-theme.css" />
+    <script src="app-icons.js"></script>
     <script src="theme.js"></script>
   </head>
   <body>
@@ -103,8 +104,8 @@
             </div>
           </div>
           <div class="inline">
-            <a class="btn" href="task.html">← Back to List</a>
-            <a class="btn" href="index.html">🏠 Dashboard</a>
+            <a class="btn btn--with-ic" href="task.html"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 6 9 12l6 6"/><path d="M9 12h10"/></svg></span> Back to List</a>
+            <a class="btn btn--with-ic" href="index.html"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5"/><path d="M6.5 10v8.5h11V10"/><path d="M10 18.5v-5h4v5"/></svg></span> Dashboard</a>
           </div>
         </header>
 
@@ -117,10 +118,10 @@
               </div>
             </div>
             <div class="inline">
-              <button id="btnEdit" class="btn">✏️ Edit</button>
-              <button id="btnSave" class="btn primary hidden">💾 Save</button>
-              <button id="btnCancel" class="btn hidden">↩ Cancel</button>
-              <button id="btnDelete" class="btn danger">🗑 Delete</button>
+              <button id="btnEdit" class="btn btn--with-ic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/></svg></span> Edit</button>
+              <button id="btnSave" class="btn primary btn--with-ic hidden"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h11l3 3v11H5V5z"/><path d="M8 5v5h8V5"/><path d="M8 19v-6h8v6"/></svg></span> Save</button>
+              <button id="btnCancel" class="btn btn--with-ic hidden"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 8H5v4"/><path d="M5 12a7 7 0 1 0 2-4.9"/></svg></span> Cancel</button>
+              <button id="btnDelete" class="btn danger btn--with-ic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 8h14"/><path d="M9.5 8V6.5h5V8"/><path d="M8 8l.8 11h6.4L16 8"/></svg></span> Delete</button>
             </div>
           </div>
 
@@ -181,12 +182,15 @@
                 </select>
               </div>
 
-              <div>
-                <label for="charged">Charged?</label>
-                <select id="charged" disabled>
-                  <option value="false">Chưa</option>
-                  <option value="true">Đã charge</option>
-                </select>
+              <div class="switch-field">
+                <span class="switch-field__label" id="chargedFieldLabel"
+                  >Charged?</span
+                >
+                <label class="switch" for="charged">
+                  <input id="charged" type="checkbox" role="switch" disabled />
+                  <span class="switch__ui" aria-hidden="true"></span>
+                </label>
+                <span class="switch-field__state" id="chargedState">Unpaid</span>
               </div>
 
               <div class="row-1">
@@ -222,7 +226,7 @@
 
             <div id="error" class="hidden" style="margin-top: 10px">
               <p>
-                ❌ Không tải được task. Kiểm tra tham số
+                Không tải được task. Kiểm tra tham số
                 <code>?id=...</code> hoặc quyền truy cập.
               </p>
             </div>
@@ -346,6 +350,8 @@
         els.btnSave.addEventListener("click", onSave);
         els.btnDelete.addEventListener("click", onDelete);
 
+        els.charged.addEventListener("change", syncChargedState);
+
         els.price.addEventListener("input", () => {
           const dig = els.price.value.replace(/\D/g, "");
           if (!dig) {
@@ -426,7 +432,8 @@
           els.pricePreview.textContent = formatVND(0);
         }
         els.assign.value = r.assign_to || "The One";
-        els.charged.value = r.is_charged === true ? "true" : "false";
+        els.charged.checked = r.is_charged === true;
+        syncChargedState();
         els.link.value = r.link || "";
         els.openLink.href =
           r.link && /^https?:\/\//i.test(r.link) ? r.link : "#";
@@ -455,6 +462,16 @@
           ? "rgba(16,185,129,.12)"
           : "#fee2e2";
         els.chipState.style.color = isCharged ? "#059669" : "#991b1b";
+      }
+
+      function syncChargedState() {
+        const on = !!els.charged.checked;
+        const state = document.getElementById("chargedState");
+        if (state) {
+          state.textContent = on ? "Charged" : "Unpaid";
+          state.classList.toggle("is-on", on);
+        }
+        els.charged.setAttribute("aria-checked", on ? "true" : "false");
       }
 
       function setViewMode(viewOnly) {
@@ -488,7 +505,7 @@
             return dig ? parseInt(dig, 10) : null;
           })(),
           assign_to: els.assign.value || null,
-          is_charged: els.charged.value === "true",
+          is_charged: !!els.charged.checked,
           link: els.link.value.trim() || null,
           note: els.note.value.trim() || null,
         };
@@ -517,12 +534,12 @@
           fillForm(row);
           setViewMode(true);
           drawStateChip(row.is_charged === true);
-          notify("Đã lưu thay đổi ✔️");
+          notify("Đã lưu thay đổi");
         } catch (e) {
           notify("Lỗi lưu: " + (e.message || e), true);
         } finally {
           els.btnSave.disabled = false;
-          els.btnSave.textContent = "💾 Save";
+          els.btnSave.innerHTML = `<span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h11l3 3v11H5V5z"/><path d="M8 5v5h8V5"/><path d="M8 19v-6h8v6"/></svg></span> Save`;
         }
       }
 
@@ -593,8 +610,9 @@
       }
       function showError(msg) {
         els.error.classList.remove("hidden");
-        els.error.innerHTML = `<p>❌ ${escapeHtml(msg)}</p>`;
+        els.error.innerHTML = `<p>${escapeHtml(msg)}</p>`;
       }
     </script>
+      <script src="app-ui.js"></script>
   </body>
 </html>

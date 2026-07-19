@@ -13,6 +13,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="app-theme.css" />
+    <script src="app-icons.js"></script>
     <script src="theme.js"></script>
   </head>
   <body>
@@ -95,45 +96,66 @@
 
         <!-- Filters -->
         <div class="filters">
-          <select id="f_year"></select>
+          <select id="f_year" aria-label="Year"></select>
+          <select id="f_month" aria-label="Month">
+            <option value="">All months</option>
+            <option value="1">Tháng 1</option>
+            <option value="2">Tháng 2</option>
+            <option value="3">Tháng 3</option>
+            <option value="4">Tháng 4</option>
+            <option value="5">Tháng 5</option>
+            <option value="6">Tháng 6</option>
+            <option value="7">Tháng 7</option>
+            <option value="8">Tháng 8</option>
+            <option value="9">Tháng 9</option>
+            <option value="10">Tháng 10</option>
+            <option value="11">Tháng 11</option>
+            <option value="12">Tháng 12</option>
+          </select>
           <span class="muted"
             >Assume: 0 dependents · personal deduction 11,000,000 ₫/month</span
           >
         </div>
 
-        <section class="panel" style="margin-bottom: 16px">
-          <div class="panel-head">
+        <section class="panel performance-chart-card" style="margin-bottom: 16px">
+          <div class="performance-chart-card__head">
             <div>
-              <b>Charged revenue by month</b>
-              <div class="muted" style="font-size: 12px">Biểu đồ nến</div>
+              <b id="chartTitle">Charged revenue by month</b>
+              <p id="chartSub">
+                Doanh thu đã charge và số task theo tháng trong năm.
+              </p>
+              <div class="chart-legend">
+                <span><i class="theory"></i> Revenue</span>
+                <span><i class="practice"></i> Task count</span>
+                <span><i class="lexicon"></i> <span id="chartRangeLegend">Year range</span></span>
+              </div>
             </div>
           </div>
-          <div class="panel-body">
-            <svg
-              id="monthCandles"
-              class="chart"
-              viewBox="0 0 640 260"
-              preserveAspectRatio="xMidYMid meet"
-              role="img"
-              aria-label="Doanh thu task theo tháng"
-            ></svg>
-            <div class="chart-legend">
-              <span><i></i> Doanh thu (nến)</span>
-              <span><i class="sec"></i> Số task (cột)</span>
+          <div class="performance-chart-card__body">
+            <div class="chart-stage">
+              <svg
+                id="monthCandles"
+                class="chart chart-anim performance-chart"
+                viewBox="0 0 900 360"
+                preserveAspectRatio="xMidYMid meet"
+                role="img"
+                aria-label="Doanh thu và số task theo tháng"></svg>
             </div>
+            <div class="chart-range" aria-hidden="true"><span></span></div>
           </div>
         </section>
 
         <section class="panel">
           <div class="panel-head">
-            <b>Revenue by month & personal income tax</b>
-            <span class="muted">Salary per month: 9,600,000 ₫</span>
+            <b id="tableTitle">Revenue by month & personal income tax</b>
+            <span class="muted">Salary per month: 10,000,000 ₫</span>
           </div>
           <div class="panel-body table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Month</th>
+                  <th class="col-stt">#</th>
+                  <th id="colPeriod">Month</th>
                   <th>Task revenue (charged)</th>
                   <th>Salary</th>
                   <th>Total income</th>
@@ -144,7 +166,8 @@
               <tbody id="tbody"></tbody>
               <tfoot>
                 <tr>
-                  <td>TOTAL (year)</td>
+                  <td></td>
+                  <td id="t_scope">TOTAL (year)</td>
                   <td class="money" id="t_rev">₫0</td>
                   <td class="money" id="t_salary">₫0</td>
                   <td class="money" id="t_total">₫0</td>
@@ -180,6 +203,7 @@
 
       function bindYearChange() {
         document.getElementById("f_year").addEventListener("change", paint);
+        document.getElementById("f_month").addEventListener("change", paint);
       }
 
       // ====== Loader helpers ======
@@ -206,7 +230,7 @@
           paint();
         } catch (e) {
           console.error(e);
-          setStatus("❌ API error: " + e.message);
+          setStatus("API error: " + e.message);
         } finally {
           setLoading(false);
         }
@@ -272,116 +296,141 @@
         return tax;
       }
 
-      /** Nến doanh thu tháng + cột số task (đã charge) */
-      function monthlyCandlestickChart(sel, seriesRev, seriesCnt, labels) {
+      /** Performance chart (same style as Dashboard) */
+      function sum(arr) {
+        return (arr || []).reduce((a, b) => a + (+b || 0), 0);
+      }
+
+      function performanceChart(sel, seriesRev, seriesCnt, labels, tipSub) {
         const svg = document.querySelector(sel);
         if (!svg) return;
-        const W = 640;
-        const H = 260;
-        const P = 36;
-        const splitY = 198;
-        const volTop = 208;
-        const volBot = H - 22;
+        const W = 900,
+          H = 360;
+        const pad = { top: 54, right: 34, bottom: 58, left: 54 };
+        const plotW = W - pad.left - pad.right;
+        const plotH = H - pad.top - pad.bottom;
         const n = seriesRev.length;
         svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
         svg.innerHTML = "";
-        if (n === 0) return;
-
-        const ohlc = seriesRev.map((c, i) => {
-          const o = i > 0 ? seriesRev[i - 1] : c;
-          const h = Math.max(o, c) * 1.03 + (Math.max(o, c) === 0 ? 1 : 0);
-          const l = Math.max(0, Math.min(o, c) * 0.97);
-          return { o, c, h, l };
-        });
-        const maxH = Math.max(1, ...ohlc.map((x) => x.h));
-        const maxVol = Math.max(1, ...seriesCnt);
-
+        if (!n) return;
         const xAt = (i) =>
-          P + (n <= 1 ? (W - P * 2) / 2 : (i / (n - 1)) * (W - P * 2));
-        const yPrice = (v) => splitY - 10 - (v / maxH) * (splitY - P - 18);
-        const yVolBase = (v) => volBot - (v / maxVol) * (volBot - volTop);
-
-        for (let g = 0; g <= 4; g++) {
-          const y = P + ((splitY - P - 18) * g) / 4;
-          svg.insertAdjacentHTML(
-            "beforeend",
-            `<line class="grid-line" x1="${P}" y1="${y}" x2="${
-              W - P
-            }" y2="${y}" />`,
-          );
-        }
+          pad.left + (n <= 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+        const maxRev = Math.max(1, ...seriesRev);
+        const maxCnt = Math.max(1, ...seriesCnt);
+        const yRev = (v) => pad.top + plotH - (v / maxRev) * plotH * 0.82;
+        const yCnt = (v) => pad.top + plotH - (v / maxCnt) * plotH * 0.72;
+        const revPts = seriesRev.map((v, i) => ({ x: xAt(i), y: yRev(v) }));
+        const cntPts = seriesCnt.map((v, i) => ({ x: xAt(i), y: yCnt(v) }));
+        const barW = Math.max(3, Math.min(14, plotW / Math.max(18, n * 1.6)));
+        const smoothPath = (pts) => {
+          if (!pts.length) return "";
+          let d = `M ${pts[0].x} ${pts[0].y}`;
+          for (let i = 0; i < pts.length - 1; i++) {
+            const p0 = pts[i],
+              p1 = pts[i + 1],
+              midX = (p0.x + p1.x) / 2;
+            d += ` C ${midX} ${p0.y}, ${midX} ${p1.y}, ${p1.x} ${p1.y}`;
+          }
+          return d;
+        };
+        const prevRev = sum(seriesRev.slice(0, Math.floor(n / 2)));
+        const curRev = sum(seriesRev.slice(Math.floor(n / 2)));
+        const pct = Math.max(
+          -99,
+          Math.min(
+            999,
+            Math.round(prevRev ? ((curRev - prevRev) / prevRev) * 100 : 0),
+          ),
+        );
+        const hi = Math.min(
+          n - 1,
+          Math.max(
+            0,
+            seriesRev.reduce(
+              (best, v, i) => (v >= seriesRev[best] ? i : best),
+              0,
+            ),
+          ),
+        );
+        const hiPt = revPts[hi] || { x: W / 2, y: H / 2 };
+        const tipX = Math.max(pad.left + 10, Math.min(W - 234, hiPt.x - 105));
+        const tipY = Math.max(24, hiPt.y - 104);
+        const tipText = tipSub || `Charged tasks: ${sum(seriesCnt)}`;
         svg.insertAdjacentHTML(
           "beforeend",
-          `<line class="vol-axis" x1="${P}" y1="${volBot}" x2="${
-            W - P
-          }" y2="${volBot}" />`,
+          `<defs><linearGradient id="analPerfBarPurple" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b8a4ff" stop-opacity=".72"/><stop offset="100%" stop-color="#b8a4ff" stop-opacity=".08"/></linearGradient><linearGradient id="analPerfBarPink" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f7a8c7" stop-opacity=".7"/><stop offset="100%" stop-color="#f7a8c7" stop-opacity=".08"/></linearGradient></defs>`,
         );
-
-        const slot = n <= 1 ? W - P * 2 : (W - P * 2) / (n - 1);
-        const cw = Math.min(14, slot * 0.45);
-
-        ohlc.forEach((x, i) => {
-          const cx = xAt(i);
-          const yHi = yPrice(x.h);
-          const yLo = yPrice(x.l);
-          const yO = yPrice(x.o);
-          const yC = yPrice(x.c);
-          const top = Math.min(yO, yC);
-          const bot = Math.max(yO, yC);
-          const up = x.c >= x.o;
-          const cls = up ? "candle-up" : "candle-down";
+        for (let g = 0; g <= 4; g++) {
+          const y = pad.top + (plotH * g) / 4;
           svg.insertAdjacentHTML(
             "beforeend",
-            `<line class="wick" x1="${cx}" y1="${yHi}" x2="${cx}" y2="${yLo}" />`,
+            `<line class="perf-grid" x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" />`,
           );
-          const bh = Math.max(2.5, bot - top);
+        }
+        seriesCnt.forEach((v, i) => {
+          const cx = xAt(i),
+            h = Math.max(12, (v / maxCnt) * plotH * 0.82 || 12),
+            y = pad.top + plotH - h;
+          const fill =
+            i % 3 === 1
+              ? "url(#analPerfBarPink)"
+              : "url(#analPerfBarPurple)";
           svg.insertAdjacentHTML(
             "beforeend",
-            `<rect class="${cls}" x="${cx - cw / 2}" y="${top}" width="${cw}" height="${bh}" rx="1.5" />`,
-          );
-          const vb = yVolBase(seriesCnt[i]);
-          const vh = volBot - vb;
-          svg.insertAdjacentHTML(
-            "beforeend",
-            `<rect class="vol-bar" x="${cx - cw / 2}" y="${vb}" width="${cw}" height="${vh}" rx="1" />`,
+            `<rect class="perf-bar" x="${cx - barW / 2}" y="${y}" width="${barW}" height="${h}" rx="${barW / 2}" fill="${fill}" />`,
           );
         });
-
+        svg.insertAdjacentHTML(
+          "beforeend",
+          `<path class="perf-line perf-line--practice" d="${smoothPath(cntPts)}" /><path class="perf-line perf-line--theory" d="${smoothPath(revPts)}" /><circle class="perf-point perf-point--halo" cx="${hiPt.x}" cy="${hiPt.y}" r="12" /><circle class="perf-point" cx="${hiPt.x}" cy="${hiPt.y}" r="5" /><rect class="perf-tooltip" x="${tipX}" y="${tipY}" width="228" height="76" rx="22" /><text class="perf-tooltip__pct" x="${tipX + 22}" y="${tipY + 32}">${pct >= 0 ? "+" : ""}${pct}%</text><text class="perf-tooltip__sub" x="${tipX + 22}" y="${tipY + 56}">${tipText}</text>`,
+        );
+        const step = Math.max(1, Math.ceil(labels.length / 10));
         labels.forEach((lab, i) => {
-          const x = xAt(i);
+          if (i % step !== 0 && i !== n - 1) return;
           svg.insertAdjacentHTML(
             "beforeend",
-            `<text x="${x}" y="${
-              H - 5
-            }" text-anchor="middle" font-size="9" fill="#8b8499">${lab}</text>`,
+            `<text class="perf-label" x="${xAt(i)}" y="${H - 20}" text-anchor="middle">${lab}</text>`,
           );
         });
+        revealChart(svg);
+      }
+
+      function revealChart(svg) {
+        if (!svg) return;
+        svg.classList.remove("in");
+        void svg.offsetWidth;
+        svg.classList.add("in");
+      }
+
+      function daysInMonth(year, month) {
+        return new Date(year, month, 0).getDate();
       }
 
       // ====== Paint ======
       function paint() {
+        try {
+          paintInner();
+        } catch (e) {
+          console.error(e);
+          setStatus("Chart error: " + (e.message || e));
+        }
+      }
+
+      function paintInner() {
         const year =
           +document.getElementById("f_year").value || new Date().getFullYear();
-        const rows = ROWS.filter(
+        const monthRaw = document.getElementById("f_month").value;
+        const month = monthRaw ? +monthRaw : 0; // 0 = all months
+        const yearRows = ROWS.filter(
           (r) => r.is_charged && yearOf(r.date) === String(year),
         );
 
-        const revByMonth = new Map();
-        const cntByMonth = new Map();
-        for (let m = 1; m <= 12; m++) {
-          revByMonth.set(m, 0);
-          cntByMonth.set(m, 0);
-        }
-        rows.forEach((r) => {
-          if (!r.date) return;
-          const dt = new Date(
-            r.date + (String(r.date).length > 10 ? "" : "T00:00:00"),
-          );
-          if (isNaN(dt)) return;
-          const m = dt.getMonth() + 1;
-          revByMonth.set(m, (revByMonth.get(m) || 0) + (+r.price || 0));
-          cntByMonth.set(m, (cntByMonth.get(m) || 0) + 1);
-        });
+        const chartTitle = document.getElementById("chartTitle");
+        const chartSub = document.getElementById("chartSub");
+        const chartRangeLegend = document.getElementById("chartRangeLegend");
+        const tableTitle = document.getElementById("tableTitle");
+        const colPeriod = document.getElementById("colPeriod");
+        const tScope = document.getElementById("t_scope");
 
         const tb = document.getElementById("tbody");
         tb.innerHTML = "";
@@ -391,20 +440,48 @@
         let sumTotal = 0;
         let sumPIT = 0;
 
-        for (let m = 1; m <= 12; m++) {
-          const rev = revByMonth.get(m) || 0;
-          const sal = SALARY_PER_MONTH;
-          const total = rev + sal;
-          const pit = calcPITMonthly(total);
-          const pct = total > 0 ? (pit / total) * 100 : 0;
+        if (!month) {
+          // ===== Full year (by month) =====
+          chartTitle.textContent = "Charged revenue by month";
+          chartSub.textContent =
+            "Doanh thu đã charge và số task theo tháng trong năm.";
+          chartRangeLegend.textContent = "Year range";
+          tableTitle.textContent = "Revenue by month & personal income tax";
+          colPeriod.textContent = "Month";
+          tScope.textContent = "TOTAL (year)";
 
-          sumRev += rev;
-          sumSalary += sal;
-          sumTotal += total;
-          sumPIT += pit;
+          const revByMonth = new Map();
+          const cntByMonth = new Map();
+          for (let m = 1; m <= 12; m++) {
+            revByMonth.set(m, 0);
+            cntByMonth.set(m, 0);
+          }
+          yearRows.forEach((r) => {
+            if (!r.date) return;
+            const dt = new Date(
+              r.date + (String(r.date).length > 10 ? "" : "T00:00:00"),
+            );
+            if (isNaN(dt)) return;
+            const m = dt.getMonth() + 1;
+            revByMonth.set(m, (revByMonth.get(m) || 0) + (+r.price || 0));
+            cntByMonth.set(m, (cntByMonth.get(m) || 0) + 1);
+          });
 
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
+          for (let m = 1; m <= 12; m++) {
+            const rev = revByMonth.get(m) || 0;
+            const sal = SALARY_PER_MONTH;
+            const total = rev + sal;
+            const pit = calcPITMonthly(total);
+            const pct = total > 0 ? (pit / total) * 100 : 0;
+
+            sumRev += rev;
+            sumSalary += sal;
+            sumTotal += total;
+            sumPIT += pit;
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+            <td class="col-stt muted">${m}</td>
             <td>${prettyYM(year, m)}</td>
             <td class="money">${formatVND(rev)}</td>
             <td class="money">${formatVND(sal)}</td>
@@ -412,18 +489,119 @@
             <td class="money">${formatVND(pit)}</td>
             <td>${pct.toFixed(1)}%</td>
           `;
-          tb.appendChild(tr);
-        }
+            tb.appendChild(tr);
+          }
 
-        const revs = [];
-        const cnts = [];
-        const labs = [];
-        for (let m = 1; m <= 12; m++) {
-          revs.push(revByMonth.get(m) || 0);
-          cnts.push(cntByMonth.get(m) || 0);
-          labs.push(prettyYM(year, m));
+          const revs = [];
+          const cnts = [];
+          const labs = [];
+          for (let m = 1; m <= 12; m++) {
+            revs.push(revByMonth.get(m) || 0);
+            cnts.push(cntByMonth.get(m) || 0);
+            labs.push(`T${m}`);
+          }
+          performanceChart(
+            "#monthCandles",
+            revs,
+            cnts,
+            labs,
+            `Charged tasks this year: ${sum(cnts)}`,
+          );
+        } else {
+          // ===== Single month (by day) =====
+          const label = `Tháng ${month}/${year}`;
+          chartTitle.textContent = `Charged revenue · ${label}`;
+          chartSub.textContent =
+            "Doanh thu đã charge và số task theo từng ngày trong tháng.";
+          chartRangeLegend.textContent = "Month range";
+          tableTitle.textContent = `Revenue & PIT · ${label}`;
+          colPeriod.textContent = "Period";
+          tScope.textContent = "TOTAL (month)";
+
+          const monthRows = yearRows.filter((r) => {
+            if (!r.date) return false;
+            const dt = new Date(
+              r.date + (String(r.date).length > 10 ? "" : "T00:00:00"),
+            );
+            return !isNaN(dt) && dt.getMonth() + 1 === month;
+          });
+
+          const dim = daysInMonth(year, month);
+          const revByDay = new Map();
+          const cntByDay = new Map();
+          for (let d = 1; d <= dim; d++) {
+            revByDay.set(d, 0);
+            cntByDay.set(d, 0);
+          }
+          monthRows.forEach((r) => {
+            const dt = new Date(
+              r.date + (String(r.date).length > 10 ? "" : "T00:00:00"),
+            );
+            if (isNaN(dt)) return;
+            const d = dt.getDate();
+            revByDay.set(d, (revByDay.get(d) || 0) + (+r.price || 0));
+            cntByDay.set(d, (cntByDay.get(d) || 0) + 1);
+          });
+
+          const rev = monthRows.reduce((a, r) => a + (+r.price || 0), 0);
+          const sal = SALARY_PER_MONTH;
+          const total = rev + sal;
+          const pit = calcPITMonthly(total);
+          const pct = total > 0 ? (pit / total) * 100 : 0;
+
+          sumRev = rev;
+          sumSalary = sal;
+          sumTotal = total;
+          sumPIT = pit;
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="col-stt muted">1</td>
+            <td>${prettyYM(year, month)}</td>
+            <td class="money">${formatVND(rev)}</td>
+            <td class="money">${formatVND(sal)}</td>
+            <td class="money">${formatVND(total)}</td>
+            <td class="money">${formatVND(pit)}</td>
+            <td>${pct.toFixed(1)}%</td>
+          `;
+          tb.appendChild(tr);
+
+          // Optional daily breakdown rows (revenue/count only — PIT is monthly)
+          let dayIdx = 2;
+          for (let d = 1; d <= dim; d++) {
+            const dRev = revByDay.get(d) || 0;
+            const dCnt = cntByDay.get(d) || 0;
+            if (!dRev && !dCnt) continue;
+            const trDay = document.createElement("tr");
+            trDay.className = "analytics-day-row";
+            trDay.innerHTML = `
+              <td class="col-stt muted">${dayIdx++}</td>
+              <td class="muted">Ngày ${String(d).padStart(2, "0")}/${String(month).padStart(2, "0")} · ${dCnt} task</td>
+              <td class="money">${formatVND(dRev)}</td>
+              <td class="muted">—</td>
+              <td class="muted">—</td>
+              <td class="muted">—</td>
+              <td class="muted">—</td>
+            `;
+            tb.appendChild(trDay);
+          }
+
+          const revs = [];
+          const cnts = [];
+          const labs = [];
+          for (let d = 1; d <= dim; d++) {
+            revs.push(revByDay.get(d) || 0);
+            cnts.push(cntByDay.get(d) || 0);
+            labs.push(String(d));
+          }
+          performanceChart(
+            "#monthCandles",
+            revs,
+            cnts,
+            labs,
+            `Charged tasks this month: ${sum(cnts)}`,
+          );
         }
-        monthlyCandlestickChart("#monthCandles", revs, cnts, labs);
 
         document.getElementById("t_rev").textContent = formatVND(sumRev);
         document.getElementById("t_salary").textContent = formatVND(sumSalary);
@@ -445,5 +623,6 @@
         return _VND_FORMATTER.format(v);
       }
     </script>
+      <script src="app-ui.js"></script>
   </body>
 </html>

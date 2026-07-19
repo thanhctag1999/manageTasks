@@ -13,6 +13,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="app-theme.css" />
+    <script src="app-icons.js"></script>
     <script src="theme.js"></script>
   </head>
   <body>
@@ -93,7 +94,7 @@
             </div>
           </div>
           <div class="toolbar">
-            <a class="btn" href="task.html">← Back to Task List</a>
+            <a class="btn btn--with-ic" href="task.html"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 6 9 12l6 6"/><path d="M9 12h10"/></svg></span> Back to Task List</a>
           </div>
         </header>
 
@@ -155,12 +156,15 @@
                 </select>
               </div>
 
-              <div>
-                <label for="charged">Charged?</label>
-                <select id="charged">
-                  <option value="false" selected>Unpaid</option>
-                  <option value="true">Completed</option>
-                </select>
+              <div class="switch-field">
+                <span class="switch-field__label" id="chargedFieldLabel"
+                  >Charged?</span
+                >
+                <label class="switch" for="charged">
+                  <input id="charged" type="checkbox" role="switch" />
+                  <span class="switch__ui" aria-hidden="true"></span>
+                </label>
+                <span class="switch-field__state" id="chargedState">Unpaid</span>
               </div>
 
               <div class="row-1">
@@ -263,6 +267,18 @@
         catSave: document.getElementById("catSave"),
         catCancel: document.getElementById("catCancel"),
       };
+
+      function syncChargedState() {
+        const on = !!els.charged.checked;
+        const state = document.getElementById("chargedState");
+        if (state) {
+          state.textContent = on ? "Charged" : "Unpaid";
+          state.classList.toggle("is-on", on);
+        }
+        els.charged.setAttribute("aria-checked", on ? "true" : "false");
+      }
+      els.charged.addEventListener("change", syncChargedState);
+      syncChargedState();
 
       let categories = [];
       let tasksCache = [];
@@ -505,7 +521,7 @@
               const dig = els.price.value.replace(/\D/g, "");
               return dig ? parseInt(dig, 10) : null;
             })(),
-            is_charged: els.charged.value === "true",
+            is_charged: !!els.charged.checked,
             assign_to: els.assign.value || null,
             note: els.note.value.trim() || null,
           };
@@ -523,7 +539,7 @@
             throw new Error(t || "HTTP " + res.status);
           }
           const out = await res.json();
-          notify("Đã lưu task ✔️");
+          notify("Đã lưu task");
           els.form.reset();
           const now = new Date();
           const pad = (n) => String(n).padStart(2, "0");
@@ -531,6 +547,8 @@
             now.getMonth() + 1,
           )}-${pad(now.getDate())}`;
           els.assign.value = "The One";
+          els.charged.checked = false;
+          syncChargedState();
         } catch (err) {
           notify("Lỗi lưu: " + err.message, true);
         } finally {
@@ -560,5 +578,6 @@
         );
       }
     </script>
+      <script src="app-ui.js"></script>
   </body>
 </html>
