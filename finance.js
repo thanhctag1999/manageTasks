@@ -10,13 +10,80 @@
     budgets: [],
     goals: [],
     contributions: [],
+    debts: [],
+    debtPayments: [],
     wishlist: [],
     scenarios: [],
     period: "month",
     transactionType: "",
     purchaseWishlistId: null,
     lastSyncedAt: null,
+    debtsAvailable: true,
+    quickTxPresets: [],
   };
+
+  const DEFAULT_QUICK_TX = [
+    {
+      id: "qt-breakfast",
+      name: "Ăn sáng",
+      type: "expense",
+      amount: 30000,
+      category_hint: "ăn",
+      priority: "p1",
+      nature: "variable",
+      merchant: "",
+    },
+    {
+      id: "qt-lunch",
+      name: "Ăn trưa",
+      type: "expense",
+      amount: 50000,
+      category_hint: "ăn",
+      priority: "p1",
+      nature: "variable",
+      merchant: "",
+    },
+    {
+      id: "qt-dinner",
+      name: "Ăn tối",
+      type: "expense",
+      amount: 50000,
+      category_hint: "ăn",
+      priority: "p1",
+      nature: "variable",
+      merchant: "",
+    },
+    {
+      id: "qt-coffee",
+      name: "Cà phê",
+      type: "expense",
+      amount: 35000,
+      category_hint: "cà phê",
+      priority: "p2",
+      nature: "variable",
+      merchant: "",
+    },
+    {
+      id: "qt-commute",
+      name: "Đi lại",
+      type: "expense",
+      amount: 30000,
+      category_hint: "đi lại",
+      priority: "p1",
+      nature: "semi_fixed",
+      merchant: "",
+    },
+    {
+      id: "qt-grocery",
+      name: "Tạp hóa",
+      type: "expense",
+      amount: 100000,
+      category_hint: "siêu thị",
+      priority: "p1",
+      nature: "variable",
+      merchant: "",
+    },
+  ];
 
   const TABLES = {
     accounts: "financial_account",
@@ -26,6 +93,8 @@
     budgets: "budget",
     goals: "savings_goal",
     contributions: "goal_contribution",
+    debts: "finance_debt",
+    debtPayments: "debt_payment",
     wishlist: "wishlist_item",
     scenarios: "cashflow_scenario",
   };
@@ -55,8 +124,10 @@
     saving: "Đang tiết kiệm",
     ready: "Sẵn sàng mua",
     purchased: "Đã mua",
+    paid: "Đã trả hết",
   };
   const FREQUENCY_LABELS = {
+    daily: "Hàng ngày",
     weekly: "Hàng tuần",
     monthly: "Hàng tháng",
     quarterly: "Hàng quý",
@@ -99,6 +170,10 @@
     scenarios: [
       "Kịch bản dòng tiền",
       "Thử tương lai trước khi tương lai thử ví của bạn.",
+    ],
+    debts: [
+      "Quản lý nợ",
+      "Theo dõi dư nợ, hạn trả và lịch sử thanh toán.",
     ],
     setup: [
       "Tài khoản & danh mục",
@@ -169,10 +244,14 @@
     });
 
     $("#transactionForm").addEventListener("submit", saveTransaction);
+    $("#quickTxForm")?.addEventListener("submit", saveQuickTxPreset);
+    $("#quickTxResetDefaults")?.addEventListener("click", resetQuickTxDefaults);
     $("#recurringForm").addEventListener("submit", saveRecurring);
     $("#budgetForm").addEventListener("submit", saveBudget);
     $("#goalForm").addEventListener("submit", saveGoal);
     $("#contributionForm").addEventListener("submit", saveContribution);
+    $("#debtForm").addEventListener("submit", saveDebt);
+    $("#debtPaymentForm").addEventListener("submit", saveDebtPayment);
     $("#wishlistForm").addEventListener("submit", saveWishlist);
     $("#accountForm").addEventListener("submit", saveAccount);
     $("#categoryForm").addEventListener("submit", saveCategory);
@@ -248,6 +327,9 @@
       "edit-goal": () => editGoal(id),
       "delete-goal": () => deleteRow("goals", id, "Xóa mục tiêu này?"),
       "contribute-goal": () => openContribution(id),
+      "edit-debt": () => editDebt(id),
+      "delete-debt": () => deleteRow("debts", id, "Xóa khoản nợ này?"),
+      "pay-debt": () => openDebtPayment(id),
       "edit-wishlist": () => editWishlist(id),
       "delete-wishlist": () =>
         deleteRow("wishlist", id, "Xóa mặt hàng này khỏi wishlist?"),
@@ -260,6 +342,10 @@
       "delete-category": () => deleteRow("categories", id, "Xóa danh mục này?"),
       "edit-scenario": () => editScenario(id),
       "delete-scenario": () => deleteRow("scenarios", id, "Xóa kịch bản này?"),
+      "use-quick-tx": () => applyQuickTxPreset(id, false),
+      "instant-quick-tx": () => applyQuickTxPreset(id, true),
+      "edit-quick-tx": () => editQuickTxPreset(id),
+      "delete-quick-tx": () => deleteQuickTxPreset(id),
     };
     if (routes[action]) await routes[action]();
   }
@@ -325,6 +411,20 @@
         list("wishlist", "priority.asc,created_at.desc"),
         list("scenarios", "created_at.desc"),
       ]);
+
+      let debts = [];
+      let debtPayments = [];
+      let debtsAvailable = true;
+      try {
+        [debts, debtPayments] = await Promise.all([
+          list("debts", "due_date.asc"),
+          list("debtPayments", "paid_on.desc"),
+        ]);
+      } catch (debtError) {
+        debtsAvailable = false;
+        console.warn("Debts tables unavailable:", debtError);
+      }
+
       Object.assign(state, {
         accounts,
         categories,
@@ -333,10 +433,14 @@
         budgets,
         goals,
         contributions,
+        debts,
+        debtPayments,
         wishlist,
         scenarios,
+        debtsAvailable,
         lastSyncedAt: new Date(),
       });
+      loadQuickTxPresets();
       populateSelects();
       renderAll();
     } catch (error) {
@@ -478,6 +582,21 @@
       if ([...el.options].some((option) => option.value === current))
         el.value = current;
     });
+    const quickTxCategory = $("#quickTxCategory");
+    if (quickTxCategory) {
+      const currentQuickCat = quickTxCategory.value;
+      quickTxCategory.innerHTML =
+        '<option value="">Tự chọn khi thêm</option>' +
+        state.categories
+          .filter((item) => !item.is_archived)
+          .map(
+            (item) =>
+              `<option value="${escapeAttr(item.id)}">${escapeHtml(item.name)}</option>`,
+          )
+          .join("");
+      if ([...quickTxCategory.options].some((o) => o.value === currentQuickCat))
+        quickTxCategory.value = currentQuickCat;
+    }
     const budgetCategory = $("#budgetCategory");
     const currentBudgetCat = budgetCategory.value;
     budgetCategory.innerHTML =
@@ -503,14 +622,31 @@
         )
         .join("");
     wishlistGoal.value = currentGoal;
+
+    const debtPaymentAccount = $("#debtPaymentAccount");
+    if (debtPaymentAccount) {
+      const currentDebtAcc = debtPaymentAccount.value;
+      debtPaymentAccount.innerHTML =
+        '<option value="">Không chọn</option>' +
+        state.accounts
+          .filter((item) => !item.is_archived)
+          .map(
+            (item) =>
+              `<option value="${escapeAttr(item.id)}">${escapeHtml(item.name)}</option>`,
+          )
+          .join("");
+      debtPaymentAccount.value = currentDebtAcc;
+    }
   }
 
   function renderAll() {
     renderOverview();
     renderTransactions();
+    renderQuickTx();
     renderRecurring();
     renderBudgets();
     renderGoals();
+    renderDebts();
     renderWishlist();
     renderScenarios();
     renderSetup();
@@ -971,6 +1107,24 @@
         text: `Tổng gần nhất ${money(sum(overdue.map((item) => item.amount)))} cần được xử lý.`,
       });
     }
+    const activeDebts = state.debts.filter((debt) => debt.status === "active");
+    const outstanding = sum(activeDebts.map((debt) => debtProgress(debt).remaining));
+    const dueSoonDebts = activeDebts.filter((debt) => {
+      if (!debt.due_date) return false;
+      const due = parseDate(debt.due_date);
+      const days = Math.ceil((due - startOfDay(new Date())) / 86400000);
+      return days <= 7;
+    });
+    if (outstanding > 0) {
+      items.push({
+        tone: dueSoonDebts.length ? "warn" : "info",
+        icon: "₫",
+        title: `Đang nợ ${money(outstanding)}`,
+        text: dueSoonDebts.length
+          ? `${dueSoonDebts.length} khoản đến hạn trong 7 ngày tới.`
+          : `${activeDebts.length} khoản đang mở · mở mục Nợ để trả.`,
+      });
+    }
     const overBudgets = budgetDetails().filter((item) => item.percent >= 100);
     if (overBudgets.length) {
       items.push({
@@ -1287,6 +1441,275 @@
     $$(".transfer-only").forEach((el) =>
       el.classList.toggle("hidden", type !== "transfer"),
     );
+  }
+
+  // -------------------------------------------------------------------------
+  // Quick transaction presets (daily essentials)
+  // -------------------------------------------------------------------------
+
+  function quickTxStorageKey() {
+    const uid = state.user?.id || state.user?.username || "guest";
+    return `finance.quickTx.${uid}`;
+  }
+
+  function cloneQuickTxDefaults() {
+    return DEFAULT_QUICK_TX.map((item) => ({ ...item }));
+  }
+
+  function loadQuickTxPresets() {
+    try {
+      const raw = localStorage.getItem(quickTxStorageKey());
+      if (!raw) {
+        state.quickTxPresets = cloneQuickTxDefaults();
+        return;
+      }
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed) || !parsed.length) {
+        state.quickTxPresets = cloneQuickTxDefaults();
+        return;
+      }
+      state.quickTxPresets = parsed.map((item) => normalizeQuickTx(item));
+    } catch {
+      state.quickTxPresets = cloneQuickTxDefaults();
+    }
+  }
+
+  function normalizeQuickTx(item) {
+    return {
+      id: String(item.id || `qt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`),
+      name: String(item.name || "Gợi ý").trim() || "Gợi ý",
+      type: item.type === "income" ? "income" : "expense",
+      amount: Math.max(0, Number(item.amount) || 0),
+      category_id: item.category_id || null,
+      category_hint: item.category_hint || "",
+      priority: item.priority || "p1",
+      nature: item.nature || "variable",
+      merchant: item.merchant || "",
+    };
+  }
+
+  function saveQuickTxPresets() {
+    localStorage.setItem(
+      quickTxStorageKey(),
+      JSON.stringify(state.quickTxPresets),
+    );
+  }
+
+  function resolveQuickTxCategoryId(preset) {
+    if (preset.category_id && findById(state.categories, preset.category_id)) {
+      return preset.category_id;
+    }
+    const hint = (preset.category_hint || preset.name || "").toLowerCase();
+    if (!hint) return null;
+    const match = state.categories.find((cat) => {
+      if (cat.is_archived) return false;
+      const name = (cat.name || "").toLowerCase();
+      return name.includes(hint) || hint.includes(name);
+    });
+    return match?.id || null;
+  }
+
+  function isQuickTxUsedToday(preset) {
+    const today = todayYmd();
+    const name = (preset.name || "").toLowerCase();
+    return state.transactions.some(
+      (row) =>
+        row.occurred_on === today &&
+        (row.name || "").toLowerCase() === name &&
+        row.type === preset.type,
+    );
+  }
+
+  function renderQuickTx() {
+    const chips = $("#quickTxChips");
+    if (!chips) return;
+    const presets = state.quickTxPresets || [];
+    if (!presets.length) {
+      chips.innerHTML = empty(
+        "Chưa có gợi ý. Bấm Tùy chỉnh để thêm giao dịch thiết yếu.",
+      );
+      renderQuickTxManageList();
+      return;
+    }
+    chips.innerHTML = presets
+      .map((preset) => {
+        const used = isQuickTxUsedToday(preset);
+        const category =
+          findById(state.categories, resolveQuickTxCategoryId(preset)) || null;
+        return `<div class="quick-tx-chip${used ? " is-used" : ""}">
+          <button type="button" class="quick-tx-chip__main" data-action="use-quick-tx" data-id="${escapeAttr(preset.id)}" title="Mở form đã điền sẵn">
+            <span class="quick-tx-chip__name">${escapeHtml(preset.name)}</span>
+            <span class="quick-tx-chip__meta">
+              <b>${money(preset.amount)}</b>
+              <span>${escapeHtml(category?.name || typeLabel(preset.type))}</span>
+            </span>
+            ${used ? '<span class="quick-tx-chip__badge">Hôm nay</span>' : ""}
+          </button>
+          <button type="button" class="quick-tx-chip__instant" data-action="instant-quick-tx" data-id="${escapeAttr(preset.id)}" title="Thêm ngay">+</button>
+        </div>`;
+      })
+      .join("");
+    renderQuickTxManageList();
+  }
+
+  function renderQuickTxManageList() {
+    const list = $("#quickTxManageList");
+    if (!list) return;
+    const presets = state.quickTxPresets || [];
+    if (!presets.length) {
+      list.innerHTML = empty("Chưa có gợi ý nào.");
+      return;
+    }
+    list.innerHTML = `
+      <div class="quick-tx-manage-head">Danh sách đang dùng</div>
+      ${presets
+        .map((preset) => {
+          const category = findById(
+            state.categories,
+            resolveQuickTxCategoryId(preset),
+          );
+          return `<div class="quick-tx-manage-row">
+            <div>
+              <b>${escapeHtml(preset.name)}</b>
+              <span>${money(preset.amount)} · ${escapeHtml(
+                category?.name || typeLabel(preset.type),
+              )} · ${escapeHtml(PRIORITY_LABELS[preset.priority] || preset.priority)}</span>
+            </div>
+            <div class="row-actions">
+              <button type="button" class="icon-action" data-action="edit-quick-tx" data-id="${escapeAttr(preset.id)}" title="Sửa">✎</button>
+              <button type="button" class="icon-action danger" data-action="delete-quick-tx" data-id="${escapeAttr(preset.id)}" title="Xóa">×</button>
+            </div>
+          </div>`;
+        })
+        .join("")}`;
+  }
+
+  function resetQuickTxForm() {
+    $("#quickTxForm")?.reset();
+    $("#quickTxEditId").value = "";
+    $("#quickTxDialogTitle").textContent = "Gợi ý giao dịch nhanh";
+    $("#quickTxType").value = "expense";
+    $("#quickTxPriority").value = "p1";
+    $("#quickTxNature").value = "variable";
+    $("#quickTxAmount").value = "";
+    $("#quickTxCategory").value = "";
+    $("#quickTxMerchant").value = "";
+    renderQuickTxManageList();
+  }
+
+  function editQuickTxPreset(id) {
+    const preset = state.quickTxPresets.find((item) => item.id === id);
+    if (!preset) return;
+    $("#quickTxEditId").value = preset.id;
+    $("#quickTxDialogTitle").textContent = "Sửa gợi ý";
+    $("#quickTxName").value = preset.name;
+    $("#quickTxType").value = preset.type;
+    $("#quickTxAmount").value = numberFormat(preset.amount);
+    $("#quickTxCategory").value = resolveQuickTxCategoryId(preset) || "";
+    $("#quickTxPriority").value = preset.priority || "p1";
+    $("#quickTxNature").value = preset.nature || "variable";
+    $("#quickTxMerchant").value = preset.merchant || "";
+    openDialog($("#quickTxDialog"));
+  }
+
+  async function saveQuickTxPreset(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const id = $("#quickTxEditId").value;
+    const name = $("#quickTxName").value.trim();
+    const amount = parseMoney($("#quickTxAmount").value);
+    if (!name || !amount) {
+      toast("Vui lòng nhập tên và số tiền mặc định.", true);
+      return;
+    }
+    const categoryId = nullable($("#quickTxCategory").value);
+    const category = findById(state.categories, categoryId);
+    const body = normalizeQuickTx({
+      id: id || `qt-${Date.now()}`,
+      name,
+      type: $("#quickTxType").value,
+      amount,
+      category_id: categoryId,
+      category_hint: category?.name || name,
+      priority: $("#quickTxPriority").value,
+      nature: $("#quickTxNature").value,
+      merchant: $("#quickTxMerchant").value.trim(),
+    });
+    await withSubmit(form, async () => {
+      if (id) {
+        state.quickTxPresets = state.quickTxPresets.map((item) =>
+          item.id === id ? body : item,
+        );
+      } else {
+        state.quickTxPresets = [...state.quickTxPresets, body];
+      }
+      saveQuickTxPresets();
+      resetQuickTxForm();
+      renderQuickTx();
+      toast(id ? "Đã cập nhật gợi ý." : "Đã thêm gợi ý.");
+    });
+  }
+
+  function deleteQuickTxPreset(id) {
+    if (!confirm("Xóa gợi ý này?")) return;
+    state.quickTxPresets = state.quickTxPresets.filter((item) => item.id !== id);
+    saveQuickTxPresets();
+    if ($("#quickTxEditId").value === id) resetQuickTxForm();
+    renderQuickTx();
+    toast("Đã xóa gợi ý.");
+  }
+
+  function resetQuickTxDefaults() {
+    if (!confirm("Khôi phục bộ gợi ý mặc định? Thay đổi hiện tại sẽ bị ghi đè."))
+      return;
+    state.quickTxPresets = cloneQuickTxDefaults();
+    saveQuickTxPresets();
+    resetQuickTxForm();
+    renderQuickTx();
+    toast("Đã khôi phục gợi ý mặc định.");
+  }
+
+  async function applyQuickTxPreset(id, instant) {
+    const preset = state.quickTxPresets.find((item) => item.id === id);
+    if (!preset) return;
+    const categoryId = resolveQuickTxCategoryId(preset);
+    if (instant) {
+      const body = ownerBody({
+        name: preset.name,
+        type: preset.type,
+        amount: preset.amount,
+        occurred_on: todayYmd(),
+        status: "posted",
+        account_id: null,
+        transfer_account_id: null,
+        category_id: preset.type === "expense" ? categoryId : null,
+        nature: preset.type === "expense" ? preset.nature || "variable" : "one_off",
+        priority: preset.type === "expense" ? preset.priority || "p1" : "p2",
+        merchant: nullable(preset.merchant),
+        note: null,
+        wishlist_item_id: null,
+      });
+      try {
+        await createRow("transactions", body);
+        toast(`Đã thêm “${preset.name}”.`);
+        await loadAll();
+      } catch (error) {
+        toast(readableApiError(error), true);
+      }
+      return;
+    }
+    resetTransactionForm();
+    $("#transactionDialogTitle").textContent = `Nhanh · ${preset.name}`;
+    $("#transactionName").value = preset.name;
+    $("#transactionAmount").value = numberFormat(preset.amount);
+    $("#transactionDate").value = todayYmd();
+    $("#transactionCategory").value = categoryId || "";
+    $("#transactionPriority").value = preset.priority || "p1";
+    $("#transactionNature").value = preset.nature || "variable";
+    $("#transactionMerchant").value = preset.merchant || "";
+    $("#transactionStatus").value = "posted";
+    setTransactionType(preset.type);
+    openDialog($("#transactionDialog"));
   }
 
   // -------------------------------------------------------------------------
@@ -1980,6 +2403,300 @@
     $("#goalDialogTitle").textContent = "Mục tiêu mới";
     $("#goalPriority").value = "p1";
     $("#goalFrequency").value = "monthly";
+  }
+
+  // -------------------------------------------------------------------------
+  // Debts
+  // -------------------------------------------------------------------------
+
+  function renderDebts() {
+    const stats = $("#debtStats");
+    const grid = $("#debtGrid");
+    const history = $("#debtPaymentHistory");
+    if (!stats || !grid || !history) return;
+
+    if (!state.debtsAvailable) {
+      stats.innerHTML = "";
+      grid.innerHTML = empty(
+        "Chưa có bảng nợ trên database. Chạy database/schema-debts.sql rồi bấm Reload.",
+      );
+      history.innerHTML = empty("Chưa có lịch sử trả nợ.");
+      return;
+    }
+
+    const active = state.debts.filter((debt) => debt.status === "active");
+    const outstanding = sum(active.map((debt) => debtProgress(debt).remaining));
+    const paidTotal = sum(
+      state.debts.map((debt) => debtProgress(debt).paid),
+    );
+    const dueSoon = active.filter((debt) => {
+      if (!debt.due_date) return false;
+      const days = Math.ceil(
+        (parseDate(debt.due_date) - startOfDay(new Date())) / 86400000,
+      );
+      return days >= 0 && days <= 14;
+    }).length;
+
+    stats.innerHTML = [
+      ["Khoản đang nợ", String(active.length)],
+      ["Dư nợ còn lại", money(outstanding)],
+      ["Đã trả tích lũy", money(paidTotal)],
+      ["Đến hạn ≤ 14 ngày", String(dueSoon)],
+    ]
+      .map(([label, value]) => miniKpi(label, value))
+      .join("");
+
+    grid.innerHTML = state.debts.length
+      ? state.debts
+          .map((debt) => {
+            const data = debtProgress(debt);
+            const statusLabel =
+              debt.status === "active"
+                ? "Đang nợ"
+                : STATUS_LABELS[debt.status] || debt.status;
+            const dueLabel = debt.due_date
+              ? `hạn ${formatDate(debt.due_date)}`
+              : "không có hạn";
+            const track =
+              data.remaining <= 0 || debt.status === "paid"
+                ? "completed"
+                : data.daysLeft != null && data.daysLeft < 0
+                  ? "risk"
+                  : data.daysLeft != null && data.daysLeft <= 7
+                    ? "risk"
+                    : "on_track";
+            const trackLabel = {
+              completed: "Đã tất toán",
+              risk: data.daysLeft < 0 ? "Quá hạn" : "Sắp đến hạn",
+              on_track: "Đang theo dõi",
+            }[track];
+            return `<article class="goal-card debt-card">
+              <div class="goal-card__head">
+                <div>
+                  <h3>${escapeHtml(debt.name)}</h3>
+                  <p>${escapeHtml(PRIORITY_LABELS[debt.priority] || "P1")} · ${escapeHtml(
+                    debt.lender || "Không rõ chủ nợ",
+                  )} · ${dueLabel}</p>
+                </div>
+                <span class="chip ${
+                  track === "risk"
+                    ? "chip--p0"
+                    : track === "completed"
+                      ? "chip--posted"
+                      : "chip--due"
+                }">${escapeHtml(trackLabel)}</span>
+              </div>
+              <div class="progress-track"><span style="--bar-color:${escapeAttr(
+                debt.color || "#dc3f57",
+              )};width:${data.percentPaid}%"></span></div>
+              <div class="goal-card__numbers">
+                <span>Còn lại <b>${money(data.remaining)}</b></span>
+                <span>Gốc <b>${money(debt.principal_amount)}</b></span>
+              </div>
+              <div class="card-footer-actions">
+                <span>${escapeHtml(statusLabel)}${
+                  debt.min_payment
+                    ? ` · tối thiểu ${money(debt.min_payment)}`
+                    : ""
+                }${
+                  debt.interest_rate
+                    ? ` · ${(+debt.interest_rate || 0).toFixed(1)}%/năm`
+                    : ""
+                }</span>
+                <div>
+                  ${
+                    debt.status === "active" && data.remaining > 0
+                      ? `<button class="icon-action" data-action="pay-debt" data-id="${escapeAttr(
+                          debt.id,
+                        )}" title="Trả nợ">₫</button>`
+                      : ""
+                  }
+                  <button class="icon-action" data-action="edit-debt" data-id="${escapeAttr(
+                    debt.id,
+                  )}">✎</button>
+                  <button class="icon-action danger" data-action="delete-debt" data-id="${escapeAttr(
+                    debt.id,
+                  )}">×</button>
+                </div>
+              </div>
+            </article>`;
+          })
+          .join("")
+      : empty("Chưa có khoản nợ nào. Thêm khoản vay, thẻ tín dụng hoặc nợ cá nhân.");
+
+    const payments = state.debtPayments
+      .slice()
+      .sort((a, b) => String(b.paid_on).localeCompare(String(a.paid_on)))
+      .slice(0, 12);
+    history.innerHTML = payments.length
+      ? payments
+          .map((row) => {
+            const debt = findById(state.debts, row.debt_id);
+            return `<div class="transaction-item">
+              <div class="transaction-item__icon" style="--item-color:#dc3f57">₫</div>
+              <div><b>${escapeHtml(debt?.name || "Khoản nợ")}</b><span>${formatDate(
+                row.paid_on,
+              )} · ${escapeHtml(accountName(row.account_id))}</span></div>
+              <div class="transaction-item__amount expense">−${money(row.amount)}</div>
+            </div>`;
+          })
+          .join("")
+      : empty("Chưa có lần trả nợ nào.");
+  }
+
+  function debtProgress(debt) {
+    const payments = state.debtPayments.filter(
+      (row) => String(row.debt_id) === String(debt.id),
+    );
+    const paidFromPayments = sum(payments.map((row) => row.amount));
+    const paidInitial = +debt.paid_initial || 0;
+    const paid = paidInitial + paidFromPayments;
+    const principal = +debt.principal_amount || 0;
+    const remaining = Math.max(0, principal - paid);
+    const percentPaid = clamp(principal ? (paid / principal) * 100 : 0, 0, 100);
+    let daysLeft = null;
+    if (debt.due_date) {
+      daysLeft = Math.ceil(
+        (parseDate(debt.due_date) - startOfDay(new Date())) / 86400000,
+      );
+    }
+    return { paid, remaining, principal, percentPaid, daysLeft };
+  }
+
+  async function saveDebt(event) {
+    event.preventDefault();
+    if (!state.debtsAvailable) {
+      toast("Chưa có bảng nợ. Chạy database/schema-debts.sql trước.", true);
+      return;
+    }
+    const form = event.currentTarget;
+    const id = $("#debtId").value;
+    const existing = findById(state.debts, id);
+    const principal = parseMoney($("#debtPrincipal").value);
+    const paidInitial = parseMoney($("#debtPaidInitial").value);
+    const body = ownerBody({
+      name: $("#debtName").value.trim(),
+      lender: nullable($("#debtLender").value.trim()),
+      principal_amount: principal,
+      paid_initial: paidInitial,
+      interest_rate: $("#debtInterest").value
+        ? Number($("#debtInterest").value)
+        : null,
+      min_payment: parseMoney($("#debtMinPayment").value) || null,
+      due_date: nullable($("#debtDueDate").value),
+      priority: $("#debtPriority").value || "p1",
+      status: $("#debtStatus").value || "active",
+      note: nullable($("#debtNote").value.trim()),
+      color: existing?.color || "#dc3f57",
+      updated_at: new Date().toISOString(),
+    });
+    if (!body.name || !body.principal_amount) {
+      toast("Vui lòng nhập tên và tổng gốc khoản nợ.", true);
+      return;
+    }
+    if (paidInitial > principal) {
+      toast("Số đã trả trước không được lớn hơn tổng gốc.", true);
+      return;
+    }
+    await withSubmit(form, async () => {
+      if (id) await updateRow("debts", id, body);
+      else await createRow("debts", body);
+      closeDialog($("#debtDialog"));
+      toast(id ? "Đã cập nhật khoản nợ." : "Đã thêm khoản nợ.");
+      await loadAll();
+    });
+  }
+
+  function editDebt(id) {
+    const row = findById(state.debts, id);
+    if (!row) return;
+    resetDebtForm();
+    $("#debtId").value = row.id;
+    $("#debtDialogTitle").textContent = "Chỉnh sửa khoản nợ";
+    $("#debtName").value = row.name || "";
+    $("#debtLender").value = row.lender || "";
+    $("#debtPrincipal").value = numberFormat(row.principal_amount);
+    $("#debtPaidInitial").value = numberFormat(row.paid_initial);
+    $("#debtInterest").value =
+      row.interest_rate == null || row.interest_rate === ""
+        ? ""
+        : String(row.interest_rate);
+    $("#debtMinPayment").value = numberFormat(row.min_payment);
+    $("#debtDueDate").value = row.due_date || "";
+    $("#debtPriority").value = row.priority || "p1";
+    $("#debtStatus").value = row.status || "active";
+    $("#debtNote").value = row.note || "";
+    openDialog($("#debtDialog"));
+  }
+
+  function openDebtPayment(id) {
+    const debt = findById(state.debts, id);
+    if (!debt) return;
+    $("#debtPaymentForm").reset();
+    $("#debtPaymentDebtId").value = debt.id;
+    $("#debtPaymentDebtName").value = debt.name;
+    $("#debtPaymentDate").value = todayYmd();
+    const remaining = debtProgress(debt).remaining;
+    const suggest = debt.min_payment
+      ? Math.min(+debt.min_payment || 0, remaining)
+      : remaining;
+    $("#debtPaymentAmount").value = suggest ? numberFormat(suggest) : "";
+    openDialog($("#debtPaymentDialog"));
+  }
+
+  async function saveDebtPayment(event) {
+    event.preventDefault();
+    if (!state.debtsAvailable) {
+      toast("Chưa có bảng nợ. Chạy database/schema-debts.sql trước.", true);
+      return;
+    }
+    const form = event.currentTarget;
+    const debtId = $("#debtPaymentDebtId").value;
+    const amount = parseMoney($("#debtPaymentAmount").value);
+    const debt = findById(state.debts, debtId);
+    if (!debt || !amount) {
+      toast("Vui lòng nhập số tiền trả.", true);
+      return;
+    }
+    const remaining = debtProgress(debt).remaining;
+    if (amount > remaining) {
+      toast(`Số tiền vượt dư nợ còn lại (${money(remaining)}).`, true);
+      return;
+    }
+    const body = ownerBody({
+      debt_id: debtId,
+      amount,
+      paid_on: $("#debtPaymentDate").value || todayYmd(),
+      account_id: nullable($("#debtPaymentAccount").value),
+      note: nullable($("#debtPaymentNote").value.trim()),
+    });
+    await withSubmit(form, async () => {
+      await createRow("debtPayments", body);
+      closeDialog($("#debtPaymentDialog"));
+      toast("Đã ghi nhận trả nợ.");
+      await loadAll();
+      const updated = findById(state.debts, debtId);
+      if (
+        updated &&
+        debtProgress(updated).remaining <= 0 &&
+        updated.status !== "paid"
+      ) {
+        await updateRow("debts", debtId, {
+          status: "paid",
+          updated_at: new Date().toISOString(),
+        });
+        await loadAll();
+        toast("Khoản nợ đã tất toán.");
+      }
+    });
+  }
+
+  function resetDebtForm() {
+    $("#debtForm").reset();
+    $("#debtId").value = "";
+    $("#debtDialogTitle").textContent = "Khoản nợ mới";
+    $("#debtPriority").value = "p1";
+    $("#debtStatus").value = "active";
   }
 
   // -------------------------------------------------------------------------
@@ -2695,6 +3412,7 @@
 
   function nextOccurrence(rule, from) {
     const interval = Math.max(1, +rule.interval_count || 1);
+    if (rule.frequency === "daily") return addDays(from, interval);
     if (rule.frequency === "weekly") return addDays(from, 7 * interval);
     if (rule.frequency === "quarterly")
       return addMonthsClamped(from, 3 * interval, rule.day_of_month);
@@ -2714,6 +3432,7 @@
   function monthlyEquivalent(rule) {
     const amount = +rule.amount || 0;
     const interval = Math.max(1, +rule.interval_count || 1);
+    if (rule.frequency === "daily") return (amount * 30.4375) / interval;
     if (rule.frequency === "weekly") return (amount * 4.345) / interval;
     if (rule.frequency === "quarterly") return amount / (3 * interval);
     if (rule.frequency === "yearly") return amount / (12 * interval);
@@ -2836,9 +3555,11 @@
   function openCreateDialog(id) {
     const resetters = {
       transactionDialog: resetTransactionForm,
+      quickTxDialog: resetQuickTxForm,
       recurringDialog: resetRecurringForm,
       budgetDialog: resetBudgetForm,
       goalDialog: resetGoalForm,
+      debtDialog: resetDebtForm,
       wishlistDialog: resetWishlistForm,
       accountDialog: resetAccountForm,
       categoryDialog: resetCategoryForm,

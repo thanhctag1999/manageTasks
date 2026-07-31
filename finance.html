@@ -86,6 +86,7 @@
           <button class="active" data-view-target="overview">Tổng quan</button>
           <button data-view-target="transactions">Giao dịch</button>
           <button data-view-target="recurring">Định kỳ</button>
+          <button data-view-target="debts">Nợ</button>
           <button data-view-target="budgets">Ngân sách</button>
           <button data-view-target="goals">Tiết kiệm</button>
           <button data-view-target="wishlist">Wishlist</button>
@@ -177,6 +178,7 @@
           <button class="active" data-view-target="overview">Tổng quan</button>
           <button data-view-target="transactions">Giao dịch</button>
           <button data-view-target="recurring">Định kỳ</button>
+          <button data-view-target="debts">Nợ</button>
           <button data-view-target="budgets">Ngân sách</button>
           <button data-view-target="goals">Tiết kiệm</button>
           <button data-view-target="wishlist">Wishlist</button>
@@ -439,6 +441,27 @@
               </button>
             </div>
           </div>
+          <article class="finance-card quick-tx-card">
+            <div class="finance-card__head">
+              <div>
+                <span class="finance-card__eyebrow">Daily essentials</span>
+                <h2>Gợi ý thiết yếu hằng ngày</h2>
+                <p class="quick-tx-card__hint">
+                  Chạm để mở form đã điền sẵn · giữ số tiền mặc định để thêm
+                  nhanh.
+                </p>
+              </div>
+              <button
+                type="button"
+                class="f-btn"
+                data-open-dialog="quickTxDialog"
+                id="manageQuickTxBtn"
+              >
+                Tùy chỉnh
+              </button>
+            </div>
+            <div class="quick-tx-chips" id="quickTxChips"></div>
+          </article>
           <div class="ledger-summary" id="ledgerSummary"></div>
           <div class="finance-card finance-card--table">
             <div class="responsive-table">
@@ -516,6 +539,34 @@
           </div>
           <div class="budget-overview" id="budgetOverview"></div>
           <div class="budget-grid" id="budgetGrid"></div>
+        </section>
+
+        <!-- DEBTS -->
+        <section class="finance-view" data-view="debts">
+          <div class="module-intro">
+            <div>
+              <span class="finance-card__eyebrow">Liability desk</span>
+              <h2>Quản lý nợ</h2>
+              <p>
+                Theo dõi dư nợ, hạn trả và lịch sử thanh toán để không bỏ lỡ khoản
+                đến hạn.
+              </p>
+            </div>
+            <button
+              class="f-btn f-btn--primary"
+              data-open-dialog="debtDialog"
+            >
+              + Khoản nợ mới
+            </button>
+          </div>
+          <div class="goal-stats" id="debtStats"></div>
+          <div class="goal-grid" id="debtGrid"></div>
+          <article class="finance-card contribution-history-card">
+            <div class="finance-card__head">
+              <div><h2>Lịch sử trả nợ</h2></div>
+            </div>
+            <div class="transaction-list" id="debtPaymentHistory"></div>
+          </article>
         </section>
 
         <!-- GOALS -->
@@ -649,6 +700,75 @@
         </section>
       </main>
     </div>
+
+    <!-- Quick transaction presets -->
+    <dialog class="finance-dialog" id="quickTxDialog" aria-labelledby="quickTxDialogTitle">
+      <form class="dialog-panel" id="quickTxForm">
+        <header class="dialog-head">
+          <div>
+            <span class="finance-card__eyebrow">Customize</span>
+            <h2 id="quickTxDialogTitle">Gợi ý giao dịch nhanh</h2>
+          </div>
+          <button type="button" class="dialog-close" data-close-dialog>×</button>
+        </header>
+        <input type="hidden" id="quickTxEditId" />
+        <div class="form-grid">
+          <label class="form-field form-field--wide">
+            <span>Tên gợi ý *</span>
+            <input id="quickTxName" required placeholder="VD: Ăn trưa" />
+          </label>
+          <label class="form-field">
+            <span>Loại</span>
+            <select id="quickTxType">
+              <option value="expense" selected>Chi tiêu</option>
+              <option value="income">Thu nhập</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Số tiền mặc định *</span>
+            <input id="quickTxAmount" required data-money-input inputmode="numeric" />
+          </label>
+          <label class="form-field">
+            <span>Danh mục</span>
+            <select id="quickTxCategory">
+              <option value="">Tự chọn khi thêm</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Ưu tiên</span>
+            <select id="quickTxPriority">
+              <option value="p0">P0 · Bắt buộc</option>
+              <option value="p1" selected>P1 · Thiết yếu</option>
+              <option value="p2">P2 · Quan trọng</option>
+              <option value="p3">P3 · Tùy chọn</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Tính chất</span>
+            <select id="quickTxNature">
+              <option value="fixed">Cố định</option>
+              <option value="semi_fixed">Bán cố định</option>
+              <option value="variable" selected>Biến đổi</option>
+              <option value="one_off">Một lần</option>
+            </select>
+          </label>
+          <label class="form-field form-field--wide">
+            <span>Người bán / nguồn</span>
+            <input id="quickTxMerchant" placeholder="Tùy chọn" />
+          </label>
+        </div>
+        <footer class="dialog-actions">
+          <button type="button" class="f-btn" id="quickTxResetDefaults">
+            Khôi phục mặc định
+          </button>
+          <button type="button" class="f-btn" data-close-dialog>Đóng</button>
+          <button class="f-btn f-btn--primary" type="submit">
+            Lưu gợi ý
+          </button>
+        </footer>
+        <div class="quick-tx-manage-list" id="quickTxManageList"></div>
+      </form>
+    </dialog>
 
     <!-- Transaction -->
     <dialog class="finance-dialog" id="transactionDialog" aria-labelledby="transactionDialogTitle">
@@ -784,6 +904,7 @@
           <label class="form-field">
             <span>Chu kỳ</span>
             <select id="recurringFrequency">
+              <option value="daily">Hàng ngày</option>
               <option value="weekly">Hàng tuần</option>
               <option value="monthly" selected>Hàng tháng</option>
               <option value="quarterly">Hàng quý</option>
@@ -988,6 +1109,115 @@
         <footer class="dialog-actions">
           <button type="button" class="f-btn" data-close-dialog>Hủy</button>
           <button class="f-btn f-btn--primary" type="submit">Lưu kịch bản</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <!-- Debt -->
+    <dialog class="finance-dialog" id="debtDialog" aria-labelledby="debtDialogTitle">
+      <form class="dialog-panel" id="debtForm">
+        <header class="dialog-head">
+          <div>
+            <span class="finance-card__eyebrow">Liability</span>
+            <h2 id="debtDialogTitle">Khoản nợ mới</h2>
+          </div>
+          <button type="button" class="dialog-close" data-close-dialog>×</button>
+        </header>
+        <input type="hidden" id="debtId" />
+        <div class="form-grid">
+          <label class="form-field form-field--wide">
+            <span>Tên khoản nợ *</span>
+            <input id="debtName" required placeholder="VD: Vay ngân hàng / Nợ thẻ" />
+          </label>
+          <label class="form-field">
+            <span>Chủ nợ / bên cho vay</span>
+            <input id="debtLender" placeholder="VD: Vietcombank" />
+          </label>
+          <label class="form-field">
+            <span>Tổng gốc *</span>
+            <input id="debtPrincipal" required data-money-input inputmode="numeric" />
+          </label>
+          <label class="form-field">
+            <span>Đã trả trước (nếu có)</span>
+            <input id="debtPaidInitial" data-money-input inputmode="numeric" />
+          </label>
+          <label class="form-field">
+            <span>Lãi suất (%/năm)</span>
+            <input id="debtInterest" type="number" min="0" max="100" step="0.1" placeholder="0" />
+          </label>
+          <label class="form-field">
+            <span>Trả tối thiểu / kỳ</span>
+            <input id="debtMinPayment" data-money-input inputmode="numeric" />
+          </label>
+          <label class="form-field">
+            <span>Hạn trả tiếp theo</span>
+            <input id="debtDueDate" type="date" />
+          </label>
+          <label class="form-field">
+            <span>Ưu tiên</span>
+            <select id="debtPriority">
+              <option value="p0">P0 · Bắt buộc</option>
+              <option value="p1" selected>P1 · Thiết yếu</option>
+              <option value="p2">P2 · Quan trọng</option>
+              <option value="p3">P3 · Tùy chọn</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Trạng thái</span>
+            <select id="debtStatus">
+              <option value="active">Đang nợ</option>
+              <option value="paused">Tạm dừng</option>
+              <option value="paid">Đã trả hết</option>
+            </select>
+          </label>
+          <label class="form-field form-field--wide">
+            <span>Ghi chú</span>
+            <textarea id="debtNote" placeholder="Điều khoản, số hợp đồng…"></textarea>
+          </label>
+        </div>
+        <footer class="dialog-actions">
+          <button type="button" class="f-btn" data-close-dialog>Hủy</button>
+          <button class="f-btn f-btn--primary" type="submit">Lưu khoản nợ</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <!-- Debt payment -->
+    <dialog class="finance-dialog" id="debtPaymentDialog" aria-labelledby="debtPaymentDialogTitle">
+      <form class="dialog-panel dialog-panel--compact" id="debtPaymentForm">
+        <header class="dialog-head">
+          <div>
+            <span class="finance-card__eyebrow">Pay down</span>
+            <h2 id="debtPaymentDialogTitle">Trả nợ</h2>
+          </div>
+          <button type="button" class="dialog-close" data-close-dialog>×</button>
+        </header>
+        <input type="hidden" id="debtPaymentDebtId" />
+        <div class="form-grid">
+          <label class="form-field form-field--wide">
+            <span>Khoản nợ</span>
+            <input id="debtPaymentDebtName" disabled />
+          </label>
+          <label class="form-field">
+            <span>Số tiền trả *</span>
+            <input id="debtPaymentAmount" required data-money-input inputmode="numeric" />
+          </label>
+          <label class="form-field">
+            <span>Ngày trả</span>
+            <input id="debtPaymentDate" type="date" required />
+          </label>
+          <label class="form-field form-field--wide">
+            <span>Tài khoản nguồn</span>
+            <select id="debtPaymentAccount"></select>
+          </label>
+          <label class="form-field form-field--wide">
+            <span>Ghi chú</span>
+            <textarea id="debtPaymentNote"></textarea>
+          </label>
+        </div>
+        <footer class="dialog-actions">
+          <button type="button" class="f-btn" data-close-dialog>Hủy</button>
+          <button class="f-btn f-btn--primary" type="submit">Ghi nhận trả nợ</button>
         </footer>
       </form>
     </dialog>
