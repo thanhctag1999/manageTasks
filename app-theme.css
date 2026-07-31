@@ -40,6 +40,10 @@
   --sidebar-w: 260px;
 }
 
+.auth-checking body {
+  visibility: hidden;
+}
+
 *,
 *::before,
 *::after {
@@ -5408,6 +5412,32 @@ form .inline:has(> .cui-date) > .cui-date {
   padding: 8px;
   max-height: min(320px, 70vh);
   overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(20, 20, 25, 0.22) transparent;
+  touch-action: pan-y;
+}
+
+.cui-select__panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cui-select__panel::-webkit-scrollbar-track {
+  margin-block: 10px;
+  background: transparent;
+}
+
+.cui-select__panel::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(20, 20, 25, 0.2);
+  background-clip: padding-box;
+}
+
+.cui-select__panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(20, 20, 25, 0.34);
+  background-clip: padding-box;
 }
 
 .cui-date__panel {
@@ -5578,4 +5608,110 @@ form .inline:has(> .cui-date) > .cui-date {
 tbody tr.analytics-day-row td {
   background: #fafafa;
   font-size: 13px;
+}
+
+/* Unified dialogs: complete, viewport-safe UI on every screen */
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
+dialog:not(.finance-dialog) {
+  width: min(560px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--panel-solid);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: 0 28px 90px rgba(20, 20, 25, 0.28);
+}
+
+dialog:not(.finance-dialog)::backdrop {
+  background: rgba(20, 20, 25, 0.58);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.app-dialog__head,
+.app-dialog__actions,
+.export-dlg__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 22px;
+  background: var(--panel-solid);
+}
+
+.app-dialog__head,
+.export-dlg__head {
+  border-bottom: 1px solid var(--line);
+}
+
+.app-dialog__head h3 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: -0.025em;
+}
+
+.app-dialog__body {
+  display: grid;
+  gap: 8px;
+  padding: 22px;
+  overflow-y: auto;
+}
+
+.app-dialog__body input {
+  width: 100%;
+  min-height: 48px;
+}
+
+.app-dialog__actions {
+  justify-content: flex-end;
+  border-top: 1px solid var(--line);
+}
+
+.export-dlg__body {
+  max-height: min(62dvh, 560px);
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 520px) {
+  dialog:not(.finance-dialog) {
+    width: calc(100vw - 20px);
+    max-height: calc(100dvh - 20px);
+    border-radius: 20px;
+  }
+
+  .app-dialog__head,
+  .app-dialog__body,
+  .app-dialog__actions,
+  .export-dlg__head,
+  .export-dlg__body {
+    padding: 16px;
+  }
+
+  .app-dialog__actions,
+  .export-dlg__head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .app-dialog__actions .btn,
+  .export-dlg__head .toolbar,
+  .export-dlg__head .btn {
+    width: 100%;
+  }
+
+  .export-dlg__head .toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .export-dlg__head .toolbar .primary {
+    grid-column: 1 / -1;
+  }
 }

@@ -71,6 +71,7 @@
   function apply(settings) {
     const root = document.documentElement.style;
     const mode = settings && settings.mode === "dark" ? "dark" : "light";
+    document.documentElement.dataset.theme = mode;
 
     if (mode === "dark") {
       root.setProperty("--bg-page", "#0b0b10");

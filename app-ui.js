@@ -98,8 +98,19 @@
 
   window.addEventListener(
     "scroll",
-    () => {
-      if (openPanel && openPanel._cuiFloating) closeOpen();
+    (event) => {
+      if (!openPanel || !openPanel._cuiFloating) return;
+      const floating = openPanel._cuiFloating;
+      const scrollTarget = event.target;
+      // Scrolling the option list/calendar is an interaction with the popup,
+      // not a page movement. Keep it open and preserve the scroll position.
+      if (
+        scrollTarget === floating ||
+        (scrollTarget instanceof Node && floating.contains(scrollTarget))
+      ) {
+        return;
+      }
+      closeOpen();
     },
     true,
   );
@@ -160,7 +171,9 @@
     panel.className = "cui-select__panel";
     panel.hidden = true;
     panel.setAttribute("role", "listbox");
-    document.body.appendChild(panel);
+    // A native <dialog> lives in the browser top layer. Floating controls must
+    // be mounted inside it or they render below the modal and cannot be clicked.
+    (select.closest("dialog") || document.body).appendChild(panel);
 
     const labelEl = $(".cui-select__label", trigger);
 
@@ -327,7 +340,8 @@
         <button type="button" class="cui-date__today" data-act="today">Hôm nay</button>
         <button type="button" class="cui-date__clear" data-act="clear">Xóa</button>
       </div>`;
-    document.body.appendChild(panel);
+    // Keep the calendar in the same top-layer dialog as its trigger.
+    (input.closest("dialog") || document.body).appendChild(panel);
 
     const labelEl = $(".cui-date__label", trigger);
     const titleEl = $(".cui-date__title", panel);

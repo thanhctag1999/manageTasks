@@ -26,6 +26,8 @@
     <link rel="stylesheet" href="app-theme.css" />
     <script src="app-icons.js"></script>
     <script src="theme.js"></script>
+    <script src="setting.js"></script>
+    <script src="auth.js"></script>
   </head>
   <body>
     <div class="layout">
@@ -34,8 +36,8 @@
         <div class="side-user app-sidebar__user">
           <div class="side-user__avatar" aria-hidden="true">TO</div>
           <div class="side-user__meta">
-            <b class="side-user__name">The One</b>
-            <span class="side-user__email">theone@workspace.lc</span>
+            <b class="side-user__name" data-auth-name>The One</b>
+            <span class="side-user__email" data-auth-role>owner</span>
           </div>
         </div>
         <a href="task-new.html" class="btn-create"
@@ -53,12 +55,17 @@
                 <path d="M10 18.5v-5h4v5" /></svg></span
             >Dashboard</a
           >
-          <a class="active" href="task.html"
+          <a class="active" href="task.html" aria-current="page"
             ><span class="nav__ic" aria-hidden="true"
               ><svg viewBox="0 0 24 24">
                 <rect x="5" y="4.5" width="14" height="15" rx="3" />
                 <path d="m8.5 12 2.2 2.2 4.8-5" /></svg></span
             >My Task</a
+          >
+          <a href="finance.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M7 7V5h10v2M15 13h3"/></svg></span
+            >Finance</a
           >
           <a href="analytics.html"
             ><span class="nav__ic" aria-hidden="true"
@@ -69,8 +76,14 @@
                 <path d="M4 19.5h16" /></svg></span
             >Reporting</a
           >
+          <a href="settings.html"><span class="nav__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5" /><path d="M12 3.5v2M12 18.5v2M3.5 12h2M18.5 12h2M6 6l1.4 1.4M16.6 16.6 18 18M18 6l-1.4 1.4M7.4 16.6 6 18" /></svg></span>Settings</a>
         </nav>
         <div class="side-foot">
+          <a href="login.html" class="side-foot__link" data-auth-logout
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10"/></svg></span
+            >Logout</a
+          >
           <a href="mailto:" class="side-foot__link"
             ><span class="nav__ic" aria-hidden="true"
               ><svg viewBox="0 0 24 24">
@@ -236,37 +249,23 @@
     </div>
 
     <!-- Dialog Add Category -->
-    <dialog id="dlgCat">
-      <h3 style="margin: 0 0 10px">New Category</h3>
-      <label for="catName" class="muted" style="font-size: 12px">Name</label>
-      <input id="catName" placeholder="VD: Work" />
-      <div class="inline" style="justify-content: flex-end; margin-top: 10px">
+    <dialog id="dlgCat" aria-labelledby="dlgCatTitle">
+      <header class="app-dialog__head">
+        <h3 id="dlgCatTitle">New Category</h3>
+      </header>
+      <div class="app-dialog__body">
+        <label for="catName" class="muted" style="font-size: 12px">Name</label>
+        <input id="catName" placeholder="VD: Work" autocomplete="off" />
+      </div>
+      <footer class="app-dialog__actions">
         <button id="catCancel" class="btn">Cancel</button>
         <button id="catSave" class="btn primary">Save</button>
-      </div>
+      </footer>
     </dialog>
 
     <div id="toast" class="toast"></div>
 
     <script>
-      // ====== CONFIG ======
-      const PROJECT_URL = "https://zuitnapveubnhjumvdnt.supabase.co";
-      const ANON_KEY =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1aXRuYXB2ZXVibmhqdW12ZG50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAxMTcwMjEsImV4cCI6MjA3NTY5MzAyMX0.rjhf7gSNaATuKCuVBYBgVA8wmUisSyTcM25Qeexj5Gg"; // thay bằng key thực tế hoặc JWT user nếu RLS bật
-      const BASE = `${PROJECT_URL}/rest/v1`;
-      const HEADERS_JSON = {
-        apikey: ANON_KEY,
-        Authorization: `Bearer ${ANON_KEY}`,
-        "Content-Type": "application/json",
-      };
-      const HEADERS = { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` };
-
-      // ====== MONEY (VND) ======
-      const _VND_FORMATTER = new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-        maximumFractionDigits: 0,
-      });
       function formatVND(n) {
         if (n == null || n === "") return "₫0";
         const v = +n || 0;

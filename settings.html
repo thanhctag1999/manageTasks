@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="app-theme.css" />
     <script src="app-icons.js"></script>
     <script src="theme.js"></script>
+    <script src="setting.js"></script>
+    <script src="auth.js"></script>
     <style>
       .theme-settings {
         max-width: 920px;
@@ -68,8 +70,8 @@
         <div class="side-user app-sidebar__user">
           <div class="side-user__avatar" aria-hidden="true">TO</div>
           <div class="side-user__meta">
-            <b class="side-user__name">The One</b>
-            <span class="side-user__email">theone@workspace.lc</span>
+            <b class="side-user__name" data-auth-name>The One</b>
+            <span class="side-user__email" data-auth-role>owner</span>
           </div>
         </div>
         <a href="task-new.html" class="btn-create"
@@ -78,11 +80,60 @@
           ><span class="btn-create__label">Create Task</span></a
         >
         <nav class="nav nav--stack app-nav">
-          <a href="index.html">Dashboard</a>
-          <a href="task.html">My Task</a>
-          <a href="analytics.html">Reporting</a>
-          <a class="active" href="settings.html">Settings</a>
+          <a href="index.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M4 10.5 12 4l8 6.5" />
+                <path d="M6.5 10v8.5h11V10" />
+                <path d="M10 18.5v-5h4v5" /></svg></span
+            >Dashboard</a
+          >
+          <a href="task.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <rect x="5" y="4.5" width="14" height="15" rx="3" />
+                <path d="m8.5 12 2.2 2.2 4.8-5" /></svg></span
+            >My Task</a
+          >
+          <a href="finance.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <rect x="4" y="7" width="16" height="12" rx="3" />
+                <path d="M7 7V5h10v2M15 13h3" /></svg></span
+            >Finance</a
+          >
+          <a href="analytics.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M5 19V9" />
+                <path d="M12 19V5" />
+                <path d="M19 19v-7" />
+                <path d="M4 19.5h16" /></svg></span
+            >Reporting</a
+          >
+          <a class="active" href="settings.html" aria-current="page"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+                <path d="M19.4 15a1.8 1.8 0 0 0 .2 1.9l.1.1a1 1 0 0 1-1.4 1.4l-.1-.1a1.8 1.8 0 0 0-1.9-.2 1.8 1.8 0 0 0-1 .6 1.8 1.8 0 0 1-2.6 0 1.8 1.8 0 0 0-1-.6 1.8 1.8 0 0 0-1.9.2l-.1.1a1 1 0 0 1-1.4-1.4l.1-.1a1.8 1.8 0 0 0 .2-1.9 1.8 1.8 0 0 0-.6-1 1.8 1.8 0 0 1 0-2.6 1.8 1.8 0 0 0 .6-1 1.8 1.8 0 0 0-.2-1.9l-.1-.1a1 1 0 0 1 1.4-1.4l.1.1a1.8 1.8 0 0 0 1.9.2 1.8 1.8 0 0 0 1-.6 1.8 1.8 0 0 1 2.6 0 1.8 1.8 0 0 0 1 .6 1.8 1.8 0 0 0 1.9-.2l.1-.1a1 1 0 0 1 1.4 1.4l-.1.1a1.8 1.8 0 0 0-.2 1.9 1.8 1.8 0 0 0 .6 1 1.8 1.8 0 0 1 0 2.6 1.8 1.8 0 0 0-.6 1z" /></svg></span
+            >Settings</a
+          >
         </nav>
+        <div class="side-foot">
+          <a href="login.html" class="side-foot__link" data-auth-logout
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg></span
+            >Logout</a
+          >
+          <a href="mailto:" class="side-foot__link"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8" />
+                <path d="M9.8 9.7a2.3 2.3 0 1 1 3.6 1.9c-.9.6-1.4 1.1-1.4 2.1" />
+                <path d="M12 17h.01" /></svg></span
+            >Help Center</a
+          >
+        </div>
       </aside>
 
       <main class="content">

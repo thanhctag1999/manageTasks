@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f5f7" />
+    <title>Finance · ManageTasks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="app-theme.css" />
+    <link rel="stylesheet" href="finance.css" />
+    <script src="app-icons.js"></script>
+    <script src="theme.js"></script>
+    <script src="setting.js"></script>
+    <script src="auth.js"></script>
+  </head>
+  <body class="finance-page">
+    <div class="layout app-shell">
+      <aside class="side app-sidebar sidebar">
+        <div class="app-sidebar__brand">Synchro</div>
+
+        <div class="side-user app-sidebar__user">
+          <div class="side-user__avatar" aria-hidden="true" data-user-initial>TO</div>
+          <div class="side-user__meta">
+            <b class="side-user__name" data-auth-name>The One</b>
+            <span class="side-user__email" data-auth-role>owner</span>
+          </div>
+        </div>
+
+        <a href="#" class="btn-create" data-open-dialog="transactionDialog">
+          <span class="btn-create__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+          </span>
+          <span class="btn-create__label">Giao dịch mới</span>
+        </a>
+
+        <nav class="nav nav--stack app-nav">
+          <a href="index.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M4 10.5 12 4l8 6.5" />
+                <path d="M6.5 10v8.5h11V10" />
+                <path d="M10 18.5v-5h4v5" /></svg></span
+            >Dashboard</a
+          >
+          <a href="task.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <rect x="5" y="4.5" width="14" height="15" rx="3" />
+                <path d="m8.5 12 2.2 2.2 4.8-5" /></svg></span
+            >My Task</a
+          >
+          <a class="active" href="finance.html" aria-current="page"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <rect x="4" y="7" width="16" height="12" rx="3" />
+                <path d="M7 7V5h10v2M15 13h3" /></svg></span
+            >Finance</a
+          >
+          <a href="analytics.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M5 19V9" />
+                <path d="M12 19V5" />
+                <path d="M19 19v-7" />
+                <path d="M4 19.5h16" /></svg></span
+            >Reporting</a
+          >
+          <a href="settings.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+                <path
+                  d="M19.4 15a1.8 1.8 0 0 0 .2 1.9l.1.1a1 1 0 0 1-1.4 1.4l-.1-.1a1.8 1.8 0 0 0-1.9-.2 1.8 1.8 0 0 0-1 .6 1.8 1.8 0 0 1-2.6 0 1.8 1.8 0 0 0-1-.6 1.8 1.8 0 0 0-1.9.2l-.1.1a1 1 0 0 1-1.4-1.4l.1-.1a1.8 1.8 0 0 0 .2-1.9 1.8 1.8 0 0 0-.6-1 1.8 1.8 0 0 1 0-2.6 1.8 1.8 0 0 0 .6-1 1.8 1.8 0 0 0-.2-1.9l-.1-.1a1 1 0 0 1 1.4-1.4l.1.1a1.8 1.8 0 0 0 1.9.2 1.8 1.8 0 0 0 1-.6 1.8 1.8 0 0 1 2.6 0 1.8 1.8 0 0 0 1 .6 1.8 1.8 0 0 0 1.9-.2l.1-.1a1 1 0 0 1 1.4 1.4l-.1.1a1.8 1.8 0 0 0-.2 1.9 1.8 1.8 0 0 0 .6 1 1.8 1.8 0 0 1 0 2.6 1.8 1.8 0 0 0-.6 1z"
+                /></svg></span
+            >Settings</a
+          >
+        </nav>
+
+        <div class="side-finance-nav" aria-label="Finance modules">
+          <span class="side-finance-nav__label">Không gian tài chính</span>
+          <button class="active" data-view-target="overview">Tổng quan</button>
+          <button data-view-target="transactions">Giao dịch</button>
+          <button data-view-target="recurring">Định kỳ</button>
+          <button data-view-target="budgets">Ngân sách</button>
+          <button data-view-target="goals">Tiết kiệm</button>
+          <button data-view-target="wishlist">Wishlist</button>
+          <button data-view-target="scenarios">Kịch bản</button>
+          <button data-view-target="setup">Danh mục & tài khoản</button>
+        </div>
+
+        <div class="side-foot">
+          <a href="login.html" class="side-foot__link" data-auth-logout
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg></span
+            >Logout</a
+          >
+          <a href="mailto:" class="side-foot__link"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8" />
+                <path d="M9.8 9.7a2.3 2.3 0 1 1 3.6 1.9c-.9.6-1.4 1.1-1.4 2.1" />
+                <path d="M12 17h.01" /></svg></span
+            >Help Center</a
+          >
+        </div>
+      </aside>
+
+      <main class="content main">
+        <div class="app-topbar finance-app-topbar">
+          <a
+            class="topbar-brand"
+            href="index.html"
+            aria-label="ManageTasks dashboard"
+          >
+            <span class="topbar-brand__mark" aria-hidden="true">M</span>
+            <span><strong>ManageTasks</strong><small>Productivity OS</small></span>
+          </a>
+          <nav class="topbar-nav" aria-label="Primary">
+            <a href="index.html">Overview</a>
+            <a href="task.html">Activity</a>
+            <a href="task.html">Manage</a>
+            <a class="active" href="finance.html">Finance</a>
+            <a href="task-new.html">Folders</a>
+            <a href="analytics.html">Documents</a>
+          </nav>
+          <div class="topbar-actions">
+            <label class="topbar-search" for="financeGlobalSearch">
+              <span class="ic" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="6.5" />
+                  <path d="m16.2 16.2 4.3 4.3" />
+                </svg>
+              </span>
+              <input
+                id="financeGlobalSearch"
+                class="app-topbar__search"
+                type="search"
+                placeholder="Tìm giao dịch..."
+                aria-label="Tìm giao dịch"
+              />
+            </label>
+            <button
+              type="button"
+              class="icon-btn finance-notification"
+              data-view-target="recurring"
+              aria-label="Khoản sắp đến hạn"
+              title="Khoản sắp đến hạn"
+            >
+              <span class="ic" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M6.5 16.5h11" />
+                  <path d="M8 16.5V10a4 4 0 1 1 8 0v6.5" />
+                  <path d="M10.2 18.5a1.8 1.8 0 0 0 3.6 0" />
+                </svg>
+              </span>
+              <span class="finance-notification__count" id="financeNotifCount"
+                >0</span
+              >
+            </button>
+            <div
+              class="profile-pill"
+              data-user-initial
+              aria-label="Tài khoản hiện tại"
+            >
+              U
+            </div>
+          </div>
+        </div>
+
+        <nav class="finance-mobile-nav" aria-label="Finance modules">
+          <button class="active" data-view-target="overview">Tổng quan</button>
+          <button data-view-target="transactions">Giao dịch</button>
+          <button data-view-target="recurring">Định kỳ</button>
+          <button data-view-target="budgets">Ngân sách</button>
+          <button data-view-target="goals">Tiết kiệm</button>
+          <button data-view-target="wishlist">Wishlist</button>
+          <button data-view-target="scenarios">Kịch bản</button>
+          <button data-view-target="setup">Thiết lập</button>
+        </nav>
+
+        <header class="finance-topbar">
+          <div>
+            <div class="finance-eyebrow">Finance workspace</div>
+            <h1 id="viewTitle">Tổng quan dòng tiền</h1>
+            <p id="viewSubtitle">
+              Từ số dư hiện tại đến mọi quyết định phía trước.
+            </p>
+          </div>
+          <div class="finance-topbar__actions">
+            <label class="period-select">
+              <span>Kỳ phân tích</span>
+              <select id="periodSelect">
+                <option value="week">Tuần này</option>
+                <option value="month" selected>Tháng này</option>
+                <option value="year">Năm nay</option>
+              </select>
+            </label>
+            <button class="f-btn f-btn--ghost" id="refreshBtn">
+              <span class="fi fi-refresh"></span>Làm mới
+            </button>
+            <button
+              class="f-btn f-btn--primary"
+              data-open-dialog="transactionDialog"
+            >
+              <span class="fi fi-plus"></span>Thêm giao dịch
+            </button>
+          </div>
+        </header>
+
+        <section
+          class="finance-context"
+          aria-label="Trạng thái dữ liệu tài chính"
+          aria-live="polite"
+        >
+          <div class="finance-context__item">
+            <span>Kỳ đang xem</span>
+            <b id="contextPeriod">Tháng này</b>
+          </div>
+          <div class="finance-context__item">
+            <span>Dữ liệu</span>
+            <b id="contextSync">Đang đồng bộ</b>
+          </div>
+          <div class="finance-context__item">
+            <span>45 ngày tới</span>
+            <b id="contextDue">0 khoản đến hạn</b>
+          </div>
+          <div class="finance-context__item">
+            <span>Ngân sách kỳ này</span>
+            <b id="contextBudget">Chưa thiết lập</b>
+          </div>
+        </section>
+
+        <div class="finance-alert hidden" id="passwordAlert">
+          <div>
+            <b>Bảo vệ không gian tài chính của bạn</b>
+            <span
+              >Tài khoản vẫn đang dùng mật khẩu khởi tạo. Hãy đổi ngay.</span
+            >
+          </div>
+          <button class="f-btn f-btn--dark" data-open-dialog="passwordDialog">
+            Đổi mật khẩu
+          </button>
+        </div>
+
+        <div class="finance-loading" id="financeLoading" aria-hidden="true">
+          <div class="finance-loader"></div>
+          <span>Đang đồng bộ dòng tiền…</span>
+        </div>
+
+        <!-- OVERVIEW -->
+        <section class="finance-view active" data-view="overview">
+          <div class="finance-kpis">
+            <article class="finance-kpi finance-kpi--hero">
+              <div class="finance-kpi__head">
+                <span>Số dư khả dụng</span>
+                <span class="finance-kpi__icon">₫</span>
+              </div>
+              <strong id="kpiBalance">₫0</strong>
+              <div class="finance-kpi__foot">
+                <span id="kpiAccountCount">0 tài khoản</span>
+                <em id="kpiBalanceTrend">Đang cập nhật</em>
+              </div>
+            </article>
+            <article class="finance-kpi">
+              <div class="finance-kpi__head">
+                <span>Có thể chi an toàn</span><span>◎</span>
+              </div>
+              <strong id="kpiSafeSpend">₫0</strong>
+              <div class="finance-kpi__foot">
+                <span>Đã trừ cam kết & tiết kiệm</span>
+              </div>
+            </article>
+            <article class="finance-kpi">
+              <div class="finance-kpi__head">
+                <span>Dự báo chi phí</span><span>↗</span>
+              </div>
+              <strong id="kpiForecast">₫0</strong>
+              <div class="finance-kpi__foot">
+                <span id="kpiForecastRange">Trong tháng này</span>
+              </div>
+            </article>
+            <article class="finance-kpi">
+              <div class="finance-kpi__head">
+                <span>Tỷ lệ tiết kiệm</span><span>◇</span>
+              </div>
+              <strong id="kpiSavingRate">0%</strong>
+              <div class="finance-kpi__foot">
+                <span id="kpiSavingRateNote">Thu nhập kỳ hiện tại</span>
+              </div>
+            </article>
+          </div>
+
+          <div class="finance-grid finance-grid--main">
+            <article class="finance-card cashflow-card performance-chart-card">
+              <div class="finance-card__head">
+                <div>
+                  <span class="finance-card__eyebrow">Cashflow pulse</span>
+                  <h2>Thu nhập và chi tiêu</h2>
+                </div>
+                <div class="chart-legend">
+                  <span><i class="theory"></i>Thu nhập</span>
+                  <span><i class="practice"></i>Chi tiêu</span>
+                </div>
+              </div>
+              <div class="performance-chart-card__body finance-chart-body">
+                <div class="chart-stage finance-chart-stage">
+                  <svg
+                    class="chart chart-anim performance-chart finance-performance-chart"
+                    id="cashflowChart"
+                    viewBox="0 0 900 360"
+                    preserveAspectRatio="xMidYMid meet"
+                    role="img"
+                    aria-label="Biểu đồ thu nhập và chi tiêu"></svg>
+                </div>
+                <div class="chart-range" aria-hidden="true"><span></span></div>
+              </div>
+              <div class="cashflow-summary">
+                <div><span>Tổng thu</span><b id="sumIncome">₫0</b></div>
+                <div><span>Tổng chi</span><b id="sumExpense">₫0</b></div>
+                <div><span>Dòng tiền ròng</span><b id="sumNet">₫0</b></div>
+              </div>
+            </article>
+
+            <article class="finance-card health-card">
+              <div class="finance-card__head">
+                <div>
+                  <span class="finance-card__eyebrow">Money health</span>
+                  <h2>Sức khỏe tài chính</h2>
+                </div>
+                <span class="health-score" id="healthScore">0</span>
+              </div>
+              <div class="health-ring" id="healthRing">
+                <div>
+                  <b id="healthRingScore">0</b>
+                  <span>/ 100</span>
+                </div>
+              </div>
+              <div class="health-signals" id="healthSignals"></div>
+            </article>
+          </div>
+
+          <div class="finance-grid finance-grid--triple">
+            <article class="finance-card">
+              <div class="finance-card__head">
+                <div>
+                  <span class="finance-card__eyebrow">Next up</span>
+                  <h2>Sắp đến hạn</h2>
+                </div>
+                <button class="text-btn" data-view-target="recurring">
+                  Xem tất cả
+                </button>
+              </div>
+              <div class="due-list" id="upcomingList"></div>
+            </article>
+
+            <article class="finance-card">
+              <div class="finance-card__head">
+                <div>
+                  <span class="finance-card__eyebrow">Spending mix</span>
+                  <h2>Chi theo danh mục</h2>
+                </div>
+              </div>
+              <div class="category-donut-wrap">
+                <div class="category-donut" id="categoryDonut"></div>
+                <div class="category-breakdown" id="categoryBreakdown"></div>
+              </div>
+            </article>
+
+            <article class="finance-card">
+              <div class="finance-card__head">
+                <div>
+                  <span class="finance-card__eyebrow">Goal radar</span>
+                  <h2>Tiến độ mục tiêu</h2>
+                </div>
+                <button class="text-btn" data-view-target="goals">
+                  Quản lý
+                </button>
+              </div>
+              <div class="goal-mini-list" id="goalMiniList"></div>
+            </article>
+          </div>
+
+          <div class="finance-grid finance-grid--split">
+            <article class="finance-card">
+              <div class="finance-card__head">
+                <div>
+                  <span class="finance-card__eyebrow">Smart signal</span>
+                  <h2>Cảnh báo & gợi ý</h2>
+                </div>
+              </div>
+              <div class="insight-list" id="insightList"></div>
+            </article>
+            <article class="finance-card">
+              <div class="finance-card__head">
+                <div>
+                  <span class="finance-card__eyebrow">Recent activity</span>
+                  <h2>Giao dịch gần đây</h2>
+                </div>
+                <button class="text-btn" data-view-target="transactions">
+                  Mở sổ giao dịch
+                </button>
+              </div>
+              <div class="transaction-list" id="recentTransactions"></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- TRANSACTIONS -->
+        <section class="finance-view" data-view="transactions">
+          <div class="module-toolbar">
+            <div class="segmented" id="transactionTypeTabs">
+              <button class="active" data-type="">Tất cả</button>
+              <button data-type="expense">Chi tiêu</button>
+              <button data-type="income">Thu nhập</button>
+              <button data-type="transfer">Chuyển khoản</button>
+              <button data-type="planned">Dự kiến</button>
+            </div>
+            <div class="module-toolbar__right">
+              <input
+                class="f-input f-input--search"
+                id="transactionSearch"
+                type="search"
+                placeholder="Tìm giao dịch…"
+              />
+              <button class="f-btn" id="exportTransactionsBtn">
+                Xuất CSV
+              </button>
+              <button
+                class="f-btn f-btn--primary"
+                data-open-dialog="transactionDialog"
+              >
+                + Thêm
+              </button>
+            </div>
+          </div>
+          <div class="ledger-summary" id="ledgerSummary"></div>
+          <div class="finance-card finance-card--table">
+            <div class="responsive-table">
+              <table class="finance-table">
+                <thead>
+                  <tr>
+                    <th>Giao dịch</th>
+                    <th>Ngày</th>
+                    <th>Danh mục</th>
+                    <th>Ưu tiên</th>
+                    <th>Trạng thái</th>
+                    <th class="align-right">Số tiền</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="transactionTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- RECURRING -->
+        <section class="finance-view" data-view="recurring">
+          <div class="module-intro">
+            <div>
+              <span class="finance-card__eyebrow">Commitment calendar</span>
+              <h2>Chi phí và thu nhập định kỳ</h2>
+              <p>
+                Theo dõi mọi cam kết trước khi chúng kịp “úp sọt” số dư.
+              </p>
+            </div>
+            <button
+              class="f-btn f-btn--primary"
+              data-open-dialog="recurringDialog"
+            >
+              + Tạo lịch định kỳ
+            </button>
+          </div>
+          <div class="recurring-kpis" id="recurringKpis"></div>
+          <div class="finance-grid finance-grid--split-wide">
+            <article class="finance-card">
+              <div class="finance-card__head">
+                <div><h2>Lịch sắp tới</h2></div>
+                <button class="f-btn" id="generateRecurringBtn">
+                  Sinh giao dịch đến hạn
+                </button>
+              </div>
+              <div class="recurring-timeline" id="recurringTimeline"></div>
+            </article>
+            <article class="finance-card">
+              <div class="finance-card__head">
+                <div><h2>Tất cả lịch định kỳ</h2></div>
+              </div>
+              <div class="recurring-rule-list" id="recurringRuleList"></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- BUDGETS -->
+        <section class="finance-view" data-view="budgets">
+          <div class="module-intro">
+            <div>
+              <span class="finance-card__eyebrow">Spending guardrails</span>
+              <h2>Ngân sách tuần & tháng</h2>
+              <p>
+                Theo dõi số đã chi, số dự báo và phần còn được phép sử dụng.
+              </p>
+            </div>
+            <button
+              class="f-btn f-btn--primary"
+              data-open-dialog="budgetDialog"
+            >
+              + Tạo ngân sách
+            </button>
+          </div>
+          <div class="budget-overview" id="budgetOverview"></div>
+          <div class="budget-grid" id="budgetGrid"></div>
+        </section>
+
+        <!-- GOALS -->
+        <section class="finance-view" data-view="goals">
+          <div class="module-intro">
+            <div>
+              <span class="finance-card__eyebrow">Future funds</span>
+              <h2>Mục tiêu tiết kiệm</h2>
+              <p>
+                Mỗi mục tiêu có nhịp đóng góp, hạn hoàn thành và cảnh báo tiến độ.
+              </p>
+            </div>
+            <button
+              class="f-btn f-btn--primary"
+              data-open-dialog="goalDialog"
+            >
+              + Mục tiêu mới
+            </button>
+          </div>
+          <div class="goal-stats" id="goalStats"></div>
+          <div class="goal-grid" id="goalGrid"></div>
+          <article class="finance-card contribution-history-card">
+            <div class="finance-card__head">
+              <div><h2>Lịch sử đóng góp</h2></div>
+            </div>
+            <div class="transaction-list" id="contributionHistory"></div>
+          </article>
+        </section>
+
+        <!-- WISHLIST -->
+        <section class="finance-view" data-view="wishlist">
+          <div class="module-intro">
+            <div>
+              <span class="finance-card__eyebrow">Buy with confidence</span>
+              <h2>Mặt hàng muốn mua</h2>
+              <p>
+                Biết khi nào nên mua, thay vì biết mình đã lỡ mua sau khi quẹt thẻ.
+              </p>
+            </div>
+            <button
+              class="f-btn f-btn--primary"
+              data-open-dialog="wishlistDialog"
+            >
+              + Thêm mặt hàng
+            </button>
+          </div>
+          <div class="wishlist-summary" id="wishlistSummary"></div>
+          <div class="wishlist-grid" id="wishlistGrid"></div>
+        </section>
+
+        <!-- SCENARIOS -->
+        <section class="finance-view" data-view="scenarios">
+          <div class="module-intro">
+            <div>
+              <span class="finance-card__eyebrow">What-if lab</span>
+              <h2>Kịch bản dòng tiền</h2>
+              <p>
+                Mô phỏng tăng giảm thu nhập, chi phí và các khoản phát sinh lớn.
+              </p>
+            </div>
+            <button
+              class="f-btn f-btn--primary"
+              data-open-dialog="scenarioDialog"
+            >
+              + Kịch bản mới
+            </button>
+          </div>
+          <div class="scenario-baseline" id="scenarioBaseline"></div>
+          <div class="scenario-grid" id="scenarioGrid"></div>
+          <article class="finance-card">
+            <div class="finance-card__head">
+              <div>
+                <span class="finance-card__eyebrow">Cut plan</span>
+                <h2>Gợi ý cắt giảm</h2>
+              </div>
+            </div>
+            <div class="cut-list" id="cutSuggestionList"></div>
+          </article>
+        </section>
+
+        <!-- SETUP -->
+        <section class="finance-view" data-view="setup">
+          <div class="module-intro">
+            <div>
+              <span class="finance-card__eyebrow">Finance foundation</span>
+              <h2>Tài khoản & danh mục</h2>
+              <p>
+                Quản lý nơi giữ tiền và cấu trúc phân loại chi tiêu.
+              </p>
+            </div>
+          </div>
+          <div class="finance-grid finance-grid--split">
+            <article class="finance-card">
+              <div class="finance-card__head">
+                <div><h2>Tài khoản tài chính</h2></div>
+                <button
+                  class="f-btn"
+                  data-open-dialog="accountDialog"
+                >
+                  + Tài khoản
+                </button>
+              </div>
+              <div class="account-grid" id="accountGrid"></div>
+            </article>
+            <article class="finance-card">
+              <div class="finance-card__head">
+                <div><h2>Danh mục chi tiêu</h2></div>
+                <button
+                  class="f-btn"
+                  data-open-dialog="categoryDialog"
+                >
+                  + Danh mục
+                </button>
+              </div>
+              <div class="category-manager" id="categoryManager"></div>
+            </article>
+          </div>
+          <article class="finance-card security-card">
+            <div>
+              <span class="finance-card__eyebrow">Security</span>
+              <h2>Bảo mật tài khoản</h2>
+              <p>
+                Phiên đăng nhập tự hết hạn sau 12 giờ và không được lưu vĩnh
+                viễn trong trình duyệt.
+              </p>
+            </div>
+            <button class="f-btn f-btn--dark" data-open-dialog="passwordDialog">
+              Đổi mật khẩu đăng nhập
+            </button>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <!-- Transaction -->
+    <dialog class="finance-dialog" id="transactionDialog" aria-labelledby="transactionDialogTitle">
+      <form class="dialog-panel" id="transactionForm">
+        <header class="dialog-head">
+          <div>
+            <span class="finance-card__eyebrow">Money movement</span>
+            <h2 id="transactionDialogTitle">Giao dịch mới</h2>
+          </div>
+          <button type="button" class="dialog-close" data-close-dialog>×</button>
+        </header>
+        <input type="hidden" id="transactionId" />
+        <div class="type-picker" id="transactionTypePicker">
+          <button type="button" class="active" data-value="expense">
+            Chi tiêu
+          </button>
+          <button type="button" data-value="income">Thu nhập</button>
+          <button type="button" data-value="transfer">Chuyển khoản</button>
+          <button type="button" data-value="refund">Hoàn tiền</button>
+        </div>
+        <input type="hidden" id="transactionType" value="expense" />
+        <div class="form-grid">
+          <label class="form-field form-field--wide">
+            <span>Tên giao dịch *</span>
+            <input id="transactionName" required placeholder="VD: Tiền thuê nhà" />
+          </label>
+          <label class="form-field">
+            <span>Số tiền *</span>
+            <input
+              id="transactionAmount"
+              required
+              inputmode="numeric"
+              placeholder="0"
+              data-money-input
+            />
+          </label>
+          <label class="form-field">
+            <span>Ngày</span>
+            <input id="transactionDate" type="date" required />
+          </label>
+          <label class="form-field">
+            <span>Tài khoản</span>
+            <select id="transactionAccount"></select>
+          </label>
+          <label class="form-field transfer-only hidden">
+            <span>Chuyển đến</span>
+            <select id="transactionTransferAccount"></select>
+          </label>
+          <label class="form-field expense-only">
+            <span>Danh mục</span>
+            <select id="transactionCategory"></select>
+          </label>
+          <label class="form-field expense-only">
+            <span>Tính chất</span>
+            <select id="transactionNature">
+              <option value="fixed">Cố định</option>
+              <option value="semi_fixed">Bán cố định</option>
+              <option value="variable" selected>Biến đổi</option>
+              <option value="one_off">Một lần</option>
+            </select>
+          </label>
+          <label class="form-field expense-only">
+            <span>Ưu tiên</span>
+            <select id="transactionPriority">
+              <option value="p0">P0 · Bắt buộc</option>
+              <option value="p1">P1 · Thiết yếu</option>
+              <option value="p2" selected>P2 · Quan trọng</option>
+              <option value="p3">P3 · Tùy chọn</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Trạng thái</span>
+            <select id="transactionStatus">
+              <option value="posted">Đã ghi nhận</option>
+              <option value="planned">Dự kiến</option>
+              <option value="due">Đến hạn</option>
+              <option value="skipped">Đã bỏ qua</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Người bán / nguồn</span>
+            <input id="transactionMerchant" placeholder="Tùy chọn" />
+          </label>
+          <label class="form-field form-field--wide">
+            <span>Ghi chú</span>
+            <textarea id="transactionNote" placeholder="Thông tin bổ sung…"></textarea>
+          </label>
+        </div>
+        <footer class="dialog-actions">
+          <button type="button" class="f-btn" data-close-dialog>Hủy</button>
+          <button class="f-btn f-btn--primary" type="submit">
+            Lưu giao dịch
+          </button>
+        </footer>
+      </form>
+    </dialog>
+
+    <!-- Recurring -->
+    <dialog class="finance-dialog" id="recurringDialog" aria-labelledby="recurringDialogTitle">
+      <form class="dialog-panel" id="recurringForm">
+        <header class="dialog-head">
+          <div>
+            <span class="finance-card__eyebrow">Repeat rule</span>
+            <h2 id="recurringDialogTitle">Lịch định kỳ mới</h2>
+          </div>
+          <button type="button" class="dialog-close" data-close-dialog>×</button>
+        </header>
+        <input type="hidden" id="recurringId" />
+        <div class="form-grid">
+          <label class="form-field form-field--wide">
+            <span>Tên *</span>
+            <input id="recurringName" required placeholder="VD: Tiền thuê nhà" />
+          </label>
+          <label class="form-field">
+            <span>Loại</span>
+            <select id="recurringDirection">
+              <option value="expense">Chi phí</option>
+              <option value="income">Thu nhập</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Số tiền *</span>
+            <input id="recurringAmount" required data-money-input inputmode="numeric" />
+          </label>
+          <label class="form-field">
+            <span>Danh mục</span>
+            <select id="recurringCategory"></select>
+          </label>
+          <label class="form-field">
+            <span>Tài khoản</span>
+            <select id="recurringAccount"></select>
+          </label>
+          <label class="form-field">
+            <span>Chu kỳ</span>
+            <select id="recurringFrequency">
+              <option value="weekly">Hàng tuần</option>
+              <option value="monthly" selected>Hàng tháng</option>
+              <option value="quarterly">Hàng quý</option>
+              <option value="yearly">Hàng năm</option>
+              <option value="custom">Tùy chỉnh theo ngày</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Mỗi</span>
+            <input id="recurringInterval" type="number" min="1" value="1" />
+          </label>
+          <label class="form-field">
+            <span>Ngày đến hạn tiếp theo</span>
+            <input id="recurringNextDue" type="date" required />
+          </label>
+          <label class="form-field">
+            <span>Nhắc trước (ngày)</span>
+            <input id="recurringRemindDays" type="number" min="0" max="90" value="3" />
+          </label>
+          <label class="form-field">
+            <span>Tính chất</span>
+            <select id="recurringNature">
+              <option value="fixed">Cố định</option>
+              <option value="semi_fixed">Bán cố định</option>
+              <option value="variable">Biến đổi</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Ưu tiên</span>
+            <select id="recurringPriority">
+              <option value="p0">P0 · Bắt buộc</option>
+              <option value="p1" selected>P1 · Thiết yếu</option>
+              <option value="p2">P2 · Quan trọng</option>
+              <option value="p3">P3 · Tùy chọn</option>
+            </select>
+          </label>
+          <label class="form-field form-field--wide">
+            <span>Ghi chú</span>
+            <textarea id="recurringNote"></textarea>
+          </label>
+        </div>
+        <footer class="dialog-actions">
+          <button type="button" class="f-btn" data-close-dialog>Hủy</button>
+          <button class="f-btn f-btn--primary" type="submit">Lưu lịch</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <!-- Budget -->
+    <dialog class="finance-dialog" id="budgetDialog" aria-labelledby="budgetDialogTitle">
+      <form class="dialog-panel dialog-panel--compact" id="budgetForm">
+        <header class="dialog-head">
+          <div><span class="finance-card__eyebrow">Guardrail</span><h2 id="budgetDialogTitle">Ngân sách mới</h2></div>
+          <button type="button" class="dialog-close" data-close-dialog>×</button>
+        </header>
+        <input type="hidden" id="budgetId" />
+        <div class="form-grid">
+          <label class="form-field form-field--wide"><span>Tên *</span><input id="budgetName" required placeholder="VD: Ăn uống tháng" /></label>
+          <label class="form-field"><span>Chu kỳ</span><select id="budgetPeriod"><option value="weekly">Hàng tuần</option><option value="monthly" selected>Hàng tháng</option></select></label>
+          <label class="form-field"><span>Hạn mức *</span><input id="budgetAmount" required data-money-input inputmode="numeric" /></label>
+          <label class="form-field form-field--wide"><span>Danh mục</span><select id="budgetCategory"><option value="">Toàn bộ chi tiêu</option></select></label>
+        </div>
+        <footer class="dialog-actions">
+          <button type="button" class="f-btn" data-close-dialog>Hủy</button>
+          <button class="f-btn f-btn--primary" type="submit">Lưu ngân sách</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <!-- Goal -->
+    <dialog class="finance-dialog" id="goalDialog" aria-labelledby="goalDialogTitle">
+      <form class="dialog-panel" id="goalForm">
+        <header class="dialog-head">
+          <div><span class="finance-card__eyebrow">Future fund</span><h2 id="goalDialogTitle">Mục tiêu mới</h2></div>
+          <button type="button" class="dialog-close" data-close-dialog>×</button>
+        </header>
+        <input type="hidden" id="goalId" />
+        <div class="form-grid">
+          <label class="form-field form-field--wide"><span>Tên mục tiêu *</span><input id="goalName" required placeholder="VD: Quỹ dự phòng 6 tháng" /></label>
+          <label class="form-field"><span>Số tiền mục tiêu *</span><input id="goalTarget" required data-money-input inputmode="numeric" /></label>
+          <label class="form-field"><span>Số tiền ban đầu</span><input id="goalInitial" data-money-input inputmode="numeric" /></label>
+          <label class="form-field"><span>Hạn hoàn thành</span><input id="goalDeadline" type="date" /></label>
+          <label class="form-field"><span>Ưu tiên</span><select id="goalPriority"><option value="p0">P0 · Bắt buộc</option><option value="p1" selected>P1 · Thiết yếu</option><option value="p2">P2 · Quan trọng</option><option value="p3">P3 · Tùy chọn</option></select></label>
+          <label class="form-field"><span>Nhịp đóng góp</span><select id="goalFrequency"><option value="weekly">Hàng tuần</option><option value="monthly" selected>Hàng tháng</option><option value="manual">Thủ công</option></select></label>
+          <label class="form-field"><span>Mức đóng góp dự kiến</span><input id="goalPlannedContribution" data-money-input inputmode="numeric" /></label>
+          <label class="form-field form-field--wide"><span>Ghi chú</span><textarea id="goalNote"></textarea></label>
+        </div>
+        <footer class="dialog-actions">
+          <button type="button" class="f-btn" data-close-dialog>Hủy</button>
+          <button class="f-btn f-btn--primary" type="submit">Lưu mục tiêu</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <!-- Contribution -->
+    <dialog class="finance-dialog" id="contributionDialog" aria-labelledby="contributionDialogTitle">
+      <form class="dialog-panel dialog-panel--compact" id="contributionForm">
+        <header class="dialog-head">
+          <div><span class="finance-card__eyebrow">Add progress</span><h2 id="contributionDialogTitle">Đóng góp vào mục tiêu</h2></div>
+          <button type="button" class="dialog-close" data-close-dialog>×</button>
+        </header>
+        <input type="hidden" id="contributionGoalId" />
+        <div class="form-grid">
+          <label class="form-field form-field--wide"><span>Mục tiêu</span><input id="contributionGoalName" disabled /></label>
+          <label class="form-field"><span>Số tiền *</span><input id="contributionAmount" required data-money-input inputmode="numeric" /></label>
+          <label class="form-field"><span>Ngày</span><input id="contributionDate" type="date" required /></label>
+          <label class="form-field form-field--wide"><span>Tài khoản nguồn</span><select id="contributionAccount"></select></label>
+          <label class="form-field form-field--wide"><span>Ghi chú</span><textarea id="contributionNote"></textarea></label>
+        </div>
+        <footer class="dialog-actions">
+          <button type="button" class="f-btn" data-close-dialog>Hủy</button>
+          <button class="f-btn f-btn--primary" type="submit">Ghi nhận</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <!-- Wishlist -->
+    <dialog class="finance-dialog" id="wishlistDialog" aria-labelledby="wishlistDialogTitle">
+      <form class="dialog-panel" id="wishlistForm">
+        <header class="dialog-head">
+          <div><span class="finance-card__eyebrow">Wish planner</span><h2 id="wishlistDialogTitle">Mặt hàng mới</h2></div>
+          <button type="button" class="dialog-close" data-close-dialog>×</button>
+        </header>
+        <input type="hidden" id="wishlistId" />
+        <div class="form-grid">
+          <label class="form-field form-field--wide"><span>Tên mặt hàng *</span><input id="wishlistName" required placeholder="VD: iPad Pro" /></label>
+          <label class="form-field"><span>Giá dự kiến *</span><input id="wishlistPrice" required data-money-input inputmode="numeric" /></label>
+          <label class="form-field"><span>Đã dành riêng</span><input id="wishlistSaved" data-money-input inputmode="numeric" /></label>
+          <label class="form-field"><span>Ngày mong muốn</span><input id="wishlistDesired" type="date" /></label>
+          <label class="form-field"><span>Ưu tiên</span><select id="wishlistPriority"><option value="p0">P0 · Bắt buộc</option><option value="p1">P1 · Thiết yếu</option><option value="p2" selected>P2 · Quan trọng</option><option value="p3">P3 · Tùy chọn</option></select></label>
+          <label class="form-field"><span>Chi phí hàng tháng sau mua</span><input id="wishlistOngoing" data-money-input inputmode="numeric" /></label>
+          <label class="form-field"><span>Liên kết mục tiêu</span><select id="wishlistGoal"><option value="">Không liên kết</option></select></label>
+          <label class="form-field form-field--wide"><span>Link sản phẩm</span><input id="wishlistUrl" type="url" placeholder="https://…" /></label>
+          <label class="form-field form-field--wide"><span>Ghi chú</span><textarea id="wishlistNote"></textarea></label>
+        </div>
+        <footer class="dialog-actions">
+          <button type="button" class="f-btn" data-close-dialog>Hủy</button>
+          <button class="f-btn f-btn--primary" type="submit">Lưu mặt hàng</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <!-- Account -->
+    <dialog class="finance-dialog" id="accountDialog" aria-labelledby="accountDialogTitle">
+      <form class="dialog-panel dialog-panel--compact" id="accountForm">
+        <header class="dialog-head">
+          <div><span class="finance-card__eyebrow">Money holder</span><h2 id="accountDialogTitle">Tài khoản mới</h2></div>
+          <button type="button" class="dialog-close" data-close-dialog>×</button>
+        </header>
+        <input type="hidden" id="accountId" />
+        <div class="form-grid">
+          <label class="form-field form-field--wide"><span>Tên *</span><input id="accountName" required placeholder="VD: Vietcombank" /></label>
+          <label class="form-field"><span>Loại</span><select id="accountKind"><option value="cash">Tiền mặt</option><option value="bank" selected>Ngân hàng</option><option value="ewallet">Ví điện tử</option><option value="credit">Thẻ tín dụng</option><option value="saving">Tiết kiệm</option><option value="investment">Đầu tư</option></select></label>
+          <label class="form-field"><span>Số dư ban đầu</span><input id="accountOpeningBalance" data-money-input inputmode="numeric" /></label>
+          <label class="form-field form-field--wide"><span>Màu đại diện</span><input id="accountColor" type="color" value="#1c1c24" /></label>
+        </div>
+        <footer class="dialog-actions">
+          <button type="button" class="f-btn" data-close-dialog>Hủy</button>
+          <button class="f-btn f-btn--primary" type="submit">Lưu tài khoản</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <!-- Category -->
+    <dialog class="finance-dialog" id="categoryDialog" aria-labelledby="categoryDialogTitle">
+      <form class="dialog-panel dialog-panel--compact" id="categoryForm">
+        <header class="dialog-head">
+          <div><span class="finance-card__eyebrow">Classification</span><h2 id="categoryDialogTitle">Danh mục mới</h2></div>
+          <button type="button" class="dialog-close" data-close-dialog>×</button>
+        </header>
+        <input type="hidden" id="categoryId" />
+        <div class="form-grid">
+          <label class="form-field form-field--wide"><span>Tên *</span><input id="categoryName" required placeholder="VD: Chăm sóc thú cưng" /></label>
+          <label class="form-field"><span>Tính chất mặc định</span><select id="categoryNature"><option value="fixed">Cố định</option><option value="semi_fixed">Bán cố định</option><option value="variable" selected>Biến đổi</option><option value="one_off">Một lần</option></select></label>
+          <label class="form-field"><span>Ưu tiên mặc định</span><select id="categoryPriority"><option value="p0">P0 · Bắt buộc</option><option value="p1">P1 · Thiết yếu</option><option value="p2" selected>P2 · Quan trọng</option><option value="p3">P3 · Tùy chọn</option></select></label>
+          <label class="form-field form-field--wide"><span>Màu đại diện</span><input id="categoryColor" type="color" value="#b8d94a" /></label>
+        </div>
+        <footer class="dialog-actions">
+          <button type="button" class="f-btn" data-close-dialog>Hủy</button>
+          <button class="f-btn f-btn--primary" type="submit">Lưu danh mục</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <!-- Scenario -->
+    <dialog class="finance-dialog" id="scenarioDialog" aria-labelledby="scenarioDialogTitle">
+      <form class="dialog-panel" id="scenarioForm">
+        <header class="dialog-head">
+          <div><span class="finance-card__eyebrow">What-if</span><h2 id="scenarioDialogTitle">Kịch bản mới</h2></div>
+          <button type="button" class="dialog-close" data-close-dialog>×</button>
+        </header>
+        <input type="hidden" id="scenarioId" />
+        <div class="form-grid">
+          <label class="form-field form-field--wide"><span>Tên kịch bản *</span><input id="scenarioName" required placeholder="VD: Thu nhập giảm 20%" /></label>
+          <label class="form-field"><span>Số tháng mô phỏng</span><input id="scenarioMonths" type="number" min="1" max="60" value="6" /></label>
+          <label class="form-field"><span>Thay đổi thu nhập (%)</span><input id="scenarioIncomeChange" type="number" step="0.1" value="0" /></label>
+          <label class="form-field"><span>Thay đổi chi phí (%)</span><input id="scenarioExpenseChange" type="number" step="0.1" value="0" /></label>
+          <label class="form-field"><span>Thu nhập một lần</span><input id="scenarioOneOffIncome" data-money-input inputmode="numeric" /></label>
+          <label class="form-field"><span>Chi phí một lần</span><input id="scenarioOneOffExpense" data-money-input inputmode="numeric" /></label>
+          <label class="form-field form-field--wide"><span>Ghi chú</span><textarea id="scenarioNote"></textarea></label>
+        </div>
+        <footer class="dialog-actions">
+          <button type="button" class="f-btn" data-close-dialog>Hủy</button>
+          <button class="f-btn f-btn--primary" type="submit">Lưu kịch bản</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <!-- Password -->
+    <dialog class="finance-dialog" id="passwordDialog" aria-labelledby="passwordDialogTitle">
+      <form class="dialog-panel dialog-panel--compact" id="passwordForm">
+        <header class="dialog-head">
+          <div><span class="finance-card__eyebrow">Security</span><h2 id="passwordDialogTitle">Đổi mật khẩu</h2></div>
+          <button type="button" class="dialog-close" data-close-dialog>×</button>
+        </header>
+        <div class="form-grid">
+          <label class="form-field form-field--wide"><span>Mật khẩu hiện tại</span><input id="currentPassword" type="password" autocomplete="current-password" required /></label>
+          <label class="form-field form-field--wide"><span>Mật khẩu mới</span><input id="newPassword" type="password" autocomplete="new-password" minlength="8" required /></label>
+          <label class="form-field form-field--wide"><span>Xác nhận mật khẩu mới</span><input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" required /></label>
+        </div>
+        <footer class="dialog-actions">
+          <button type="button" class="f-btn" data-close-dialog>Hủy</button>
+          <button class="f-btn f-btn--dark" type="submit">Cập nhật mật khẩu</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <div class="finance-toast" id="financeToast" role="status"></div>
+
+    <script src="finance.js"></script>
+    <script src="app-ui.js"></script>
+  </body>
+</html>
