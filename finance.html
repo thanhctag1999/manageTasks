@@ -456,8 +456,8 @@
                 <span class="finance-card__eyebrow">Daily essentials</span>
                 <h2>Gợi ý thiết yếu hằng ngày</h2>
                 <p class="quick-tx-card__hint">
-                  Chạm để mở form đã điền sẵn · giữ số tiền mặc định để thêm
-                  nhanh.
+                  Chạm để mở form đã gắn tài khoản &amp; danh mục · giữ số tiền
+                  mặc định để thêm nhanh.
                 </p>
               </div>
               <button
@@ -736,6 +736,12 @@
           <label class="form-field">
             <span>Số tiền mặc định *</span>
             <input id="quickTxAmount" required data-money-input inputmode="numeric" />
+          </label>
+          <label class="form-field">
+            <span>Tài khoản</span>
+            <select id="quickTxAccount">
+              <option value="">Tự chọn khi thêm</option>
+            </select>
           </label>
           <label class="form-field">
             <span>Danh mục</span>
