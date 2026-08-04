@@ -198,6 +198,7 @@
             <label class="period-select">
               <span>Kỳ phân tích</span>
               <select id="periodSelect">
+                <option value="day">Hôm nay</option>
                 <option value="week">Tuần này</option>
                 <option value="month" selected>Tháng này</option>
                 <option value="year">Năm nay</option>
@@ -424,6 +425,14 @@
               <button data-type="planned">Dự kiến</button>
             </div>
             <div class="module-toolbar__right">
+              <div class="transaction-date-filter">
+                <span>Ngày theo dõi</span>
+                <input
+                  id="transactionFilterDate"
+                  type="date"
+                  aria-label="Chọn ngày theo dõi giao dịch"
+                />
+              </div>
               <input
                 class="f-input f-input--search"
                 id="transactionSearch"

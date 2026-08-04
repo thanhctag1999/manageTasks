@@ -16,6 +16,7 @@
     scenarios: [],
     period: "month",
     transactionType: "",
+    transactionDate: "",
     purchaseWishlistId: null,
     lastSyncedAt: null,
     debtsAvailable: true,
@@ -55,9 +56,9 @@
     },
     {
       id: "qt-coffee",
-      name: "Cà phê",
+      name: "Cà phê sáng",
       type: "expense",
-      amount: 35000,
+      amount: 23000,
       category_hint: "cà phê",
       priority: "p2",
       nature: "variable",
@@ -65,9 +66,9 @@
     },
     {
       id: "qt-commute",
-      name: "Đi lại",
+      name: "Đổ xăng",
       type: "expense",
-      amount: 30000,
+      amount: 70000,
       category_hint: "đi lại",
       priority: "p1",
       nature: "semi_fixed",
@@ -171,10 +172,7 @@
       "Kịch bản dòng tiền",
       "Thử tương lai trước khi tương lai thử ví của bạn.",
     ],
-    debts: [
-      "Quản lý nợ",
-      "Theo dõi dư nợ, hạn trả và lịch sử thanh toán.",
-    ],
+    debts: ["Quản lý nợ", "Theo dõi dư nợ, hạn trả và lịch sử thanh toán."],
     setup: [
       "Tài khoản & danh mục",
       "Nền móng dữ liệu cho mọi báo cáo và dự báo.",
@@ -206,6 +204,10 @@
       renderAll();
     });
     $("#transactionSearch").addEventListener("input", renderTransactions);
+    $("#transactionFilterDate").addEventListener("change", (event) => {
+      state.transactionDate = event.target.value;
+      renderTransactions();
+    });
     $("#financeGlobalSearch")?.addEventListener("keydown", (event) => {
       if (event.key !== "Enter") return;
       event.preventDefault();
@@ -701,11 +703,13 @@
     text("#kpiForecast", money(forecast.total));
     text(
       "#kpiForecastRange",
-      state.period === "week"
-        ? "Trong tuần này"
-        : state.period === "year"
-          ? "Trong năm nay"
-          : "Trong tháng này",
+      state.period === "day"
+        ? "Trong hôm nay"
+        : state.period === "week"
+          ? "Trong tuần này"
+          : state.period === "year"
+            ? "Trong năm nay"
+            : "Trong tháng này",
     );
     text("#kpiSavingRate", `${Math.round(savingRate)}%`);
     text(
@@ -742,6 +746,7 @@
 
   function renderContextSummary(range) {
     const periodLabels = {
+      day: "Hôm nay",
       week: "Tuần này",
       month: "Tháng này",
       year: "Năm nay",
@@ -755,9 +760,17 @@
       month: "2-digit",
       year: "numeric",
     });
+    const rangeLabel =
+      state.period === "day"
+        ? range.end.toLocaleDateString("vi-VN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        : `${rangeStart}–${rangeEnd}`;
     text(
       "#contextPeriod",
-      `${periodLabels[state.period] || "Kỳ hiện tại"} · ${rangeStart}–${rangeEnd}`,
+      `${periodLabels[state.period] || "Kỳ hiện tại"} · ${rangeLabel}`,
     );
 
     const syncedLabel = state.lastSyncedAt
@@ -894,7 +907,13 @@
   function cashflowBuckets(range, period) {
     const rows = postedTransactions(range);
     const buckets = [];
-    if (period === "week") {
+    if (period === "day") {
+      buckets.push({
+        start: range.start,
+        end: range.end,
+        label: "Hôm nay",
+      });
+    } else if (period === "week") {
       for (let i = 0; i < 7; i++) {
         const start = addDays(range.start, i);
         buckets.push({
@@ -1108,7 +1127,9 @@
       });
     }
     const activeDebts = state.debts.filter((debt) => debt.status === "active");
-    const outstanding = sum(activeDebts.map((debt) => debtProgress(debt).remaining));
+    const outstanding = sum(
+      activeDebts.map((debt) => debtProgress(debt).remaining),
+    );
     const dueSoonDebts = activeDebts.filter((debt) => {
       if (!debt.due_date) return false;
       const due = parseDate(debt.due_date);
@@ -1232,9 +1253,17 @@
   function renderTransactions() {
     const search = ($("#transactionSearch")?.value || "").trim().toLowerCase();
     const range = periodRange(state.period);
+    const selectedDate = state.transactionDate
+      ? parseDate(state.transactionDate)
+      : null;
     const rows = state.transactions
       .filter((row) => {
-        if (!inRange(parseDate(row.occurred_on), range.start, range.end))
+        const occurredOn = parseDate(row.occurred_on);
+        if (
+          selectedDate
+            ? !inRange(occurredOn, selectedDate, selectedDate)
+            : !inRange(occurredOn, range.start, range.end)
+        )
           return false;
         if (
           state.transactionType === "planned" &&
@@ -1283,7 +1312,12 @@
         .map((row) => row.amount),
     );
     $("#ledgerSummary").innerHTML = [
-      ["Đang hiển thị", `${rows.length} giao dịch`],
+      [
+        selectedDate ? "Ngày theo dõi" : "Đang hiển thị",
+        selectedDate
+          ? `${formatDate(state.transactionDate)} · ${rows.length} giao dịch`
+          : `${rows.length} giao dịch`,
+      ],
       ["Tổng thu", money(income)],
       ["Tổng chi", money(expense)],
       ["Chi đang chờ", money(planned)],
@@ -1476,7 +1510,9 @@
 
   function normalizeQuickTx(item) {
     return {
-      id: String(item.id || `qt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`),
+      id: String(
+        item.id || `qt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      ),
       name: String(item.name || "Gợi ý").trim() || "Gợi ý",
       type: item.type === "income" ? "income" : "expense",
       amount: Math.max(0, Number(item.amount) || 0),
@@ -1652,7 +1688,9 @@
 
   function deleteQuickTxPreset(id) {
     if (!confirm("Xóa gợi ý này?")) return;
-    state.quickTxPresets = state.quickTxPresets.filter((item) => item.id !== id);
+    state.quickTxPresets = state.quickTxPresets.filter(
+      (item) => item.id !== id,
+    );
     saveQuickTxPresets();
     if ($("#quickTxEditId").value === id) resetQuickTxForm();
     renderQuickTx();
@@ -1660,7 +1698,9 @@
   }
 
   function resetQuickTxDefaults() {
-    if (!confirm("Khôi phục bộ gợi ý mặc định? Thay đổi hiện tại sẽ bị ghi đè."))
+    if (
+      !confirm("Khôi phục bộ gợi ý mặc định? Thay đổi hiện tại sẽ bị ghi đè.")
+    )
       return;
     state.quickTxPresets = cloneQuickTxDefaults();
     saveQuickTxPresets();
@@ -1683,7 +1723,8 @@
         account_id: null,
         transfer_account_id: null,
         category_id: preset.type === "expense" ? categoryId : null,
-        nature: preset.type === "expense" ? preset.nature || "variable" : "one_off",
+        nature:
+          preset.type === "expense" ? preset.nature || "variable" : "one_off",
         priority: preset.type === "expense" ? preset.priority || "p1" : "p2",
         merchant: nullable(preset.merchant),
         note: null,
@@ -2426,9 +2467,7 @@
 
     const active = state.debts.filter((debt) => debt.status === "active");
     const outstanding = sum(active.map((debt) => debtProgress(debt).remaining));
-    const paidTotal = sum(
-      state.debts.map((debt) => debtProgress(debt).paid),
-    );
+    const paidTotal = sum(state.debts.map((debt) => debtProgress(debt).paid));
     const dueSoon = active.filter((debt) => {
       if (!debt.due_date) return false;
       const days = Math.ceil(
@@ -2522,7 +2561,9 @@
             </article>`;
           })
           .join("")
-      : empty("Chưa có khoản nợ nào. Thêm khoản vay, thẻ tín dụng hoặc nợ cá nhân.");
+      : empty(
+          "Chưa có khoản nợ nào. Thêm khoản vay, thẻ tín dụng hoặc nợ cá nhân.",
+        );
 
     const payments = state.debtPayments
       .slice()
@@ -3465,18 +3506,22 @@
         .map((goal) => {
           const amount = +goal.planned_contribution || 0;
           if (goal.contribution_frequency === "weekly") {
-            return period === "week"
-              ? amount
-              : period === "year"
-                ? amount * 52
-                : amount * 4.345;
+            return period === "day"
+              ? amount / 7
+              : period === "week"
+                ? amount
+                : period === "year"
+                  ? amount * 52
+                  : amount * 4.345;
           }
           if (goal.contribution_frequency === "monthly") {
-            return period === "week"
-              ? amount / 4.345
-              : period === "year"
-                ? amount * 12
-                : amount;
+            return period === "day"
+              ? amount / 30.4375
+              : period === "week"
+                ? amount / 4.345
+                : period === "year"
+                  ? amount * 12
+                  : amount;
           }
           return 0;
         }),
@@ -3604,8 +3649,13 @@
 
   function exportTransactions() {
     const range = periodRange(state.period);
+    const selectedDate = state.transactionDate
+      ? parseDate(state.transactionDate)
+      : null;
     const rows = state.transactions.filter((row) =>
-      inRange(parseDate(row.occurred_on), range.start, range.end),
+      selectedDate
+        ? inRange(parseDate(row.occurred_on), selectedDate, selectedDate)
+        : inRange(parseDate(row.occurred_on), range.start, range.end),
     );
     const header = [
       "id",
@@ -3648,7 +3698,7 @@
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `finance_${state.period}_${todayYmd()}.csv`;
+    anchor.download = `finance_${state.transactionDate || state.period}_${todayYmd()}.csv`;
     anchor.click();
     URL.revokeObjectURL(url);
   }
@@ -3658,6 +3708,8 @@
   // -------------------------------------------------------------------------
 
   function setDefaultDates() {
+    state.transactionDate = todayYmd();
+    $("#transactionFilterDate").value = state.transactionDate;
     $("#transactionDate").value = todayYmd();
     $("#recurringNextDue").value = todayYmd();
     $("#contributionDate").value = todayYmd();
@@ -3665,6 +3717,9 @@
 
   function periodRange(period, date = new Date()) {
     const now = startOfDay(date);
+    if (period === "day") {
+      return { start: now, end: now };
+    }
     if (period === "week" || period === "weekly") {
       const day = now.getDay();
       const mondayOffset = day === 0 ? -6 : 1 - day;
