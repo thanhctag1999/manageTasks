@@ -443,6 +443,7 @@
         lastSyncedAt: new Date(),
       });
       loadQuickTxPresets();
+      hydrateQuickTxLinks();
       populateSelects();
       renderAll();
     } catch (error) {
@@ -567,6 +568,25 @@
       if ([...el.options].some((option) => option.value === current))
         el.value = current;
     });
+    const quickTxAccount = $("#quickTxAccount");
+    if (quickTxAccount) {
+      const currentQuickAccount = quickTxAccount.value;
+      quickTxAccount.innerHTML =
+        '<option value="">Tự chọn khi thêm</option>' +
+        state.accounts
+          .filter((item) => !item.is_archived)
+          .map(
+            (item) =>
+              `<option value="${escapeAttr(item.id)}">${escapeHtml(item.name)}</option>`,
+          )
+          .join("");
+      if (
+        [...quickTxAccount.options].some(
+          (option) => option.value === currentQuickAccount,
+        )
+      )
+        quickTxAccount.value = currentQuickAccount;
+    }
 
     const categoryOptions = [
       '<option value="">Không phân loại</option>',
@@ -1516,6 +1536,7 @@
       name: String(item.name || "Gợi ý").trim() || "Gợi ý",
       type: item.type === "income" ? "income" : "expense",
       amount: Math.max(0, Number(item.amount) || 0),
+      account_id: item.account_id || null,
       category_id: item.category_id || null,
       category_hint: item.category_hint || "",
       priority: item.priority || "p1",
@@ -1531,9 +1552,17 @@
     );
   }
 
+  function resolveQuickTxAccountId(preset) {
+    if (!preset?.account_id) return null;
+    const account = findById(state.accounts, preset.account_id);
+    if (!account || account.is_archived) return null;
+    return account.id;
+  }
+
   function resolveQuickTxCategoryId(preset) {
-    if (preset.category_id && findById(state.categories, preset.category_id)) {
-      return preset.category_id;
+    if (preset.category_id) {
+      const linked = findById(state.categories, preset.category_id);
+      if (linked && !linked.is_archived) return preset.category_id;
     }
     const hint = (preset.category_hint || preset.name || "").toLowerCase();
     if (!hint) return null;
@@ -1543,6 +1572,27 @@
       return name.includes(hint) || hint.includes(name);
     });
     return match?.id || null;
+  }
+
+  /** Persist resolved category/account links when hints match live data. */
+  function hydrateQuickTxLinks() {
+    let changed = false;
+    state.quickTxPresets = (state.quickTxPresets || []).map((preset) => {
+      const next = { ...preset };
+      const categoryId = resolveQuickTxCategoryId(preset);
+      if (categoryId && categoryId !== preset.category_id) {
+        next.category_id = categoryId;
+        const category = findById(state.categories, categoryId);
+        if (category?.name) next.category_hint = category.name;
+        changed = true;
+      }
+      if (preset.account_id && !resolveQuickTxAccountId(preset)) {
+        next.account_id = null;
+        changed = true;
+      }
+      return next;
+    });
+    if (changed) saveQuickTxPresets();
   }
 
   function isQuickTxUsedToday(preset) {
@@ -1572,12 +1622,18 @@
         const used = isQuickTxUsedToday(preset);
         const category =
           findById(state.categories, resolveQuickTxCategoryId(preset)) || null;
+        const account =
+          findById(state.accounts, resolveQuickTxAccountId(preset)) || null;
+        const metaParts = [
+          category?.name || typeLabel(preset.type),
+          account?.name,
+        ].filter(Boolean);
         return `<div class="quick-tx-chip${used ? " is-used" : ""}">
           <button type="button" class="quick-tx-chip__main" data-action="use-quick-tx" data-id="${escapeAttr(preset.id)}" title="Mở form đã điền sẵn">
             <span class="quick-tx-chip__name">${escapeHtml(preset.name)}</span>
             <span class="quick-tx-chip__meta">
               <b>${money(preset.amount)}</b>
-              <span>${escapeHtml(category?.name || typeLabel(preset.type))}</span>
+              <span>${escapeHtml(metaParts.join(" · "))}</span>
             </span>
             ${used ? '<span class="quick-tx-chip__badge">Hôm nay</span>' : ""}
           </button>
@@ -1604,12 +1660,21 @@
             state.categories,
             resolveQuickTxCategoryId(preset),
           );
+          const account = findById(
+            state.accounts,
+            resolveQuickTxAccountId(preset),
+          );
+          const linkParts = [
+            account?.name || "Chưa gắn tài khoản",
+            category?.name || typeLabel(preset.type),
+            PRIORITY_LABELS[preset.priority] || preset.priority,
+          ];
           return `<div class="quick-tx-manage-row">
             <div>
               <b>${escapeHtml(preset.name)}</b>
               <span>${money(preset.amount)} · ${escapeHtml(
-                category?.name || typeLabel(preset.type),
-              )} · ${escapeHtml(PRIORITY_LABELS[preset.priority] || preset.priority)}</span>
+                linkParts.join(" · "),
+              )}</span>
             </div>
             <div class="row-actions">
               <button type="button" class="icon-action" data-action="edit-quick-tx" data-id="${escapeAttr(preset.id)}" title="Sửa">✎</button>
@@ -1628,6 +1693,7 @@
     $("#quickTxPriority").value = "p1";
     $("#quickTxNature").value = "variable";
     $("#quickTxAmount").value = "";
+    $("#quickTxAccount").value = "";
     $("#quickTxCategory").value = "";
     $("#quickTxMerchant").value = "";
     renderQuickTxManageList();
@@ -1641,6 +1707,7 @@
     $("#quickTxName").value = preset.name;
     $("#quickTxType").value = preset.type;
     $("#quickTxAmount").value = numberFormat(preset.amount);
+    $("#quickTxAccount").value = resolveQuickTxAccountId(preset) || "";
     $("#quickTxCategory").value = resolveQuickTxCategoryId(preset) || "";
     $("#quickTxPriority").value = preset.priority || "p1";
     $("#quickTxNature").value = preset.nature || "variable";
@@ -1658,6 +1725,7 @@
       toast("Vui lòng nhập tên và số tiền mặc định.", true);
       return;
     }
+    const accountId = nullable($("#quickTxAccount").value);
     const categoryId = nullable($("#quickTxCategory").value);
     const category = findById(state.categories, categoryId);
     const body = normalizeQuickTx({
@@ -1665,6 +1733,7 @@
       name,
       type: $("#quickTxType").value,
       amount,
+      account_id: accountId,
       category_id: categoryId,
       category_hint: category?.name || name,
       priority: $("#quickTxPriority").value,
@@ -1703,6 +1772,7 @@
     )
       return;
     state.quickTxPresets = cloneQuickTxDefaults();
+    hydrateQuickTxLinks();
     saveQuickTxPresets();
     resetQuickTxForm();
     renderQuickTx();
@@ -1712,6 +1782,7 @@
   async function applyQuickTxPreset(id, instant) {
     const preset = state.quickTxPresets.find((item) => item.id === id);
     if (!preset) return;
+    const accountId = resolveQuickTxAccountId(preset);
     const categoryId = resolveQuickTxCategoryId(preset);
     if (instant) {
       const body = ownerBody({
@@ -1720,7 +1791,7 @@
         amount: preset.amount,
         occurred_on: todayYmd(),
         status: "posted",
-        account_id: null,
+        account_id: accountId,
         transfer_account_id: null,
         category_id: preset.type === "expense" ? categoryId : null,
         nature:
@@ -1744,6 +1815,7 @@
     $("#transactionName").value = preset.name;
     $("#transactionAmount").value = numberFormat(preset.amount);
     $("#transactionDate").value = todayYmd();
+    $("#transactionAccount").value = accountId || "";
     $("#transactionCategory").value = categoryId || "";
     $("#transactionPriority").value = preset.priority || "p1";
     $("#transactionNature").value = preset.nature || "variable";
