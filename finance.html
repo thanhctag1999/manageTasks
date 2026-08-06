@@ -24,7 +24,9 @@
         <div class="app-sidebar__brand">Synchro</div>
 
         <div class="side-user app-sidebar__user">
-          <div class="side-user__avatar" aria-hidden="true" data-user-initial>TO</div>
+          <div class="side-user__avatar" aria-hidden="true" data-user-initial>
+            TO
+          </div>
           <div class="side-user__meta">
             <b class="side-user__name" data-auth-name>The One</b>
             <span class="side-user__email" data-auth-role>owner</span>
@@ -105,7 +107,9 @@
             ><span class="nav__ic" aria-hidden="true"
               ><svg viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="8" />
-                <path d="M9.8 9.7a2.3 2.3 0 1 1 3.6 1.9c-.9.6-1.4 1.1-1.4 2.1" />
+                <path
+                  d="M9.8 9.7a2.3 2.3 0 1 1 3.6 1.9c-.9.6-1.4 1.1-1.4 2.1"
+                />
                 <path d="M12 17h.01" /></svg></span
             >Help Center</a
           >
@@ -120,7 +124,9 @@
             aria-label="ManageTasks dashboard"
           >
             <span class="topbar-brand__mark" aria-hidden="true">M</span>
-            <span><strong>ManageTasks</strong><small>Productivity OS</small></span>
+            <span
+              ><strong>ManageTasks</strong><small>Productivity OS</small></span
+            >
           </a>
           <nav class="topbar-nav" aria-label="Primary">
             <a href="index.html">Overview</a>
@@ -319,7 +325,8 @@
                     viewBox="0 0 900 360"
                     preserveAspectRatio="xMidYMid meet"
                     role="img"
-                    aria-label="Biểu đồ thu nhập và chi tiêu"></svg>
+                    aria-label="Biểu đồ thu nhập và chi tiêu"
+                  ></svg>
                 </div>
                 <div class="chart-range" aria-hidden="true"><span></span></div>
               </div>
@@ -439,9 +446,7 @@
                 type="search"
                 placeholder="Tìm giao dịch…"
               />
-              <button class="f-btn" id="exportTransactionsBtn">
-                Xuất CSV
-              </button>
+              <button class="f-btn" id="exportTransactionsBtn">Xuất CSV</button>
               <button
                 class="f-btn f-btn--primary"
                 data-open-dialog="transactionDialog"
@@ -498,9 +503,7 @@
             <div>
               <span class="finance-card__eyebrow">Commitment calendar</span>
               <h2>Chi phí và thu nhập định kỳ</h2>
-              <p>
-                Theo dõi mọi cam kết trước khi chúng kịp “úp sọt” số dư.
-              </p>
+              <p>Theo dõi mọi cam kết trước khi chúng kịp “úp sọt” số dư.</p>
             </div>
             <button
               class="f-btn f-btn--primary"
@@ -557,14 +560,11 @@
               <span class="finance-card__eyebrow">Liability desk</span>
               <h2>Quản lý nợ</h2>
               <p>
-                Theo dõi dư nợ, hạn trả và lịch sử thanh toán để không bỏ lỡ khoản
-                đến hạn.
+                Theo dõi dư nợ, hạn trả và lịch sử thanh toán để không bỏ lỡ
+                khoản đến hạn.
               </p>
             </div>
-            <button
-              class="f-btn f-btn--primary"
-              data-open-dialog="debtDialog"
-            >
+            <button class="f-btn f-btn--primary" data-open-dialog="debtDialog">
               + Khoản nợ mới
             </button>
           </div>
@@ -585,13 +585,11 @@
               <span class="finance-card__eyebrow">Future funds</span>
               <h2>Mục tiêu tiết kiệm</h2>
               <p>
-                Mỗi mục tiêu có nhịp đóng góp, hạn hoàn thành và cảnh báo tiến độ.
+                Mỗi mục tiêu có nhịp đóng góp, hạn hoàn thành và cảnh báo tiến
+                độ.
               </p>
             </div>
-            <button
-              class="f-btn f-btn--primary"
-              data-open-dialog="goalDialog"
-            >
+            <button class="f-btn f-btn--primary" data-open-dialog="goalDialog">
               + Mục tiêu mới
             </button>
           </div>
@@ -612,7 +610,8 @@
               <span class="finance-card__eyebrow">Buy with confidence</span>
               <h2>Mặt hàng muốn mua</h2>
               <p>
-                Biết khi nào nên mua, thay vì biết mình đã lỡ mua sau khi quẹt thẻ.
+                Biết khi nào nên mua, thay vì biết mình đã lỡ mua sau khi quẹt
+                thẻ.
               </p>
             </div>
             <button
@@ -662,19 +661,14 @@
             <div>
               <span class="finance-card__eyebrow">Finance foundation</span>
               <h2>Tài khoản & danh mục</h2>
-              <p>
-                Quản lý nơi giữ tiền và cấu trúc phân loại chi tiêu.
-              </p>
+              <p>Quản lý nơi giữ tiền và cấu trúc phân loại chi tiêu.</p>
             </div>
           </div>
           <div class="finance-grid finance-grid--split">
             <article class="finance-card">
               <div class="finance-card__head">
                 <div><h2>Tài khoản tài chính</h2></div>
-                <button
-                  class="f-btn"
-                  data-open-dialog="accountDialog"
-                >
+                <button class="f-btn" data-open-dialog="accountDialog">
                   + Tài khoản
                 </button>
               </div>
@@ -683,10 +677,7 @@
             <article class="finance-card">
               <div class="finance-card__head">
                 <div><h2>Danh mục chi tiêu</h2></div>
-                <button
-                  class="f-btn"
-                  data-open-dialog="categoryDialog"
-                >
+                <button class="f-btn" data-open-dialog="categoryDialog">
                   + Danh mục
                 </button>
               </div>
@@ -711,14 +702,20 @@
     </div>
 
     <!-- Quick transaction presets -->
-    <dialog class="finance-dialog" id="quickTxDialog" aria-labelledby="quickTxDialogTitle">
+    <dialog
+      class="finance-dialog"
+      id="quickTxDialog"
+      aria-labelledby="quickTxDialogTitle"
+    >
       <form class="dialog-panel" id="quickTxForm">
         <header class="dialog-head">
           <div>
             <span class="finance-card__eyebrow">Customize</span>
             <h2 id="quickTxDialogTitle">Gợi ý giao dịch nhanh</h2>
           </div>
-          <button type="button" class="dialog-close" data-close-dialog>×</button>
+          <button type="button" class="dialog-close" data-close-dialog>
+            ×
+          </button>
         </header>
         <input type="hidden" id="quickTxEditId" />
         <div class="form-grid">
@@ -735,7 +732,12 @@
           </label>
           <label class="form-field">
             <span>Số tiền mặc định *</span>
-            <input id="quickTxAmount" required data-money-input inputmode="numeric" />
+            <input
+              id="quickTxAmount"
+              required
+              data-money-input
+              inputmode="numeric"
+            />
           </label>
           <label class="form-field">
             <span>Danh mục</span>
@@ -771,23 +773,27 @@
             Khôi phục mặc định
           </button>
           <button type="button" class="f-btn" data-close-dialog>Đóng</button>
-          <button class="f-btn f-btn--primary" type="submit">
-            Lưu gợi ý
-          </button>
+          <button class="f-btn f-btn--primary" type="submit">Lưu gợi ý</button>
         </footer>
         <div class="quick-tx-manage-list" id="quickTxManageList"></div>
       </form>
     </dialog>
 
     <!-- Transaction -->
-    <dialog class="finance-dialog" id="transactionDialog" aria-labelledby="transactionDialogTitle">
+    <dialog
+      class="finance-dialog"
+      id="transactionDialog"
+      aria-labelledby="transactionDialogTitle"
+    >
       <form class="dialog-panel" id="transactionForm">
         <header class="dialog-head">
           <div>
             <span class="finance-card__eyebrow">Money movement</span>
             <h2 id="transactionDialogTitle">Giao dịch mới</h2>
           </div>
-          <button type="button" class="dialog-close" data-close-dialog>×</button>
+          <button type="button" class="dialog-close" data-close-dialog>
+            ×
+          </button>
         </header>
         <input type="hidden" id="transactionId" />
         <div class="type-picker" id="transactionTypePicker">
@@ -802,7 +808,11 @@
         <div class="form-grid">
           <label class="form-field form-field--wide">
             <span>Tên giao dịch *</span>
-            <input id="transactionName" required placeholder="VD: Tiền thuê nhà" />
+            <input
+              id="transactionName"
+              required
+              placeholder="VD: Tiền thuê nhà"
+            />
           </label>
           <label class="form-field">
             <span>Số tiền *</span>
@@ -863,7 +873,10 @@
           </label>
           <label class="form-field form-field--wide">
             <span>Ghi chú</span>
-            <textarea id="transactionNote" placeholder="Thông tin bổ sung…"></textarea>
+            <textarea
+              id="transactionNote"
+              placeholder="Thông tin bổ sung…"
+            ></textarea>
           </label>
         </div>
         <footer class="dialog-actions">
@@ -876,20 +889,30 @@
     </dialog>
 
     <!-- Recurring -->
-    <dialog class="finance-dialog" id="recurringDialog" aria-labelledby="recurringDialogTitle">
+    <dialog
+      class="finance-dialog"
+      id="recurringDialog"
+      aria-labelledby="recurringDialogTitle"
+    >
       <form class="dialog-panel" id="recurringForm">
         <header class="dialog-head">
           <div>
             <span class="finance-card__eyebrow">Repeat rule</span>
             <h2 id="recurringDialogTitle">Lịch định kỳ mới</h2>
           </div>
-          <button type="button" class="dialog-close" data-close-dialog>×</button>
+          <button type="button" class="dialog-close" data-close-dialog>
+            ×
+          </button>
         </header>
         <input type="hidden" id="recurringId" />
         <div class="form-grid">
           <label class="form-field form-field--wide">
             <span>Tên *</span>
-            <input id="recurringName" required placeholder="VD: Tiền thuê nhà" />
+            <input
+              id="recurringName"
+              required
+              placeholder="VD: Tiền thuê nhà"
+            />
           </label>
           <label class="form-field">
             <span>Loại</span>
@@ -900,7 +923,12 @@
           </label>
           <label class="form-field">
             <span>Số tiền *</span>
-            <input id="recurringAmount" required data-money-input inputmode="numeric" />
+            <input
+              id="recurringAmount"
+              required
+              data-money-input
+              inputmode="numeric"
+            />
           </label>
           <label class="form-field">
             <span>Danh mục</span>
@@ -931,7 +959,13 @@
           </label>
           <label class="form-field">
             <span>Nhắc trước (ngày)</span>
-            <input id="recurringRemindDays" type="number" min="0" max="90" value="3" />
+            <input
+              id="recurringRemindDays"
+              type="number"
+              min="0"
+              max="90"
+              value="3"
+            />
           </label>
           <label class="form-field">
             <span>Tính chất</span>
@@ -963,65 +997,174 @@
     </dialog>
 
     <!-- Budget -->
-    <dialog class="finance-dialog" id="budgetDialog" aria-labelledby="budgetDialogTitle">
+    <dialog
+      class="finance-dialog"
+      id="budgetDialog"
+      aria-labelledby="budgetDialogTitle"
+    >
       <form class="dialog-panel dialog-panel--compact" id="budgetForm">
         <header class="dialog-head">
-          <div><span class="finance-card__eyebrow">Guardrail</span><h2 id="budgetDialogTitle">Ngân sách mới</h2></div>
-          <button type="button" class="dialog-close" data-close-dialog>×</button>
+          <div>
+            <span class="finance-card__eyebrow">Guardrail</span>
+            <h2 id="budgetDialogTitle">Ngân sách mới</h2>
+          </div>
+          <button type="button" class="dialog-close" data-close-dialog>
+            ×
+          </button>
         </header>
         <input type="hidden" id="budgetId" />
         <div class="form-grid">
-          <label class="form-field form-field--wide"><span>Tên *</span><input id="budgetName" required placeholder="VD: Ăn uống tháng" /></label>
-          <label class="form-field"><span>Chu kỳ</span><select id="budgetPeriod"><option value="weekly">Hàng tuần</option><option value="monthly" selected>Hàng tháng</option></select></label>
-          <label class="form-field"><span>Hạn mức *</span><input id="budgetAmount" required data-money-input inputmode="numeric" /></label>
-          <label class="form-field form-field--wide"><span>Danh mục</span><select id="budgetCategory"><option value="">Toàn bộ chi tiêu</option></select></label>
+          <label class="form-field form-field--wide"
+            ><span>Tên *</span
+            ><input id="budgetName" required placeholder="VD: Ăn uống tháng"
+          /></label>
+          <label class="form-field"
+            ><span>Chu kỳ</span
+            ><select id="budgetPeriod">
+              <option value="weekly">Hàng tuần</option>
+              <option value="monthly" selected>Hàng tháng</option>
+            </select></label
+          >
+          <label class="form-field"
+            ><span>Hạn mức *</span
+            ><input
+              id="budgetAmount"
+              required
+              data-money-input
+              inputmode="numeric"
+          /></label>
+          <label class="form-field form-field--wide"
+            ><span>Danh mục</span
+            ><select id="budgetCategory">
+              <option value="">Toàn bộ chi tiêu</option>
+            </select></label
+          >
         </div>
         <footer class="dialog-actions">
           <button type="button" class="f-btn" data-close-dialog>Hủy</button>
-          <button class="f-btn f-btn--primary" type="submit">Lưu ngân sách</button>
+          <button class="f-btn f-btn--primary" type="submit">
+            Lưu ngân sách
+          </button>
         </footer>
       </form>
     </dialog>
 
     <!-- Goal -->
-    <dialog class="finance-dialog" id="goalDialog" aria-labelledby="goalDialogTitle">
+    <dialog
+      class="finance-dialog"
+      id="goalDialog"
+      aria-labelledby="goalDialogTitle"
+    >
       <form class="dialog-panel" id="goalForm">
         <header class="dialog-head">
-          <div><span class="finance-card__eyebrow">Future fund</span><h2 id="goalDialogTitle">Mục tiêu mới</h2></div>
-          <button type="button" class="dialog-close" data-close-dialog>×</button>
+          <div>
+            <span class="finance-card__eyebrow">Future fund</span>
+            <h2 id="goalDialogTitle">Mục tiêu mới</h2>
+          </div>
+          <button type="button" class="dialog-close" data-close-dialog>
+            ×
+          </button>
         </header>
         <input type="hidden" id="goalId" />
         <div class="form-grid">
-          <label class="form-field form-field--wide"><span>Tên mục tiêu *</span><input id="goalName" required placeholder="VD: Quỹ dự phòng 6 tháng" /></label>
-          <label class="form-field"><span>Số tiền mục tiêu *</span><input id="goalTarget" required data-money-input inputmode="numeric" /></label>
-          <label class="form-field"><span>Số tiền ban đầu</span><input id="goalInitial" data-money-input inputmode="numeric" /></label>
-          <label class="form-field"><span>Hạn hoàn thành</span><input id="goalDeadline" type="date" /></label>
-          <label class="form-field"><span>Ưu tiên</span><select id="goalPriority"><option value="p0">P0 · Bắt buộc</option><option value="p1" selected>P1 · Thiết yếu</option><option value="p2">P2 · Quan trọng</option><option value="p3">P3 · Tùy chọn</option></select></label>
-          <label class="form-field"><span>Nhịp đóng góp</span><select id="goalFrequency"><option value="weekly">Hàng tuần</option><option value="monthly" selected>Hàng tháng</option><option value="manual">Thủ công</option></select></label>
-          <label class="form-field"><span>Mức đóng góp dự kiến</span><input id="goalPlannedContribution" data-money-input inputmode="numeric" /></label>
-          <label class="form-field form-field--wide"><span>Ghi chú</span><textarea id="goalNote"></textarea></label>
+          <label class="form-field form-field--wide"
+            ><span>Tên mục tiêu *</span
+            ><input
+              id="goalName"
+              required
+              placeholder="VD: Quỹ dự phòng 6 tháng"
+          /></label>
+          <label class="form-field"
+            ><span>Số tiền mục tiêu *</span
+            ><input
+              id="goalTarget"
+              required
+              data-money-input
+              inputmode="numeric"
+          /></label>
+          <label class="form-field"
+            ><span>Số tiền ban đầu</span
+            ><input id="goalInitial" data-money-input inputmode="numeric"
+          /></label>
+          <label class="form-field"
+            ><span>Hạn hoàn thành</span><input id="goalDeadline" type="date"
+          /></label>
+          <label class="form-field"
+            ><span>Ưu tiên</span
+            ><select id="goalPriority">
+              <option value="p0">P0 · Bắt buộc</option>
+              <option value="p1" selected>P1 · Thiết yếu</option>
+              <option value="p2">P2 · Quan trọng</option>
+              <option value="p3">P3 · Tùy chọn</option>
+            </select></label
+          >
+          <label class="form-field"
+            ><span>Nhịp đóng góp</span
+            ><select id="goalFrequency">
+              <option value="weekly">Hàng tuần</option>
+              <option value="monthly" selected>Hàng tháng</option>
+              <option value="manual">Thủ công</option>
+            </select></label
+          >
+          <label class="form-field"
+            ><span>Mức đóng góp dự kiến</span
+            ><input
+              id="goalPlannedContribution"
+              data-money-input
+              inputmode="numeric"
+          /></label>
+          <label class="form-field form-field--wide"
+            ><span>Ghi chú</span><textarea id="goalNote"></textarea>
+          </label>
         </div>
         <footer class="dialog-actions">
           <button type="button" class="f-btn" data-close-dialog>Hủy</button>
-          <button class="f-btn f-btn--primary" type="submit">Lưu mục tiêu</button>
+          <button class="f-btn f-btn--primary" type="submit">
+            Lưu mục tiêu
+          </button>
         </footer>
       </form>
     </dialog>
 
     <!-- Contribution -->
-    <dialog class="finance-dialog" id="contributionDialog" aria-labelledby="contributionDialogTitle">
+    <dialog
+      class="finance-dialog"
+      id="contributionDialog"
+      aria-labelledby="contributionDialogTitle"
+    >
       <form class="dialog-panel dialog-panel--compact" id="contributionForm">
         <header class="dialog-head">
-          <div><span class="finance-card__eyebrow">Add progress</span><h2 id="contributionDialogTitle">Đóng góp vào mục tiêu</h2></div>
-          <button type="button" class="dialog-close" data-close-dialog>×</button>
+          <div>
+            <span class="finance-card__eyebrow">Add progress</span>
+            <h2 id="contributionDialogTitle">Đóng góp vào mục tiêu</h2>
+          </div>
+          <button type="button" class="dialog-close" data-close-dialog>
+            ×
+          </button>
         </header>
         <input type="hidden" id="contributionGoalId" />
         <div class="form-grid">
-          <label class="form-field form-field--wide"><span>Mục tiêu</span><input id="contributionGoalName" disabled /></label>
-          <label class="form-field"><span>Số tiền *</span><input id="contributionAmount" required data-money-input inputmode="numeric" /></label>
-          <label class="form-field"><span>Ngày</span><input id="contributionDate" type="date" required /></label>
-          <label class="form-field form-field--wide"><span>Tài khoản nguồn</span><select id="contributionAccount"></select></label>
-          <label class="form-field form-field--wide"><span>Ghi chú</span><textarea id="contributionNote"></textarea></label>
+          <label class="form-field form-field--wide"
+            ><span>Mục tiêu</span><input id="contributionGoalName" disabled
+          /></label>
+          <label class="form-field"
+            ><span>Số tiền *</span
+            ><input
+              id="contributionAmount"
+              required
+              data-money-input
+              inputmode="numeric"
+          /></label>
+          <label class="form-field"
+            ><span>Ngày</span><input id="contributionDate" type="date" required
+          /></label>
+          <label class="form-field form-field--wide"
+            ><span>Tài khoản nguồn</span
+            ><select id="contributionAccount"></select
+          ></label>
+          <label class="form-field form-field--wide"
+            ><span>Ghi chú</span><textarea id="contributionNote"></textarea>
+          </label>
         </div>
         <footer class="dialog-actions">
           <button type="button" class="f-btn" data-close-dialog>Hủy</button>
@@ -1031,112 +1174,291 @@
     </dialog>
 
     <!-- Wishlist -->
-    <dialog class="finance-dialog" id="wishlistDialog" aria-labelledby="wishlistDialogTitle">
+    <dialog
+      class="finance-dialog"
+      id="wishlistDialog"
+      aria-labelledby="wishlistDialogTitle"
+    >
       <form class="dialog-panel" id="wishlistForm">
         <header class="dialog-head">
-          <div><span class="finance-card__eyebrow">Wish planner</span><h2 id="wishlistDialogTitle">Mặt hàng mới</h2></div>
-          <button type="button" class="dialog-close" data-close-dialog>×</button>
+          <div>
+            <span class="finance-card__eyebrow">Wish planner</span>
+            <h2 id="wishlistDialogTitle">Mặt hàng mới</h2>
+          </div>
+          <button type="button" class="dialog-close" data-close-dialog>
+            ×
+          </button>
         </header>
         <input type="hidden" id="wishlistId" />
         <div class="form-grid">
-          <label class="form-field form-field--wide"><span>Tên mặt hàng *</span><input id="wishlistName" required placeholder="VD: iPad Pro" /></label>
-          <label class="form-field"><span>Giá dự kiến *</span><input id="wishlistPrice" required data-money-input inputmode="numeric" /></label>
-          <label class="form-field"><span>Đã dành riêng</span><input id="wishlistSaved" data-money-input inputmode="numeric" /></label>
-          <label class="form-field"><span>Ngày mong muốn</span><input id="wishlistDesired" type="date" /></label>
-          <label class="form-field"><span>Ưu tiên</span><select id="wishlistPriority"><option value="p0">P0 · Bắt buộc</option><option value="p1">P1 · Thiết yếu</option><option value="p2" selected>P2 · Quan trọng</option><option value="p3">P3 · Tùy chọn</option></select></label>
-          <label class="form-field"><span>Chi phí hàng tháng sau mua</span><input id="wishlistOngoing" data-money-input inputmode="numeric" /></label>
-          <label class="form-field"><span>Liên kết mục tiêu</span><select id="wishlistGoal"><option value="">Không liên kết</option></select></label>
-          <label class="form-field form-field--wide"><span>Link sản phẩm</span><input id="wishlistUrl" type="url" placeholder="https://…" /></label>
-          <label class="form-field form-field--wide"><span>Ghi chú</span><textarea id="wishlistNote"></textarea></label>
+          <label class="form-field form-field--wide"
+            ><span>Tên mặt hàng *</span
+            ><input id="wishlistName" required placeholder="VD: iPad Pro"
+          /></label>
+          <label class="form-field"
+            ><span>Giá dự kiến *</span
+            ><input
+              id="wishlistPrice"
+              required
+              data-money-input
+              inputmode="numeric"
+          /></label>
+          <label class="form-field"
+            ><span>Đã dành riêng</span
+            ><input id="wishlistSaved" data-money-input inputmode="numeric"
+          /></label>
+          <label class="form-field"
+            ><span>Ngày mong muốn</span><input id="wishlistDesired" type="date"
+          /></label>
+          <label class="form-field"
+            ><span>Ưu tiên</span
+            ><select id="wishlistPriority">
+              <option value="p0">P0 · Bắt buộc</option>
+              <option value="p1">P1 · Thiết yếu</option>
+              <option value="p2" selected>P2 · Quan trọng</option>
+              <option value="p3">P3 · Tùy chọn</option>
+            </select></label
+          >
+          <label class="form-field"
+            ><span>Chi phí hàng tháng sau mua</span
+            ><input id="wishlistOngoing" data-money-input inputmode="numeric"
+          /></label>
+          <label class="form-field"
+            ><span>Liên kết mục tiêu</span
+            ><select id="wishlistGoal">
+              <option value="">Không liên kết</option>
+            </select></label
+          >
+          <label class="form-field form-field--wide"
+            ><span>Link sản phẩm</span
+            ><input id="wishlistUrl" type="url" placeholder="https://…"
+          /></label>
+          <label class="form-field form-field--wide"
+            ><span>Ghi chú</span><textarea id="wishlistNote"></textarea>
+          </label>
         </div>
         <footer class="dialog-actions">
           <button type="button" class="f-btn" data-close-dialog>Hủy</button>
-          <button class="f-btn f-btn--primary" type="submit">Lưu mặt hàng</button>
+          <button class="f-btn f-btn--primary" type="submit">
+            Lưu mặt hàng
+          </button>
         </footer>
       </form>
     </dialog>
 
     <!-- Account -->
-    <dialog class="finance-dialog" id="accountDialog" aria-labelledby="accountDialogTitle">
+    <dialog
+      class="finance-dialog"
+      id="accountDialog"
+      aria-labelledby="accountDialogTitle"
+    >
       <form class="dialog-panel dialog-panel--compact" id="accountForm">
         <header class="dialog-head">
-          <div><span class="finance-card__eyebrow">Money holder</span><h2 id="accountDialogTitle">Tài khoản mới</h2></div>
-          <button type="button" class="dialog-close" data-close-dialog>×</button>
+          <div>
+            <span class="finance-card__eyebrow">Money holder</span>
+            <h2 id="accountDialogTitle">Tài khoản mới</h2>
+          </div>
+          <button type="button" class="dialog-close" data-close-dialog>
+            ×
+          </button>
         </header>
         <input type="hidden" id="accountId" />
         <div class="form-grid">
-          <label class="form-field form-field--wide"><span>Tên *</span><input id="accountName" required placeholder="VD: Vietcombank" /></label>
-          <label class="form-field"><span>Loại</span><select id="accountKind"><option value="cash">Tiền mặt</option><option value="bank" selected>Ngân hàng</option><option value="ewallet">Ví điện tử</option><option value="credit">Thẻ tín dụng</option><option value="saving">Tiết kiệm</option><option value="investment">Đầu tư</option></select></label>
-          <label class="form-field"><span>Số dư ban đầu</span><input id="accountOpeningBalance" data-money-input inputmode="numeric" /></label>
-          <label class="form-field form-field--wide"><span>Màu đại diện</span><input id="accountColor" type="color" value="#1c1c24" /></label>
+          <label class="form-field form-field--wide"
+            ><span>Tên *</span
+            ><input id="accountName" required placeholder="VD: Vietcombank"
+          /></label>
+          <label class="form-field"
+            ><span>Loại</span
+            ><select id="accountKind">
+              <option value="cash">Tiền mặt</option>
+              <option value="bank" selected>Ngân hàng</option>
+              <option value="ewallet">Ví điện tử</option>
+              <option value="credit">Thẻ tín dụng</option>
+              <option value="saving">Tiết kiệm</option>
+              <option value="investment">Đầu tư</option>
+            </select></label
+          >
+          <label class="form-field"
+            ><span>Số dư ban đầu</span
+            ><input
+              id="accountOpeningBalance"
+              data-money-input
+              inputmode="numeric"
+          /></label>
+          <label class="form-field form-field--wide"
+            ><span>Màu đại diện</span
+            ><input id="accountColor" type="color" value="#1c1c24"
+          /></label>
         </div>
         <footer class="dialog-actions">
           <button type="button" class="f-btn" data-close-dialog>Hủy</button>
-          <button class="f-btn f-btn--primary" type="submit">Lưu tài khoản</button>
+          <button class="f-btn f-btn--primary" type="submit">
+            Lưu tài khoản
+          </button>
         </footer>
       </form>
     </dialog>
 
     <!-- Category -->
-    <dialog class="finance-dialog" id="categoryDialog" aria-labelledby="categoryDialogTitle">
+    <dialog
+      class="finance-dialog"
+      id="categoryDialog"
+      aria-labelledby="categoryDialogTitle"
+    >
       <form class="dialog-panel dialog-panel--compact" id="categoryForm">
         <header class="dialog-head">
-          <div><span class="finance-card__eyebrow">Classification</span><h2 id="categoryDialogTitle">Danh mục mới</h2></div>
-          <button type="button" class="dialog-close" data-close-dialog>×</button>
+          <div>
+            <span class="finance-card__eyebrow">Classification</span>
+            <h2 id="categoryDialogTitle">Danh mục mới</h2>
+          </div>
+          <button type="button" class="dialog-close" data-close-dialog>
+            ×
+          </button>
         </header>
         <input type="hidden" id="categoryId" />
         <div class="form-grid">
-          <label class="form-field form-field--wide"><span>Tên *</span><input id="categoryName" required placeholder="VD: Chăm sóc thú cưng" /></label>
-          <label class="form-field"><span>Tính chất mặc định</span><select id="categoryNature"><option value="fixed">Cố định</option><option value="semi_fixed">Bán cố định</option><option value="variable" selected>Biến đổi</option><option value="one_off">Một lần</option></select></label>
-          <label class="form-field"><span>Ưu tiên mặc định</span><select id="categoryPriority"><option value="p0">P0 · Bắt buộc</option><option value="p1">P1 · Thiết yếu</option><option value="p2" selected>P2 · Quan trọng</option><option value="p3">P3 · Tùy chọn</option></select></label>
-          <label class="form-field form-field--wide"><span>Màu đại diện</span><input id="categoryColor" type="color" value="#b8d94a" /></label>
+          <label class="form-field form-field--wide"
+            ><span>Tên *</span
+            ><input
+              id="categoryName"
+              required
+              placeholder="VD: Chăm sóc thú cưng"
+          /></label>
+          <label class="form-field"
+            ><span>Tính chất mặc định</span
+            ><select id="categoryNature">
+              <option value="fixed">Cố định</option>
+              <option value="semi_fixed">Bán cố định</option>
+              <option value="variable" selected>Biến đổi</option>
+              <option value="one_off">Một lần</option>
+            </select></label
+          >
+          <label class="form-field"
+            ><span>Ưu tiên mặc định</span
+            ><select id="categoryPriority">
+              <option value="p0">P0 · Bắt buộc</option>
+              <option value="p1">P1 · Thiết yếu</option>
+              <option value="p2" selected>P2 · Quan trọng</option>
+              <option value="p3">P3 · Tùy chọn</option>
+            </select></label
+          >
+          <label class="form-field form-field--wide"
+            ><span>Màu đại diện</span
+            ><input id="categoryColor" type="color" value="#b8d94a"
+          /></label>
         </div>
         <footer class="dialog-actions">
           <button type="button" class="f-btn" data-close-dialog>Hủy</button>
-          <button class="f-btn f-btn--primary" type="submit">Lưu danh mục</button>
+          <button class="f-btn f-btn--primary" type="submit">
+            Lưu danh mục
+          </button>
         </footer>
       </form>
     </dialog>
 
     <!-- Scenario -->
-    <dialog class="finance-dialog" id="scenarioDialog" aria-labelledby="scenarioDialogTitle">
+    <dialog
+      class="finance-dialog"
+      id="scenarioDialog"
+      aria-labelledby="scenarioDialogTitle"
+    >
       <form class="dialog-panel" id="scenarioForm">
         <header class="dialog-head">
-          <div><span class="finance-card__eyebrow">What-if</span><h2 id="scenarioDialogTitle">Kịch bản mới</h2></div>
-          <button type="button" class="dialog-close" data-close-dialog>×</button>
+          <div>
+            <span class="finance-card__eyebrow">What-if</span>
+            <h2 id="scenarioDialogTitle">Kịch bản mới</h2>
+          </div>
+          <button type="button" class="dialog-close" data-close-dialog>
+            ×
+          </button>
         </header>
         <input type="hidden" id="scenarioId" />
         <div class="form-grid">
-          <label class="form-field form-field--wide"><span>Tên kịch bản *</span><input id="scenarioName" required placeholder="VD: Thu nhập giảm 20%" /></label>
-          <label class="form-field"><span>Số tháng mô phỏng</span><input id="scenarioMonths" type="number" min="1" max="60" value="6" /></label>
-          <label class="form-field"><span>Thay đổi thu nhập (%)</span><input id="scenarioIncomeChange" type="number" step="0.1" value="0" /></label>
-          <label class="form-field"><span>Thay đổi chi phí (%)</span><input id="scenarioExpenseChange" type="number" step="0.1" value="0" /></label>
-          <label class="form-field"><span>Thu nhập một lần</span><input id="scenarioOneOffIncome" data-money-input inputmode="numeric" /></label>
-          <label class="form-field"><span>Chi phí một lần</span><input id="scenarioOneOffExpense" data-money-input inputmode="numeric" /></label>
-          <label class="form-field form-field--wide"><span>Ghi chú</span><textarea id="scenarioNote"></textarea></label>
+          <label class="form-field form-field--wide"
+            ><span>Tên kịch bản *</span
+            ><input
+              id="scenarioName"
+              required
+              placeholder="VD: Thu nhập giảm 20%"
+          /></label>
+          <label class="form-field"
+            ><span>Số tháng mô phỏng</span
+            ><input
+              id="scenarioMonths"
+              type="number"
+              min="1"
+              max="60"
+              value="6"
+          /></label>
+          <label class="form-field"
+            ><span>Thay đổi thu nhập (%)</span
+            ><input
+              id="scenarioIncomeChange"
+              type="number"
+              step="0.1"
+              value="0"
+          /></label>
+          <label class="form-field"
+            ><span>Thay đổi chi phí (%)</span
+            ><input
+              id="scenarioExpenseChange"
+              type="number"
+              step="0.1"
+              value="0"
+          /></label>
+          <label class="form-field"
+            ><span>Thu nhập một lần</span
+            ><input
+              id="scenarioOneOffIncome"
+              data-money-input
+              inputmode="numeric"
+          /></label>
+          <label class="form-field"
+            ><span>Chi phí một lần</span
+            ><input
+              id="scenarioOneOffExpense"
+              data-money-input
+              inputmode="numeric"
+          /></label>
+          <label class="form-field form-field--wide"
+            ><span>Ghi chú</span><textarea id="scenarioNote"></textarea>
+          </label>
         </div>
         <footer class="dialog-actions">
           <button type="button" class="f-btn" data-close-dialog>Hủy</button>
-          <button class="f-btn f-btn--primary" type="submit">Lưu kịch bản</button>
+          <button class="f-btn f-btn--primary" type="submit">
+            Lưu kịch bản
+          </button>
         </footer>
       </form>
     </dialog>
 
     <!-- Debt -->
-    <dialog class="finance-dialog" id="debtDialog" aria-labelledby="debtDialogTitle">
+    <dialog
+      class="finance-dialog"
+      id="debtDialog"
+      aria-labelledby="debtDialogTitle"
+    >
       <form class="dialog-panel" id="debtForm">
         <header class="dialog-head">
           <div>
             <span class="finance-card__eyebrow">Liability</span>
             <h2 id="debtDialogTitle">Khoản nợ mới</h2>
           </div>
-          <button type="button" class="dialog-close" data-close-dialog>×</button>
+          <button type="button" class="dialog-close" data-close-dialog>
+            ×
+          </button>
         </header>
         <input type="hidden" id="debtId" />
         <div class="form-grid">
           <label class="form-field form-field--wide">
             <span>Tên khoản nợ *</span>
-            <input id="debtName" required placeholder="VD: Vay ngân hàng / Nợ thẻ" />
+            <input
+              id="debtName"
+              required
+              placeholder="VD: Vay ngân hàng / Nợ thẻ"
+            />
           </label>
           <label class="form-field">
             <span>Chủ nợ / bên cho vay</span>
@@ -1144,7 +1466,12 @@
           </label>
           <label class="form-field">
             <span>Tổng gốc *</span>
-            <input id="debtPrincipal" required data-money-input inputmode="numeric" />
+            <input
+              id="debtPrincipal"
+              required
+              data-money-input
+              inputmode="numeric"
+            />
           </label>
           <label class="form-field">
             <span>Đã trả trước (nếu có)</span>
@@ -1152,7 +1479,14 @@
           </label>
           <label class="form-field">
             <span>Lãi suất (%/năm)</span>
-            <input id="debtInterest" type="number" min="0" max="100" step="0.1" placeholder="0" />
+            <input
+              id="debtInterest"
+              type="number"
+              min="0"
+              max="100"
+              step="0.1"
+              placeholder="0"
+            />
           </label>
           <label class="form-field">
             <span>Trả tối thiểu / kỳ</span>
@@ -1181,25 +1515,36 @@
           </label>
           <label class="form-field form-field--wide">
             <span>Ghi chú</span>
-            <textarea id="debtNote" placeholder="Điều khoản, số hợp đồng…"></textarea>
+            <textarea
+              id="debtNote"
+              placeholder="Điều khoản, số hợp đồng…"
+            ></textarea>
           </label>
         </div>
         <footer class="dialog-actions">
           <button type="button" class="f-btn" data-close-dialog>Hủy</button>
-          <button class="f-btn f-btn--primary" type="submit">Lưu khoản nợ</button>
+          <button class="f-btn f-btn--primary" type="submit">
+            Lưu khoản nợ
+          </button>
         </footer>
       </form>
     </dialog>
 
     <!-- Debt payment -->
-    <dialog class="finance-dialog" id="debtPaymentDialog" aria-labelledby="debtPaymentDialogTitle">
+    <dialog
+      class="finance-dialog"
+      id="debtPaymentDialog"
+      aria-labelledby="debtPaymentDialogTitle"
+    >
       <form class="dialog-panel dialog-panel--compact" id="debtPaymentForm">
         <header class="dialog-head">
           <div>
             <span class="finance-card__eyebrow">Pay down</span>
             <h2 id="debtPaymentDialogTitle">Trả nợ</h2>
           </div>
-          <button type="button" class="dialog-close" data-close-dialog>×</button>
+          <button type="button" class="dialog-close" data-close-dialog>
+            ×
+          </button>
         </header>
         <input type="hidden" id="debtPaymentDebtId" />
         <div class="form-grid">
@@ -1209,7 +1554,12 @@
           </label>
           <label class="form-field">
             <span>Số tiền trả *</span>
-            <input id="debtPaymentAmount" required data-money-input inputmode="numeric" />
+            <input
+              id="debtPaymentAmount"
+              required
+              data-money-input
+              inputmode="numeric"
+            />
           </label>
           <label class="form-field">
             <span>Ngày trả</span>
@@ -1226,26 +1576,62 @@
         </div>
         <footer class="dialog-actions">
           <button type="button" class="f-btn" data-close-dialog>Hủy</button>
-          <button class="f-btn f-btn--primary" type="submit">Ghi nhận trả nợ</button>
+          <button class="f-btn f-btn--primary" type="submit">
+            Ghi nhận trả nợ
+          </button>
         </footer>
       </form>
     </dialog>
 
     <!-- Password -->
-    <dialog class="finance-dialog" id="passwordDialog" aria-labelledby="passwordDialogTitle">
+    <dialog
+      class="finance-dialog"
+      id="passwordDialog"
+      aria-labelledby="passwordDialogTitle"
+    >
       <form class="dialog-panel dialog-panel--compact" id="passwordForm">
         <header class="dialog-head">
-          <div><span class="finance-card__eyebrow">Security</span><h2 id="passwordDialogTitle">Đổi mật khẩu</h2></div>
-          <button type="button" class="dialog-close" data-close-dialog>×</button>
+          <div>
+            <span class="finance-card__eyebrow">Security</span>
+            <h2 id="passwordDialogTitle">Đổi mật khẩu</h2>
+          </div>
+          <button type="button" class="dialog-close" data-close-dialog>
+            ×
+          </button>
         </header>
         <div class="form-grid">
-          <label class="form-field form-field--wide"><span>Mật khẩu hiện tại</span><input id="currentPassword" type="password" autocomplete="current-password" required /></label>
-          <label class="form-field form-field--wide"><span>Mật khẩu mới</span><input id="newPassword" type="password" autocomplete="new-password" minlength="8" required /></label>
-          <label class="form-field form-field--wide"><span>Xác nhận mật khẩu mới</span><input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" required /></label>
+          <label class="form-field form-field--wide"
+            ><span>Mật khẩu hiện tại</span
+            ><input
+              id="currentPassword"
+              type="password"
+              autocomplete="current-password"
+              required
+          /></label>
+          <label class="form-field form-field--wide"
+            ><span>Mật khẩu mới</span
+            ><input
+              id="newPassword"
+              type="password"
+              autocomplete="new-password"
+              minlength="8"
+              required
+          /></label>
+          <label class="form-field form-field--wide"
+            ><span>Xác nhận mật khẩu mới</span
+            ><input
+              id="confirmPassword"
+              type="password"
+              autocomplete="new-password"
+              minlength="8"
+              required
+          /></label>
         </div>
         <footer class="dialog-actions">
           <button type="button" class="f-btn" data-close-dialog>Hủy</button>
-          <button class="f-btn f-btn--dark" type="submit">Cập nhật mật khẩu</button>
+          <button class="f-btn f-btn--dark" type="submit">
+            Cập nhật mật khẩu
+          </button>
         </footer>
       </form>
     </dialog>

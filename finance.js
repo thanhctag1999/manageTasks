@@ -23,12 +23,21 @@
     quickTxPresets: [],
   };
 
+  const DAILY_ESSENTIAL_ACCOUNT_ID = "82b524c3-2c71-482e-89b7-4b1b0fda09e3";
+  const DAILY_ESSENTIAL_CATEGORY_IDS = {
+    food: "925474d5-0e55-4eaf-b275-edd02cca66b1",
+    vehicle: "3b255d8d-0157-4f51-95fc-4f58bcfc5e2a",
+    grocery: "e5d408d5-5bf2-45d8-a25f-d34ecfe9c83a",
+  };
+
   const DEFAULT_QUICK_TX = [
     {
       id: "qt-breakfast",
       name: "Ăn sáng",
       type: "expense",
       amount: 30000,
+      account_id: DAILY_ESSENTIAL_ACCOUNT_ID,
+      category_id: DAILY_ESSENTIAL_CATEGORY_IDS.food,
       category_hint: "ăn",
       priority: "p1",
       nature: "variable",
@@ -39,6 +48,8 @@
       name: "Ăn trưa",
       type: "expense",
       amount: 50000,
+      account_id: DAILY_ESSENTIAL_ACCOUNT_ID,
+      category_id: DAILY_ESSENTIAL_CATEGORY_IDS.food,
       category_hint: "ăn",
       priority: "p1",
       nature: "variable",
@@ -49,6 +60,8 @@
       name: "Ăn tối",
       type: "expense",
       amount: 50000,
+      account_id: DAILY_ESSENTIAL_ACCOUNT_ID,
+      category_id: DAILY_ESSENTIAL_CATEGORY_IDS.food,
       category_hint: "ăn",
       priority: "p1",
       nature: "variable",
@@ -59,6 +72,8 @@
       name: "Cà phê sáng",
       type: "expense",
       amount: 23000,
+      account_id: DAILY_ESSENTIAL_ACCOUNT_ID,
+      category_id: DAILY_ESSENTIAL_CATEGORY_IDS.food,
       category_hint: "cà phê",
       priority: "p2",
       nature: "variable",
@@ -69,6 +84,8 @@
       name: "Đổ xăng",
       type: "expense",
       amount: 70000,
+      account_id: DAILY_ESSENTIAL_ACCOUNT_ID,
+      category_id: DAILY_ESSENTIAL_CATEGORY_IDS.vehicle,
       category_hint: "đi lại",
       priority: "p1",
       nature: "semi_fixed",
@@ -79,6 +96,8 @@
       name: "Tạp hóa",
       type: "expense",
       amount: 100000,
+      account_id: DAILY_ESSENTIAL_ACCOUNT_ID,
+      category_id: DAILY_ESSENTIAL_CATEGORY_IDS.grocery,
       category_hint: "siêu thị",
       priority: "p1",
       nature: "variable",
@@ -1509,6 +1528,9 @@
   }
 
   function normalizeQuickTx(item) {
+    const defaultPreset = DEFAULT_QUICK_TX.find(
+      (preset) => preset.id === String(item.id || ""),
+    );
     return {
       id: String(
         item.id || `qt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -1516,7 +1538,8 @@
       name: String(item.name || "Gợi ý").trim() || "Gợi ý",
       type: item.type === "income" ? "income" : "expense",
       amount: Math.max(0, Number(item.amount) || 0),
-      category_id: item.category_id || null,
+      account_id: item.account_id || defaultPreset?.account_id || null,
+      category_id: item.category_id || defaultPreset?.category_id || null,
       category_hint: item.category_hint || "",
       priority: item.priority || "p1",
       nature: item.nature || "variable",
@@ -1543,6 +1566,13 @@
       return name.includes(hint) || hint.includes(name);
     });
     return match?.id || null;
+  }
+
+  function resolveQuickTxAccountId(preset) {
+    if (preset.account_id && findById(state.accounts, preset.account_id)) {
+      return preset.account_id;
+    }
+    return null;
   }
 
   function isQuickTxUsedToday(preset) {
@@ -1713,6 +1743,7 @@
     const preset = state.quickTxPresets.find((item) => item.id === id);
     if (!preset) return;
     const categoryId = resolveQuickTxCategoryId(preset);
+    const accountId = resolveQuickTxAccountId(preset);
     if (instant) {
       const body = ownerBody({
         name: preset.name,
@@ -1720,7 +1751,7 @@
         amount: preset.amount,
         occurred_on: todayYmd(),
         status: "posted",
-        account_id: null,
+        account_id: accountId,
         transfer_account_id: null,
         category_id: preset.type === "expense" ? categoryId : null,
         nature:
@@ -1744,6 +1775,7 @@
     $("#transactionName").value = preset.name;
     $("#transactionAmount").value = numberFormat(preset.amount);
     $("#transactionDate").value = todayYmd();
+    $("#transactionAccount").value = accountId || "";
     $("#transactionCategory").value = categoryId || "";
     $("#transactionPriority").value = preset.priority || "p1";
     $("#transactionNature").value = preset.nature || "variable";
