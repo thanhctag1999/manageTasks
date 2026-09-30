@@ -906,7 +906,7 @@
             console.error(err);
             el.innerHTML = oldHtml;
             el.classList.remove("muted");
-            alert("Cập nhật thất bại: " + err.message);
+            AppUI.toast("Cập nhật thất bại: " + err.message, "error");
           }
           return;
         }

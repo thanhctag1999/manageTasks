@@ -731,11 +731,18 @@
   });
   boot.observe(document.documentElement, { childList: true, subtree: true });
 
-  window.alert = (message) => notify(message);
+  window.alert = (message) => {
+    const text = String(message ?? "");
+    const tone = /lỗi|thất bại|error|fail|invalid/i.test(text)
+      ? "error"
+      : "info";
+    return notify(text, { tone });
+  };
   window.AppUI = {
     enhanceAll,
     closeOpen,
     notify,
+    toast: notify,
     confirm: confirmAction,
   };
 })();

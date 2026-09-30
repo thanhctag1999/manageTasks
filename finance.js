@@ -3354,7 +3354,8 @@
     await withSubmit(form, async () => {
       try {
         await AppAuth.changePassword(current, next);
-        alert("Đã đổi mật khẩu. Bạn cần đăng nhập lại.");
+        toast("Đã đổi mật khẩu. Bạn cần đăng nhập lại.");
+        await new Promise((resolve) => setTimeout(resolve, 1200));
         location.replace("login.html");
       } catch (error) {
         const raw = String(error?.message || error);

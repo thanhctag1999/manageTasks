@@ -353,7 +353,7 @@
           const pre = document.getElementById("exportContent");
           try {
             await navigator.clipboard.writeText(pre.textContent || "");
-            alert("Đã copy vào clipboard!");
+            AppUI.toast("Đã copy vào clipboard!");
           } catch {
             // fallback: chọn và copy
             const range = document.createRange();
@@ -363,7 +363,7 @@
             sel.addRange(range);
             document.execCommand("copy");
             sel.removeAllRanges();
-            alert("Đã copy vào clipboard!");
+            AppUI.toast("Đã copy vào clipboard!");
           }
         });
       document
@@ -980,8 +980,9 @@
           console.error(err);
           el.innerHTML = keep;
           el.classList.remove("muted");
-          alert(
-            "Cập nhật thất bại: " + err.message + "\nKiểm tra RLS/KEY/Policy.",
+          AppUI.toast(
+            "Cập nhật thất bại: " + err.message + ". Kiểm tra RLS/KEY/Policy.",
+            "error",
           );
         }
       }
@@ -1271,7 +1272,7 @@
       async function completeAllUnpaid() {
         const unpaidCount = RAW.filter((r) => !r.is_charged).length;
         if (!unpaidCount) {
-          alert("Không có task Unpaid nào.");
+          AppUI.toast("Không có task Unpaid nào.", "error");
           return;
         }
         if (!(await AppUI.confirm(
@@ -1301,10 +1302,10 @@
           const dlg = document.getElementById("dlgExport");
           dlg.close?.();
           dlg.removeAttribute("open");
-          alert(`Đã chuyển ${updated.length} task sang Completed.`);
+          AppUI.toast(`Đã chuyển ${updated.length} task sang Completed.`);
         } catch (e) {
           console.error(e);
-          alert("Lỗi cập nhật: " + e.message);
+          AppUI.toast("Lỗi cập nhật: " + e.message, "error");
         } finally {
           showLoader(false);
         }
