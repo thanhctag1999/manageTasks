@@ -543,7 +543,10 @@
       }
 
       async function onDelete() {
-        if (!confirm("Xóa task này? Hành động không thể hoàn tác.")) return;
+        if (!(await AppUI.confirm("Xóa task này? Hành động không thể hoàn tác.", {
+          title: "Xóa task",
+          confirmText: "Xóa task",
+        }))) return;
         try {
           const res = await fetch(
             `${BASE}/task?id=eq.${encodeURIComponent(taskId)}`,

@@ -1151,6 +1151,31 @@
       }
 
       // ==== Export Unpaid ====
+      // Bỏ kí tự Markdown Telegram (* _ ` ~ [] etc.) để paste không lỗi định dạng.
+      function stripTelegramSpecials(text) {
+        return String(text ?? "")
+          .normalize("NFKC")
+          .replace(
+            /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u200B-\u200D\u2060\uFEFF]/g,
+            "",
+          )
+          .replace(/[*_`~#<>{}|\\[\]]/g, "")
+          .replace(/[“”„‟«»]/g, '"')
+          .replace(/[‘’‚‛]/g, "'")
+          .replace(/[—–−]/g, "-")
+          .replace(/[^\S\n]+/g, " ")
+          .trim();
+      }
+      function stripTelegramUrl(url) {
+        return String(url ?? "")
+          .replace(
+            /[\u0000-\u001F\u007F-\u009F\u200B-\u200D\u2060\uFEFF]/g,
+            "",
+          )
+          .replace(/[<>[\]{}|\\`*]/g, "")
+          .trim();
+      }
+
       function buildUnpaidExportText(rows) {
         // Lọc Unpaid có price > 0 (phục vụ báo cáo thanh toán)
         const unpaid = rows.filter((r) => !r.is_charged && (+r.price || 0) > 0);
@@ -1169,7 +1194,8 @@
         function groupByCategory(arr) {
           const map = new Map();
           for (const r of arr) {
-            const key = r.category?.name || "Uncategorized";
+            const key =
+              stripTelegramSpecials(r.category?.name) || "Uncategorized";
             if (!map.has(key)) map.set(key, []);
             map.get(key).push(r);
           }
@@ -1187,46 +1213,48 @@
         let lines = [];
 
         // Tiền task — nhóm theo category
-        lines.push(`+ Tiền task:`);
+        lines.push(`Tiền task:`);
         lines.push("");
         const tasksByCat = groupByCategory(tasks);
         for (const cat of sortedCategoryKeys(tasksByCat)) {
           const items = tasksByCat.get(cat);
-          lines.push(`[${cat}]`);
+          lines.push(cat);
           items.forEach((r, idx) => {
-            const name = r.name || "—";
-            const link = r.link ? r.link : "";
+            const name = stripTelegramSpecials(r.name) || "-";
+            const link = r.link ? stripTelegramUrl(r.link) : "";
             const amt = moneyText(r.price);
             lines.push(
-              `${idx + 1}. - ${name}: ${link}${link ? " " : ""}( ${amt} )`,
+              link
+                ? `${idx + 1}. ${name}: ${link} - ${amt}`
+                : `${idx + 1}. ${name}: ${amt}`,
             );
           });
-          lines.push(`=====> Tổng [${cat}]: ${moneyText(sum(items))}`);
+          lines.push(`Tổng ${cat}: ${moneyText(sum(items))}`);
           lines.push("");
         }
-        lines.push(`=====> Tổng tiền task: ${moneyText(sumTasks)}`);
+        lines.push(`Tổng tiền task: ${moneyText(sumTasks)}`);
         lines.push(""); // dòng trống
 
         // Tiền tài nguyên (chỉ category "Account") — vẫn nhóm theo category cho đồng nhất
-        lines.push(`+ Tiền tài nguyên:`);
+        lines.push(`Tiền tài nguyên:`);
         lines.push("");
         const resByCat = groupByCategory(resources);
         for (const cat of sortedCategoryKeys(resByCat)) {
           const items = resByCat.get(cat);
-          lines.push(`[${cat}]`);
+          lines.push(cat);
           items.forEach((r, idx) => {
-            const name = r.name || "—";
+            const name = stripTelegramSpecials(r.name) || "-";
             const amt = moneyText(r.price);
-            lines.push(`${idx + 1}. - ${name}: ${amt}`);
+            lines.push(`${idx + 1}. ${name}: ${amt}`);
           });
-          lines.push(`=====> Tổng [${cat}]: ${moneyText(sum(items))}`);
+          lines.push(`Tổng ${cat}: ${moneyText(sum(items))}`);
           lines.push("");
         }
-        lines.push(`=====> Tổng tiền tài nguyên: ${moneyText(sumRes)}`);
+        lines.push(`Tổng tiền tài nguyên: ${moneyText(sumRes)}`);
         lines.push(""); // dòng trống
 
         // Tổng cuối
-        lines.push(`=====> Tổng tiền cần thanh toán: ${moneyText(grand)}`);
+        lines.push(`Tổng tiền cần thanh toán: ${moneyText(grand)}`);
 
         return lines.join("\n");
       }
@@ -1246,11 +1274,10 @@
           alert("Không có task Unpaid nào.");
           return;
         }
-        if (
-          !confirm(
-            `Xác nhận chuyển ${unpaidCount} task Unpaid sang Completed? Thao tác áp dụng cho TẤT CẢ Unpaid.`,
-          )
-        ) {
+        if (!(await AppUI.confirm(
+          `Xác nhận chuyển ${unpaidCount} task Unpaid sang Completed? Thao tác áp dụng cho TẤT CẢ Unpaid.`,
+          { title: "Hoàn tất các task", confirmText: "Chuyển trạng thái" },
+        ))) {
           return;
         }
         showLoader(true);

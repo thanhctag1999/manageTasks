@@ -1650,8 +1650,8 @@
     });
   }
 
-  function deleteQuickTxPreset(id) {
-    if (!confirm("Xóa gợi ý này?")) return;
+  async function deleteQuickTxPreset(id) {
+    if (!(await AppUI.confirm("Xóa gợi ý này?", { title: "Xóa gợi ý", confirmText: "Xóa" }))) return;
     state.quickTxPresets = state.quickTxPresets.filter((item) => item.id !== id);
     saveQuickTxPresets();
     if ($("#quickTxEditId").value === id) resetQuickTxForm();
@@ -1659,8 +1659,8 @@
     toast("Đã xóa gợi ý.");
   }
 
-  function resetQuickTxDefaults() {
-    if (!confirm("Khôi phục bộ gợi ý mặc định? Thay đổi hiện tại sẽ bị ghi đè."))
+  async function resetQuickTxDefaults() {
+    if (!(await AppUI.confirm("Khôi phục bộ gợi ý mặc định? Thay đổi hiện tại sẽ bị ghi đè.", { title: "Khôi phục mặc định", confirmText: "Khôi phục" })))
       return;
     state.quickTxPresets = cloneQuickTxDefaults();
     saveQuickTxPresets();
@@ -3542,7 +3542,7 @@
   // -------------------------------------------------------------------------
 
   async function deleteRow(key, id, question) {
-    if (!confirm(question)) return;
+    if (!(await AppUI.confirm(question, { title: "Xóa dữ liệu", confirmText: "Xóa" }))) return;
     try {
       await removeRow(key, id);
       toast("Đã xóa dữ liệu.");
