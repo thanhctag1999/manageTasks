@@ -934,6 +934,35 @@
   gap: 9px;
 }
 
+.transaction-date-filter {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.transaction-date-filter > span {
+  color: var(--f-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.transaction-date-filter .cui-date {
+  width: 160px;
+}
+
+.transaction-date-filter .cui-date__trigger {
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--panel-solid);
+  box-shadow: none;
+  font-size: 12px;
+}
+
 .module-intro {
   padding: 21px;
   border-radius: 23px;
@@ -1916,6 +1945,13 @@
   }
   .module-toolbar__right {
     flex-wrap: wrap;
+  }
+  .transaction-date-filter {
+    width: 100%;
+  }
+  .transaction-date-filter .cui-date {
+    flex: 1;
+    width: auto;
   }
   .segmented {
     width: 100%;
