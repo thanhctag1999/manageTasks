@@ -180,6 +180,29 @@
                 <input id="runTime" type="time" required step="60" />
               </div>
               <div>
+                <label for="repeat">Tần suất</label>
+                <select id="repeat">
+                  <option value="once" selected>Không lặp</option>
+                  <option value="daily">Mỗi ngày</option>
+                  <option value="weekly">Mỗi tuần</option>
+                  <option value="monthly">Mỗi tháng</option>
+                  <option value="days">Mỗi số ngày</option>
+                </select>
+              </div>
+              <div id="repeatEveryWrap" class="hidden" hidden>
+                <label for="repeatEvery">Số ngày *</label>
+                <input
+                  id="repeatEvery"
+                  type="number"
+                  min="1"
+                  max="365"
+                  step="1"
+                  value="2"
+                  inputmode="numeric"
+                />
+                <div class="hint">Ví dụ: 3 nghĩa là tạo task mới mỗi 3 ngày, cùng giờ đã chọn.</div>
+              </div>
+              <div>
                 <label for="date">Ngày ghi trên task</label>
                 <input id="date" type="date" />
               </div>
@@ -220,7 +243,8 @@
             </form>
             <p class="hint" style="margin-top: 8px">
               Lịch chạy khi app đang mở. Nếu máy tắt đúng giờ đó, task được tạo
-              ngay lần mở app tiếp theo sau thời điểm đã hẹn.
+              ngay lần mở app tiếp theo. Lịch lặp sẽ hẹn lần sau theo mỗi ngày,
+              mỗi tuần, mỗi tháng hoặc số ngày đã chọn, và giữ nguyên giờ.
             </p>
           </div>
         </section>
@@ -244,6 +268,9 @@
         assign: document.getElementById("assign"),
         runDate: document.getElementById("runDate"),
         runTime: document.getElementById("runTime"),
+        repeat: document.getElementById("repeat"),
+        repeatEvery: document.getElementById("repeatEvery"),
+        repeatEveryWrap: document.getElementById("repeatEveryWrap"),
         date: document.getElementById("date"),
         price: document.getElementById("price"),
         charged: document.getElementById("charged"),
@@ -325,10 +352,10 @@
         els.date.value = ymd(run);
         els.assign.value = "The One";
         els.charged.checked = false;
+        els.repeat.value = "once";
+        els.repeatEvery.value = "2";
+        syncRepeat();
         syncChargedState();
-        if (els.category.value) {
-          els.category.dispatchEvent(new Event("change", { bubbles: true }));
-        }
         if (els.category.value) {
           els.category.dispatchEvent(new Event("change", { bubbles: true }));
         }
@@ -359,6 +386,21 @@
         return "Đang chờ";
       }
 
+      function repeatLabel(row) {
+        if (row.repeat === "daily") return "Mỗi ngày";
+        if (row.repeat === "weekly") return "Mỗi tuần";
+        if (row.repeat === "monthly") return "Mỗi tháng";
+        if (row.repeat === "days") return `Mỗi ${row.repeat_every || 1} ngày`;
+        return "Một lần";
+      }
+
+      function syncRepeat() {
+        const custom = els.repeat.value === "days";
+        els.repeatEveryWrap.classList.toggle("hidden", !custom);
+        els.repeatEveryWrap.hidden = !custom;
+        els.repeatEvery.required = custom;
+      }
+
       function render() {
         const rows = TaskSchedule.list();
         els.count.textContent = `${rows.length} lịch`;
@@ -379,9 +421,12 @@
             ${rows
               .map((row) => {
                 const status = row.status || "pending";
+                const countText = row.run_count
+                  ? `<span class="sch-sub">Đã chạy ${row.run_count} lần</span>`
+                  : "";
                 const extra =
                   status === "pending"
-                    ? `<span class="sch-sub">${escapeHtml(remainText(row.run_at))}</span>`
+                    ? `<span class="sch-sub">${escapeHtml(remainText(row.run_at))}</span>${countText}`
                     : status === "error"
                       ? `<span class="sch-sub">${escapeHtml(row.error || "")}</span>`
                       : row.task_id
@@ -400,7 +445,7 @@
                       : ""
                   }</td>
                   <td>${escapeHtml(row.category_name || "")}</td>
-                  <td class="sch-when">${escapeHtml(formatWhen(row.run_at))}</td>
+                  <td class="sch-when">${escapeHtml(formatWhen(row.run_at))}<span class="sch-sub">${escapeHtml(repeatLabel(row))}</span></td>
                   <td><span class="sch-status sch-status--${escapeHtml(status)}">${statusLabel(status)}</span>${extra}</td>
                   <td><div class="sch-actions">${run}<button type="button" class="btn" data-del="${escapeHtml(row.id)}">Xóa</button></div></td>
                 </tr>`;
@@ -411,6 +456,7 @@
       }
 
       els.charged.addEventListener("change", syncChargedState);
+      els.repeat.addEventListener("change", syncRepeat);
       els.price.addEventListener("input", () => {
         const dig = els.price.value.replace(/\D/g, "");
         els.price.value = dig ? priceFmt.format(Number(dig)) : "";
@@ -441,6 +487,11 @@
         if (Number.isNaN(runAt.getTime())) {
           return toast("Ngày hoặc giờ không hợp lệ", "error");
         }
+        const repeat = els.repeat.value || "once";
+        const repeatEvery = parseInt(els.repeatEvery.value, 10);
+        if (repeat === "days" && (!repeatEvery || repeatEvery < 1 || repeatEvery > 365)) {
+          return toast("Nhập số ngày lặp từ 1 đến 365", "error");
+        }
         const digits = els.price.value.replace(/\D/g, "");
         const cat = categories.find((c) => String(c.id) === els.category.value);
         els.submit.disabled = true;
@@ -456,11 +507,17 @@
             link: link || null,
             note: els.note.value.trim() || null,
             run_at: runAt.toISOString(),
+            repeat,
+            repeat_every: repeat === "days" ? repeatEvery : 1,
           });
           const result = await TaskSchedule.runDue();
           const createdNow = result.created.some((item) => item.id === row.id);
           if (!createdNow && row && TaskSchedule.list().some((item) => item.id === row.id && item.status === "pending")) {
-            toast("Đã lưu lịch. Task sẽ được tạo đúng giờ đã chọn.");
+            toast(
+              repeat === "once"
+                ? "Đã lưu lịch. Task sẽ được tạo đúng giờ đã chọn."
+                : `Đã lưu lịch ${repeatLabel({ repeat, repeat_every: repeatEvery }).toLowerCase()}. Task sẽ được tạo đúng giờ đã chọn.`,
+            );
           }
           els.form.reset();
           setDefaults();

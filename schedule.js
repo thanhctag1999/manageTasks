@@ -55,8 +55,12 @@
       link: input.link || null,
       note: input.note || null,
       run_at: input.run_at,
+      repeat: normalizeRepeat(input.repeat),
+      repeat_every: normalizeEvery(input.repeat, input.repeat_every),
+      date_offset_days: dayOffset(input.date, input.run_at),
       status: "pending",
       task_id: null,
+      run_count: 0,
       error: "",
       created_at: new Date().toISOString(),
       done_at: null,
@@ -71,6 +75,71 @@
 
   function remove(id) {
     write(read().filter((row) => row.id !== id));
+  }
+
+  function normalizeRepeat(value) {
+    return ["daily", "weekly", "monthly", "days"].includes(value) ? value : "once";
+  }
+
+  function normalizeEvery(repeat, value) {
+    const every = Math.round(Number(value));
+    if (normalizeRepeat(repeat) !== "days") return 1;
+    if (!Number.isFinite(every)) return 1;
+    return Math.min(365, Math.max(1, every));
+  }
+
+  function calendarDay(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
+
+  function dayOffset(taskDate, runAt) {
+    const run = new Date(runAt);
+    if (!taskDate || Number.isNaN(run.getTime())) return 0;
+    const parts = String(taskDate).split("-").map(Number);
+    if (parts.length < 3 || parts.some((part) => !Number.isFinite(part))) return 0;
+    const taskDay = new Date(parts[0], parts[1] - 1, parts[2]);
+    return Math.round((taskDay - calendarDay(run)) / 86400000);
+  }
+
+  function occurrenceYmd(runAt, offsetDays) {
+    const run = new Date(runAt);
+    const day = new Date(
+      run.getFullYear(),
+      run.getMonth(),
+      run.getDate() + (Number(offsetDays) || 0),
+    );
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${day.getFullYear()}-${pad(day.getMonth() + 1)}-${pad(day.getDate())}`;
+  }
+
+  function addDays(date, days) {
+    const next = new Date(date.getTime());
+    next.setDate(next.getDate() + days);
+    return next;
+  }
+
+  function addMonths(date, months) {
+    const next = new Date(date.getTime());
+    const day = next.getDate();
+    next.setDate(1);
+    next.setMonth(next.getMonth() + months);
+    const last = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
+    next.setDate(Math.min(day, last));
+    return next;
+  }
+
+  function nextRunAt(runAt, repeat, every) {
+    const base = new Date(runAt);
+    if (Number.isNaN(base.getTime())) return null;
+    if (repeat === "daily") return addDays(base, 1);
+    if (repeat === "weekly") return addDays(base, 7);
+    if (repeat === "monthly") return addMonths(base, 1);
+    if (repeat === "days") return addDays(base, normalizeEvery(repeat, every));
+    return null;
+  }
+
+  function isRepeating(row) {
+    return !!nextRunAt(row.run_at, row.repeat, row.repeat_every);
   }
 
   function claim(id) {
@@ -137,17 +206,35 @@
     for (const item of due) {
       const locked = claim(item.id);
       if (!locked) continue;
+      let current = locked;
+      let guard = 0;
       try {
-        const task = await createTask(locked);
-        update(locked.id, {
-          status: "done",
-          task_id: task?.id || null,
-          error: "",
-          done_at: new Date().toISOString(),
-          lockToken: "",
-          lockUntil: 0,
-        });
-        created.push(locked);
+        while (current && Date.parse(current.run_at) <= Date.now() && guard < 31) {
+          guard += 1;
+          const repeating = isRepeating(current);
+          const task = await createTask({
+            ...current,
+            date: repeating
+              ? occurrenceYmd(current.run_at, current.date_offset_days)
+              : current.date,
+          });
+          const next = nextRunAt(current.run_at, current.repeat, current.repeat_every);
+          const continueRun =
+            repeating && next && next.getTime() <= Date.now() && guard < 31;
+          current = update(current.id, {
+            status: repeating ? "pending" : "done",
+            run_at: repeating ? next.toISOString() : current.run_at,
+            task_id: task?.id || null,
+            run_count: (Number(current.run_count) || 0) + 1,
+            last_run_at: new Date().toISOString(),
+            done_at: repeating ? null : new Date().toISOString(),
+            error: "",
+            lockToken: continueRun ? current.lockToken : "",
+            lockUntil: continueRun ? Date.now() + LOCK_MS : 0,
+          });
+          created.push(current);
+          if (!continueRun) break;
+        }
       } catch (error) {
         const message = String(error?.message || error || "Lỗi không xác định");
         update(locked.id, {
