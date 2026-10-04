@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Schedule</title>
+    <link rel="icon" href="data:," />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="app-theme.css" />
+    <script src="app-icons.js"></script>
+    <script src="theme.js"></script>
+    <script src="setting.js"></script>
+    <script src="auth.js"></script>
+    <style>
+      .sch-status {
+        font-weight: 700;
+        font-size: 12px;
+      }
+      .sch-status--pending {
+        color: var(--warn);
+      }
+      .sch-status--done {
+        color: var(--good);
+      }
+      .sch-status--error {
+        color: var(--bad);
+      }
+      .sch-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: flex-end;
+      }
+      .sch-when {
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .sch-sub {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted, #8b8499);
+        font-size: 12px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="side app-sidebar">
+        <div class="app-sidebar__brand">Synchro</div>
+        <div class="side-user app-sidebar__user">
+          <div class="side-user__avatar" aria-hidden="true">TO</div>
+          <div class="side-user__meta">
+            <b class="side-user__name" data-auth-name>The One</b>
+            <span class="side-user__email" data-auth-role>owner</span>
+          </div>
+        </div>
+        <a href="task-new.html" class="btn-create"
+          ><span class="btn-create__icon" aria-hidden="true"
+            ><svg viewBox="0 0 24 24">
+              <path d="M12 5v14M5 12h14" /></svg></span
+          ><span class="btn-create__label">Create Task</span></a
+        >
+        <nav class="nav nav--stack app-nav">
+          <a href="index.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M4 10.5 12 4l8 6.5" />
+                <path d="M6.5 10v8.5h11V10" />
+                <path d="M10 18.5v-5h4v5" /></svg></span
+            >Dashboard</a
+          >
+          <a href="task.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <rect x="5" y="4.5" width="14" height="15" rx="3" />
+                <path d="m8.5 12 2.2 2.2 4.8-5" /></svg></span
+            >My Task</a
+          >
+          <a href="finance.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <rect x="4" y="7" width="16" height="12" rx="3" />
+                <path d="M7 7V5h10v2M15 13h3" /></svg></span
+            >Finance</a
+          >
+          <a href="analytics.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M5 19V9" />
+                <path d="M12 19V5" />
+                <path d="M19 19v-7" />
+                <path d="M4 19.5h16" /></svg></span
+            >Reporting</a
+          >
+          <a class="active" href="schedule.html" aria-current="page"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="7.5" />
+                <path d="M12 8v4.5l3 2" /></svg></span
+            >Schedule</a
+          >
+          <a href="settings.html"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3.5" />
+                <path
+                  d="M12 3.5v2M12 18.5v2M3.5 12h2M18.5 12h2M6 6l1.4 1.4M16.6 16.6 18 18M18 6l-1.4 1.4M7.4 16.6 6 18" /></svg></span
+            >Settings</a
+          >
+        </nav>
+        <div class="side-foot">
+          <a href="login.html" class="side-foot__link" data-auth-logout
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg></span
+            >Logout</a
+          >
+          <a href="mailto:" class="side-foot__link"
+            ><span class="nav__ic" aria-hidden="true"
+              ><svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8" />
+                <path
+                  d="M9.8 9.7a2.3 2.3 0 1 1 3.6 1.9c-.9.6-1.4 1.1-1.4 2.1" />
+                <path d="M12 17h.01" /></svg></span
+            >Help Center</a
+          >
+        </div>
+      </aside>
+
+      <main class="content">
+        <div class="app-topbar">
+          <div class="app-topbar__crumb">Synchro › Tasks › <b>Schedule</b></div>
+        </div>
+        <header class="page-head">
+          <div>
+            <div class="breadcrumbs">Tasks / <b>Schedule</b></div>
+            <div class="title">
+              <h1 class="page-head__title">
+                Schedule <span class="chip" id="countChip">0 lịch</span>
+              </h1>
+            </div>
+          </div>
+        </header>
+
+        <section class="panel">
+          <div class="panel-head">
+            <b>Tạo lịch thêm task</b>
+            <span class="hint">Đến đúng ngày giờ, app tự tạo task mới</span>
+          </div>
+          <div class="panel-body">
+            <form id="form">
+              <div class="row-1">
+                <label for="name">Task name *</label>
+                <input id="name" required placeholder="VD: Nhắc nộp báo cáo" />
+              </div>
+              <div>
+                <label for="category">Category *</label>
+                <select id="category" required></select>
+              </div>
+              <div>
+                <label for="assign">Assign to</label>
+                <select id="assign">
+                  <option value="The One" selected>The One</option>
+                  <option value="Piecesi">Piecesi</option>
+                </select>
+              </div>
+              <div>
+                <label for="runDate">Ngày chạy *</label>
+                <input id="runDate" type="date" required />
+              </div>
+              <div>
+                <label for="runTime">Giờ chạy *</label>
+                <input id="runTime" type="time" required step="60" />
+              </div>
+              <div>
+                <label for="date">Ngày ghi trên task</label>
+                <input id="date" type="date" />
+              </div>
+              <div>
+                <label for="price">Price (VND)</label>
+                <input
+                  id="price"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  placeholder="VD: 1.500.000"
+                  class="money-input"
+                />
+              </div>
+              <div class="switch-field">
+                <span class="switch-field__label">Charged?</span>
+                <label class="switch" for="charged">
+                  <input id="charged" type="checkbox" role="switch" />
+                  <span class="switch__ui" aria-hidden="true"></span>
+                </label>
+                <span class="switch-field__state" id="chargedState">Unpaid</span>
+              </div>
+              <div class="row-1">
+                <label for="link">Link</label>
+                <input id="link" type="text" placeholder="https://…" />
+              </div>
+              <div class="row-1">
+                <label for="note">Note</label>
+                <textarea id="note" placeholder="Ghi chú thêm…"></textarea>
+              </div>
+              <div class="sep"></div>
+              <div class="actions row-1">
+                <button type="reset" class="btn" id="btnReset">Reset</button>
+                <button id="submit" type="submit" class="btn primary">
+                  Lưu lịch
+                </button>
+              </div>
+            </form>
+            <p class="hint" style="margin-top: 8px">
+              Lịch chạy khi app đang mở. Nếu máy tắt đúng giờ đó, task được tạo
+              ngay lần mở app tiếp theo sau thời điểm đã hẹn.
+            </p>
+          </div>
+        </section>
+
+        <section class="panel" style="margin-top: 16px">
+          <div class="panel-head">
+            <b>Lịch đã tạo</b>
+          </div>
+          <div class="panel-body" id="scheduleList"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app-ui.js"></script>
+    <script src="schedule.js"></script>
+    <script>
+      const els = {
+        form: document.getElementById("form"),
+        name: document.getElementById("name"),
+        category: document.getElementById("category"),
+        assign: document.getElementById("assign"),
+        runDate: document.getElementById("runDate"),
+        runTime: document.getElementById("runTime"),
+        date: document.getElementById("date"),
+        price: document.getElementById("price"),
+        charged: document.getElementById("charged"),
+        link: document.getElementById("link"),
+        note: document.getElementById("note"),
+        submit: document.getElementById("submit"),
+        list: document.getElementById("scheduleList"),
+        count: document.getElementById("countChip"),
+      };
+
+      const priceFmt = new Intl.NumberFormat("vi-VN");
+      let categories = [];
+
+      function pad(n) {
+        return String(n).padStart(2, "0");
+      }
+      function ymd(d) {
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+      }
+      function hm(d) {
+        return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      }
+      function escapeHtml(s) {
+        return String(s ?? "").replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[m],
+        );
+      }
+      function toast(message, tone) {
+        if (window.AppUI?.toast) AppUI.toast(message, tone);
+      }
+      function syncChargedState() {
+        const on = !!els.charged.checked;
+        const state = document.getElementById("chargedState");
+        if (state) {
+          state.textContent = on ? "Charged" : "Unpaid";
+          state.classList.toggle("is-on", on);
+        }
+        els.charged.setAttribute("aria-checked", on ? "true" : "false");
+      }
+      function formatWhen(iso) {
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return "";
+        return d.toLocaleString("vi-VN", {
+          hour12: false,
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+      function remainText(iso) {
+        const ms = Date.parse(iso) - Date.now();
+        if (!Number.isFinite(ms)) return "";
+        if (ms <= 0) return "đến hạn, sẽ tạo khi app kiểm tra";
+        const min = Math.max(1, Math.round(ms / 60000));
+        if (min < 60) return `còn khoảng ${min} phút`;
+        const hours = Math.round(min / 60);
+        if (hours < 48) return `còn khoảng ${hours} giờ`;
+        return `còn khoảng ${Math.round(hours / 24)} ngày`;
+      }
+      function moneyText(n) {
+        if (n == null || n === "" || Number.isNaN(+n)) return "";
+        return priceFmt.format(+n);
+      }
+
+      function setDefaults() {
+        const run = new Date(Date.now() + 60 * 60 * 1000);
+        els.runDate.value = ymd(run);
+        els.runTime.value = hm(run);
+        els.date.value = ymd(run);
+        els.assign.value = "The One";
+        els.charged.checked = false;
+        syncChargedState();
+        if (els.category.value) {
+          els.category.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        if (els.category.value) {
+          els.category.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      }
+
+      async function loadCategories() {
+        const url = new URL(`${BASE}/category`);
+        url.searchParams.set("select", "id,name,price");
+        url.searchParams.set("order", "name.asc");
+        const res = await fetch(url, { headers: HEADERS });
+        if (!res.ok) throw new Error("load category: " + res.status);
+        categories = await res.json();
+        els.category.innerHTML = categories
+          .map(
+            (c) =>
+              `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name || "")}</option>`,
+          )
+          .join("");
+        if (window.AppUI?.enhanceAll) AppUI.enhanceAll(els.form);
+        if (els.category.value) {
+          els.category.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      }
+
+      function statusLabel(status) {
+        if (status === "done") return "Đã tạo";
+        if (status === "error") return "Lỗi";
+        return "Đang chờ";
+      }
+
+      function render() {
+        const rows = TaskSchedule.list();
+        els.count.textContent = `${rows.length} lịch`;
+        if (!rows.length) {
+          els.list.innerHTML =
+            '<div class="hint">Chưa có lịch nào. Tạo lịch ở form phía trên.</div>';
+          return;
+        }
+        els.list.innerHTML = `<div class="table-wrap"><table>
+          <thead><tr>
+            <th>Task</th>
+            <th>Category</th>
+            <th>Chạy lúc</th>
+            <th>Trạng thái</th>
+            <th></th>
+          </tr></thead>
+          <tbody>
+            ${rows
+              .map((row) => {
+                const status = row.status || "pending";
+                const extra =
+                  status === "pending"
+                    ? `<span class="sch-sub">${escapeHtml(remainText(row.run_at))}</span>`
+                    : status === "error"
+                      ? `<span class="sch-sub">${escapeHtml(row.error || "")}</span>`
+                      : row.task_id
+                        ? `<a class="sch-sub" href="detail.html?id=${encodeURIComponent(row.task_id)}">Xem task</a>`
+                        : "";
+                const run =
+                  status === "pending"
+                    ? `<button type="button" class="btn" data-run="${escapeHtml(row.id)}">Tạo ngay</button>`
+                    : status === "error"
+                      ? `<button type="button" class="btn" data-retry="${escapeHtml(row.id)}">Thử lại</button>`
+                      : "";
+                return `<tr>
+                  <td><b>${escapeHtml(row.name)}</b>${
+                    row.price != null
+                      ? `<span class="sch-sub">${escapeHtml(moneyText(row.price))} đ</span>`
+                      : ""
+                  }</td>
+                  <td>${escapeHtml(row.category_name || "")}</td>
+                  <td class="sch-when">${escapeHtml(formatWhen(row.run_at))}</td>
+                  <td><span class="sch-status sch-status--${escapeHtml(status)}">${statusLabel(status)}</span>${extra}</td>
+                  <td><div class="sch-actions">${run}<button type="button" class="btn" data-del="${escapeHtml(row.id)}">Xóa</button></div></td>
+                </tr>`;
+              })
+              .join("")}
+          </tbody>
+        </table></div>`;
+      }
+
+      els.charged.addEventListener("change", syncChargedState);
+      els.price.addEventListener("input", () => {
+        const dig = els.price.value.replace(/\D/g, "");
+        els.price.value = dig ? priceFmt.format(Number(dig)) : "";
+      });
+      els.category.addEventListener("change", () => {
+        const cat = categories.find((c) => String(c.id) === els.category.value);
+        if (cat && cat.price != null && cat.price !== "") {
+          els.price.value = priceFmt.format(Number(cat.price));
+        }
+      });
+      els.form.addEventListener("reset", () => {
+        setTimeout(setDefaults, 0);
+      });
+
+      els.form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = els.name.value.trim();
+        const runDate = els.runDate.value;
+        const runTime = els.runTime.value;
+        if (!name) return toast("Nhập tên task", "error");
+        if (!els.category.value) return toast("Chọn category", "error");
+        if (!runDate || !runTime) return toast("Chọn ngày và giờ chạy", "error");
+        const link = els.link.value.trim();
+        if (link && !/^https?:\/\//i.test(link)) {
+          return toast("Link phải bắt đầu bằng http(s)", "error");
+        }
+        const runAt = new Date(`${runDate}T${runTime}:00`);
+        if (Number.isNaN(runAt.getTime())) {
+          return toast("Ngày hoặc giờ không hợp lệ", "error");
+        }
+        const digits = els.price.value.replace(/\D/g, "");
+        const cat = categories.find((c) => String(c.id) === els.category.value);
+        els.submit.disabled = true;
+        try {
+          const row = TaskSchedule.add({
+            name,
+            category_id: els.category.value,
+            category_name: cat?.name || els.category.selectedOptions?.[0]?.text || "",
+            date: els.date.value || runDate,
+            price: digits ? parseInt(digits, 10) : null,
+            assign_to: els.assign.value || null,
+            is_charged: !!els.charged.checked,
+            link: link || null,
+            note: els.note.value.trim() || null,
+            run_at: runAt.toISOString(),
+          });
+          const result = await TaskSchedule.runDue();
+          const createdNow = result.created.some((item) => item.id === row.id);
+          if (!createdNow && row && TaskSchedule.list().some((item) => item.id === row.id && item.status === "pending")) {
+            toast("Đã lưu lịch. Task sẽ được tạo đúng giờ đã chọn.");
+          }
+          els.form.reset();
+          setDefaults();
+          render();
+        } catch (err) {
+          toast("Không lưu được lịch: " + (err.message || err), "error");
+        } finally {
+          els.submit.disabled = false;
+        }
+      });
+
+      els.list.addEventListener("click", async (e) => {
+        const del = e.target.closest("[data-del]");
+        const retry = e.target.closest("[data-retry]");
+        const run = e.target.closest("[data-run]");
+        if (del) {
+          const ok = await AppUI.confirm(
+            "Xóa lịch này? Task đã tạo trước đó sẽ không bị xóa.",
+            { title: "Xóa lịch", confirmText: "Xóa" },
+          );
+          if (!ok) return;
+          TaskSchedule.remove(del.dataset.del);
+          render();
+          return;
+        }
+        if (retry) {
+          await TaskSchedule.retry(retry.dataset.retry);
+          render();
+          return;
+        }
+        if (run) {
+          const ok = await AppUI.confirm("Tạo task này ngay bây giờ?", {
+            title: "Tạo task",
+            confirmText: "Tạo ngay",
+          });
+          if (!ok) return;
+          await TaskSchedule.runNow(run.dataset.run);
+          render();
+        }
+      });
+
+      window.addEventListener("mt-schedules-changed", render);
+      window.addEventListener("storage", (e) => {
+        if (e.key === "mt_task_schedules") render();
+      });
+      setInterval(render, 30000);
+
+      setDefaults();
+      loadCategories()
+        .catch((err) => toast("Không tải được category: " + err.message, "error"))
+        .finally(render);
+    </script>
+  </body>
+</html>
