@@ -4552,7 +4552,7 @@ tbody tr:hover,
     border-radius: var(--radius);
     padding: 16px;
     min-height: auto;
-    overflow-x: clip;
+    overflow-x: visible;
   }
 
   .side {
@@ -4639,7 +4639,7 @@ tbody tr:hover,
   .dash-main,
   .layout {
     max-width: 100%;
-    overflow-x: clip;
+    min-width: 0;
   }
 }
 
@@ -6027,4 +6027,45 @@ dialog:not(.finance-dialog)::backdrop {
   .export-dlg__head .toolbar .primary {
     grid-column: 1 / -1;
   }
+}
+
+/* iOS Safari treats the first tap as hover. A hover rule that moves the
+   control cancels the click, so buttons and button-styled links never fire.
+   Closed dialogs with a blurred backdrop also keep an invisible hit target. */
+@media (hover: none) {
+  a,
+  button,
+  .btn,
+  label,
+  summary {
+    touch-action: manipulation;
+  }
+
+  .btn:hover,
+  .btn-create:hover,
+  .shortcut-btn:hover,
+  .icon-btn:hover,
+  .taskmail-item.kanban-card:hover,
+  .chart-expand-btn:hover,
+  .performance-tabs button:hover,
+  .cui-color__swatch:hover {
+    transform: none;
+  }
+}
+
+dialog:not([open]) {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+dialog:not([open])::backdrop {
+  display: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.loader:not(.show) {
+  visibility: hidden;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }

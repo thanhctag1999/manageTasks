@@ -1675,7 +1675,10 @@
 
 .finance-loading.hidden {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .finance-loader {
@@ -4510,5 +4513,15 @@ html[data-theme="dark"] .quick-tx-chip__instant {
   .quick-tx-chip__main {
     min-width: 0;
     flex: 1;
+  }
+}
+
+@media (hover: none) {
+  .f-btn:hover,
+  .icon-action:hover,
+  .finance-page .account-card:hover,
+  .finance-page .account-card .icon-action:hover,
+  .finance-page .finance-card:hover {
+    transform: none;
   }
 }
