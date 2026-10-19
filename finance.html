@@ -17,6 +17,7 @@
     <script src="theme.js"></script>
     <script src="setting.js"></script>
     <script src="auth.js"></script>
+    <link rel="stylesheet" href="mobile-fixes.css" />
   </head>
   <body class="finance-page">
     <div class="layout app-shell">
@@ -71,13 +72,6 @@
                 <path d="M19 19v-7" />
                 <path d="M4 19.5h16" /></svg></span
             >Reporting</a
-          >
-          <a href="schedule.html"
-            ><span class="nav__ic" aria-hidden="true"
-              ><svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="7.5" />
-                <path d="M12 8v4.5l3 2" /></svg></span
-            >Schedule</a
           >
           <a href="settings.html"
             ><span class="nav__ic" aria-hidden="true"
@@ -264,7 +258,7 @@
           </button>
         </div>
 
-        <div class="finance-loading hidden" id="financeLoading" aria-hidden="true">
+        <div class="finance-loading" id="financeLoading" aria-hidden="true">
           <div class="finance-loader"></div>
           <span>Đang đồng bộ dòng tiền…</span>
         </div>
@@ -1647,6 +1641,6 @@
 
     <script src="finance.js"></script>
     <script src="app-ui.js"></script>
-    <script src="schedule.js"></script>
+    <script src="mobile-ui.js"></script>
   </body>
 </html>

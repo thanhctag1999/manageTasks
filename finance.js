@@ -397,7 +397,7 @@
     if (updateHash && location.hash !== `#${view}`) {
       history.pushState(null, "", `#${view}`);
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: window.matchMedia("(pointer: coarse)").matches ? "auto" : "smooth" });
   }
 
   function setLoading(on) {
@@ -480,9 +480,18 @@
     const url = new URL(`${BASE}/${TABLES[key]}`);
     url.searchParams.set("select", "*");
     if (order) url.searchParams.set("order", order);
-    const res = await fetch(url, { headers: AppAuth.authHeaders() });
-    if (!res.ok) throw await apiError(res);
-    return res.json();
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 18000);
+    try {
+      const res = await fetch(url, {
+        headers: AppAuth.authHeaders(),
+        signal: controller.signal,
+      });
+      if (!res.ok) throw await apiError(res);
+      return await res.json();
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
   async function createRow(key, body) {
@@ -1716,14 +1725,8 @@
     });
   }
 
-  async function deleteQuickTxPreset(id) {
-    if (
-      !(await AppUI.confirm("Xóa gợi ý này?", {
-        title: "Xóa gợi ý",
-        confirmText: "Xóa",
-      }))
-    )
-      return;
+  function deleteQuickTxPreset(id) {
+    if (!confirm("Xóa gợi ý này?")) return;
     state.quickTxPresets = state.quickTxPresets.filter(
       (item) => item.id !== id,
     );
@@ -1733,12 +1736,9 @@
     toast("Đã xóa gợi ý.");
   }
 
-  async function resetQuickTxDefaults() {
+  function resetQuickTxDefaults() {
     if (
-      !(await AppUI.confirm(
-        "Khôi phục bộ gợi ý mặc định? Thay đổi hiện tại sẽ bị ghi đè.",
-        { title: "Khôi phục mặc định", confirmText: "Khôi phục" },
-      ))
+      !confirm("Khôi phục bộ gợi ý mặc định? Thay đổi hiện tại sẽ bị ghi đè.")
     )
       return;
     state.quickTxPresets = cloneQuickTxDefaults();
@@ -3354,8 +3354,7 @@
     await withSubmit(form, async () => {
       try {
         await AppAuth.changePassword(current, next);
-        toast("Đã đổi mật khẩu. Bạn cần đăng nhập lại.");
-        await new Promise((resolve) => setTimeout(resolve, 1200));
+        alert("Đã đổi mật khẩu. Bạn cần đăng nhập lại.");
         location.replace("login.html");
       } catch (error) {
         const raw = String(error?.message || error);
@@ -3629,7 +3628,7 @@
   // -------------------------------------------------------------------------
 
   async function deleteRow(key, id, question) {
-    if (!(await AppUI.confirm(question, { title: "Xóa dữ liệu", confirmText: "Xóa" }))) return;
+    if (!confirm(question)) return;
     try {
       await removeRow(key, id);
       toast("Đã xóa dữ liệu.");

@@ -79,11 +79,19 @@
       const token = readToken();
       if (token) headers["x-app-session"] = token;
     }
-    const res = await fetch(`${BASE}/rpc/${name}`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body || {}),
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 18000);
+    let res;
+    try {
+      res = await fetch(`${BASE}/rpc/${name}`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body || {}),
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
     if (!res.ok) {
       let message = "";
       try {

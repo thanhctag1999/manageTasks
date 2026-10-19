@@ -28,6 +28,7 @@
     <script src="theme.js"></script>
     <script src="setting.js"></script>
     <script src="auth.js"></script>
+    <link rel="stylesheet" href="mobile-fixes.css" />
   </head>
   <body>
     <div class="layout">
@@ -76,7 +77,6 @@
                 <path d="M4 19.5h16" /></svg></span
             >Reporting</a
           >
-          <a href="schedule.html"><span class="nav__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><path d="M12 8v4.5l3 2"/></svg></span>Schedule</a>
           <a href="settings.html"><span class="nav__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5" /><path d="M12 3.5v2M12 18.5v2M3.5 12h2M18.5 12h2M6 6l1.4 1.4M16.6 16.6 18 18M18 6l-1.4 1.4M7.4 16.6 6 18" /></svg></span>Settings</a>
         </nav>
         <div class="side-foot">
@@ -544,10 +544,7 @@
       }
 
       async function onDelete() {
-        if (!(await AppUI.confirm("Xóa task này? Hành động không thể hoàn tác.", {
-          title: "Xóa task",
-          confirmText: "Xóa task",
-        }))) return;
+        if (!confirm("Xóa task này? Hành động không thể hoàn tác.")) return;
         try {
           const res = await fetch(
             `${BASE}/task?id=eq.${encodeURIComponent(taskId)}`,
@@ -617,6 +614,6 @@
       }
     </script>
       <script src="app-ui.js"></script>
-      <script src="schedule.js"></script>
+    <script src="mobile-ui.js"></script>
   </body>
 </html>

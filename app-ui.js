@@ -13,7 +13,16 @@
 
   const OPEN_ATTR = "data-cui-open";
   let openPanel = null;
-  let activeTooltip = null;
+
+  // iOS Safari handles its own native picker inside dialogs, with the keyboard
+  // and browser bars accounted for. The floating desktop picker can instead
+  // end up outside the visible/tappable area on touch screens.
+  const useNativeTouchPickers =
+    (typeof navigator !== "undefined" &&
+      (/iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1))) ||
+    (window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+
 
   function $(sel, root) {
     return (root || document).querySelector(sel);
@@ -44,8 +53,8 @@
 
   function placeFloating(trigger, panel) {
     const r = trigger.getBoundingClientRect();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const vw = window.visualViewport?.width || window.innerWidth;
+    const vh = window.visualViewport?.height || window.innerHeight;
     const gap = 8;
     panel.hidden = false;
     panel.style.position = "fixed";
@@ -65,8 +74,11 @@
     if (left + pw > vw - 8) left = Math.max(8, vw - pw - 8);
     if (left < 8) left = 8;
 
-    panel.style.top = Math.round(top) + "px";
-    panel.style.left = Math.round(left) + "px";
+    // visualViewport offsets are significant when Safari has zoomed/focused
+    // a field or when a mobile browser bar changes the visible viewport.
+    const viewport = window.visualViewport;
+    panel.style.top = Math.round(top + (viewport?.offsetTop || 0)) + "px";
+    panel.style.left = Math.round(left + (viewport?.offsetLeft || 0)) + "px";
   }
 
   function openFor(wrap, trigger, floating) {
@@ -82,7 +94,7 @@
   }
 
   document.addEventListener(
-    "mousedown",
+    "pointerdown",
     (e) => {
       if (!openPanel) return;
       const t = e.target;
@@ -119,6 +131,10 @@
   window.addEventListener("resize", () => {
     if (openPanel) closeOpen();
   });
+  window.visualViewport?.addEventListener("resize", closeOpen);
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) closeOpen();
+  });
 
   /* ---------- SELECT ---------- */
 
@@ -148,6 +164,9 @@
   }
 
   function enhanceSelect(select) {
+    // Do not hide native controls on iPhone/iPad/Android. Native controls
+    // retain the original change/input events used by every screen.
+    if (useNativeTouchPickers) return;
     if (select.dataset.cuiEnhanced === "1") return;
     if (select.closest("[data-cui-skip]")) return;
     select.dataset.cuiEnhanced = "1";
@@ -309,6 +328,7 @@
   }
 
   function enhanceDate(input) {
+    if (useNativeTouchPickers) return;
     if (input.dataset.cuiEnhanced === "1") return;
     if (input.type !== "date") return;
     input.dataset.cuiEnhanced = "1";
@@ -468,247 +488,11 @@
     });
   }
 
-  /* ---------- COLOR ---------- */
-
-  const COLOR_SWATCHES = [
-    "#1c1c24",
-    "#4f46e5",
-    "#2563eb",
-    "#0891b2",
-    "#0f9f6e",
-    "#b8d94a",
-    "#f59e0b",
-    "#f97316",
-    "#ef4444",
-    "#db2777",
-    "#7c3aed",
-    "#64748b",
-  ];
-
-  function validHex(value) {
-    const v = String(value || "").trim();
-    return /^#[0-9a-f]{6}$/i.test(v) ? v.toLowerCase() : null;
-  }
-
-  function enhanceColor(input) {
-    if (input.dataset.cuiEnhanced === "1" || input.type !== "color") return;
-    input.dataset.cuiEnhanced = "1";
-
-    const wrap = document.createElement("div");
-    wrap.className = "cui-color";
-    input.parentNode.insertBefore(wrap, input);
-    wrap.appendChild(input);
-    input.classList.add("cui-native");
-    input.tabIndex = -1;
-
-    const trigger = document.createElement("button");
-    trigger.type = "button";
-    trigger.className = "cui-color__trigger";
-    trigger.innerHTML = `<span class="cui-color__preview" aria-hidden="true"></span><span class="cui-color__value"></span><span class="cui-select__chev" aria-hidden="true"></span>`;
-    wrap.appendChild(trigger);
-
-    const panel = document.createElement("div");
-    panel.className = "cui-color__panel";
-    panel.hidden = true;
-    panel.innerHTML = `
-      <div class="cui-color__head"><b>Chọn màu</b><span>Tùy chỉnh giao diện</span></div>
-      <div class="cui-color__swatches" role="listbox" aria-label="Bảng màu">
-        ${COLOR_SWATCHES.map((color) => `<button type="button" class="cui-color__swatch" data-color="${color}" style="--swatch:${color}" aria-label="${color}"></button>`).join("")}
-      </div>
-      <label class="cui-color__hex"><span>Mã HEX</span><input type="text" maxlength="7" spellcheck="false" placeholder="#1c1c24" /></label>`;
-    (input.closest("dialog") || document.body).appendChild(panel);
-
-    const preview = $(".cui-color__preview", trigger);
-    const valueEl = $(".cui-color__value", trigger);
-    const hex = $(".cui-color__hex input", panel);
-
-    function sync() {
-      const value = validHex(input.value) || "#000000";
-      preview.style.background = value;
-      valueEl.textContent = value.toUpperCase();
-      hex.value = value.toUpperCase();
-      panel.querySelectorAll("[data-color]").forEach((swatch) => {
-        const active = swatch.dataset.color === value;
-        swatch.classList.toggle("is-active", active);
-        swatch.setAttribute("aria-selected", active ? "true" : "false");
-      });
-      trigger.disabled = input.disabled;
-      wrap.classList.toggle("is-disabled", input.disabled);
-    }
-
-    function setColor(value) {
-      const next = validHex(value);
-      if (!next) return false;
-      input.value = next;
-      input.dispatchEvent(new Event("input", { bubbles: true }));
-      input.dispatchEvent(new Event("change", { bubbles: true }));
-      sync();
-      return true;
-    }
-
-    trigger.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (input.disabled) return;
-      sync();
-      openFor(wrap, trigger, panel);
-    });
-    panel.addEventListener("click", (e) => {
-      const swatch = e.target.closest("[data-color]");
-      if (!swatch) return;
-      setColor(swatch.dataset.color);
-    });
-    hex.addEventListener("input", () => {
-      hex.classList.toggle("is-invalid", hex.value.length >= 7 && !validHex(hex.value));
-      setColor(hex.value);
-    });
-    hex.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && setColor(hex.value)) closeOpen();
-    });
-    input.addEventListener("change", sync);
-    patchValueProp(input, sync);
-    new MutationObserver(sync).observe(input, {
-      attributes: true,
-      attributeFilter: ["disabled"],
-    });
-    sync();
-  }
-
-  /* ---------- NOTICES & CONFIRMATION ---------- */
-
-  function notify(message, options) {
-    const opts = typeof options === "string" ? { tone: options } : options || {};
-    let stack = $(".cui-toast-stack");
-    if (!stack) {
-      stack = document.createElement("div");
-      stack.className = "cui-toast-stack";
-      stack.setAttribute("aria-live", "polite");
-      document.body.appendChild(stack);
-    }
-    const toast = document.createElement("div");
-    toast.className = `cui-toast cui-toast--${opts.tone || "info"}`;
-    toast.setAttribute("role", opts.tone === "error" ? "alert" : "status");
-    toast.innerHTML = `<span class="cui-toast__mark" aria-hidden="true"></span><span>${escapeHtml(message)}</span><button type="button" aria-label="Đóng">×</button>`;
-    stack.appendChild(toast);
-    requestAnimationFrame(() => toast.classList.add("is-visible"));
-    const remove = () => {
-      toast.classList.remove("is-visible");
-      setTimeout(() => toast.remove(), 180);
-    };
-    toast.querySelector("button").addEventListener("click", remove);
-    setTimeout(remove, opts.duration || 4200);
-    return toast;
-  }
-
-  function confirmAction(message, options) {
-    const opts = options || {};
-    return new Promise((resolve) => {
-      const overlay = document.createElement("div");
-      overlay.className = "cui-confirm";
-      overlay.innerHTML = `
-        <section class="cui-confirm__panel" role="alertdialog" aria-modal="true" aria-labelledby="cuiConfirmTitle">
-          <div class="cui-confirm__icon" aria-hidden="true">!</div>
-          <div class="cui-confirm__copy">
-            <h2 id="cuiConfirmTitle">${escapeHtml(opts.title || "Xác nhận thao tác")}</h2>
-            <p>${escapeHtml(message)}</p>
-          </div>
-          <div class="cui-confirm__actions">
-            <button type="button" class="btn" data-result="false">${escapeHtml(opts.cancelText || "Hủy")}</button>
-            <button type="button" class="btn primary" data-result="true">${escapeHtml(opts.confirmText || "Xác nhận")}</button>
-          </div>
-        </section>`;
-      document.body.appendChild(overlay);
-      const previous = document.activeElement;
-      const finish = (result) => {
-        document.removeEventListener("keydown", onKey);
-        overlay.classList.remove("is-visible");
-        setTimeout(() => overlay.remove(), 160);
-        previous?.focus?.();
-        resolve(result);
-      };
-      const onKey = (e) => {
-        if (e.key === "Escape") finish(false);
-      };
-      overlay.addEventListener("click", (e) => {
-        const result = e.target.closest("[data-result]");
-        if (result) finish(result.dataset.result === "true");
-        else if (e.target === overlay) finish(false);
-      });
-      document.addEventListener("keydown", onKey);
-      requestAnimationFrame(() => {
-        overlay.classList.add("is-visible");
-        overlay.querySelector('[data-result="true"]').focus();
-      });
-    });
-  }
-
-  /* ---------- TOOLTIPS & VALIDATION ---------- */
-
-  function enhanceTooltip(el) {
-    if (!el.title || el.dataset.cuiTooltip) return;
-    el.dataset.cuiTooltip = el.title;
-    el.removeAttribute("title");
-    if (!el.getAttribute("aria-label") && !el.textContent.trim()) {
-      el.setAttribute("aria-label", el.dataset.cuiTooltip);
-    }
-  }
-
-  function hideTooltip() {
-    activeTooltip?.remove();
-    activeTooltip = null;
-  }
-
-  function showTooltip(el, text) {
-    hideTooltip();
-    const tip = document.createElement("div");
-    tip.className = "cui-tooltip";
-    tip.setAttribute("role", "tooltip");
-    tip.textContent = text;
-    document.body.appendChild(tip);
-    const r = el.getBoundingClientRect();
-    const tr = tip.getBoundingClientRect();
-    let left = r.left + r.width / 2 - tr.width / 2;
-    left = Math.max(8, Math.min(left, innerWidth - tr.width - 8));
-    const above = r.top > tr.height + 14;
-    tip.style.left = `${Math.round(left)}px`;
-    tip.style.top = `${Math.round(above ? r.top - tr.height - 8 : r.bottom + 8)}px`;
-    tip.dataset.side = above ? "top" : "bottom";
-    activeTooltip = tip;
-  }
-
-  document.addEventListener("pointerover", (e) => {
-    const el = e.target.closest?.("[data-cui-tooltip]");
-    if (el) showTooltip(el, el.dataset.cuiTooltip);
-  });
-  document.addEventListener("pointerout", (e) => {
-    if (e.target.closest?.("[data-cui-tooltip]")) hideTooltip();
-  });
-  document.addEventListener("focusin", (e) => {
-    const el = e.target.closest?.("[data-cui-tooltip]");
-    if (el) showTooltip(el, el.dataset.cuiTooltip);
-  });
-  document.addEventListener("focusout", hideTooltip);
-
-  document.addEventListener(
-    "invalid",
-    (e) => {
-      e.preventDefault();
-      const field = e.target;
-      const target = field.closest(".cui-select, .cui-date")?.querySelector("button") || field;
-      target.focus?.();
-      notify(field.validationMessage || "Vui lòng kiểm tra trường này.", "error");
-    },
-    true,
-  );
-
   function enhanceAll(root) {
     (root || document).querySelectorAll("select").forEach(enhanceSelect);
     (root || document)
       .querySelectorAll('input[type="date"]')
       .forEach(enhanceDate);
-    (root || document)
-      .querySelectorAll('input[type="color"]')
-      .forEach(enhanceColor);
-    (root || document).querySelectorAll("[title]").forEach(enhanceTooltip);
   }
 
   if (document.readyState === "loading") {
@@ -724,25 +508,11 @@
         if (n.nodeType !== 1) return;
         if (n.matches?.("select")) enhanceSelect(n);
         else if (n.matches?.('input[type="date"]')) enhanceDate(n);
-        else if (n.matches?.('input[type="color"]')) enhanceColor(n);
         else if (n.querySelectorAll) enhanceAll(n);
       });
     }
   });
   boot.observe(document.documentElement, { childList: true, subtree: true });
 
-  window.alert = (message) => {
-    const text = String(message ?? "");
-    const tone = /lỗi|thất bại|error|fail|invalid/i.test(text)
-      ? "error"
-      : "info";
-    return notify(text, { tone });
-  };
-  window.AppUI = {
-    enhanceAll,
-    closeOpen,
-    notify,
-    toast: notify,
-    confirm: confirmAction,
-  };
+  window.AppUI = { enhanceAll, closeOpen };
 })();

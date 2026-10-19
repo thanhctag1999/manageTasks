@@ -1,0 +1,297 @@
+/* ManageTasks mobile / iOS Safari responsiveness (v2). */
+:root { --mobile-bottom-nav-height: 76px; }
+.mobile-nav-label { display: none; }
+
+/* Safari can delay taps or zoom fields <16px, shifting targets under overlays. */
+a, button, [role="button"], input[type="submit"], input[type="button"],
+select, input[type="date"], input[type="checkbox"], input[type="radio"], summary,
+.cui-select__trigger, .cui-date__trigger {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+button, input, select, textarea { font-family: inherit; }
+button { -webkit-appearance: none; appearance: none; }
+button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
+:focus-visible { outline: 2px solid var(--accent-lime-dark, #a3c830); outline-offset: 2px; }
+
+@media (max-width: 900px) {
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body { min-width: 0; }
+  .layout, .dash-main, .content, .page-head, .dash-header,
+  .app-topbar, .finance-page .app-shell, .finance-page .main,
+  .finance-view, .finance-card, .finance-grid { min-width: 0; }
+  .layout { padding: 10px 10px calc(var(--mobile-bottom-nav-height) + 28px + env(safe-area-inset-bottom, 0px)); gap: 0; }
+  .content { min-width: 0; padding: 14px; border-radius: 20px; }
+  .content--split, .content--task { width: 100%; }
+
+  /* Bottom navigation is always inside the safe area (home-indicator). */
+  .side.app-sidebar {
+    position: fixed;
+    top: auto;
+    bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    left: 10px; right: 10px;
+    inset-inline: 10px;
+    width: auto;
+    max-width: none;
+    height: var(--mobile-bottom-nav-height);
+    min-height: var(--mobile-bottom-nav-height);
+    max-height: var(--mobile-bottom-nav-height);
+    padding: 7px 8px;
+    border-radius: 22px;
+    display: flex;
+    overflow: visible;
+    z-index: 100;
+    box-shadow: 0 12px 36px rgba(10,10,15,.25);
+  }
+  /* Finance's later desktop rules re-enable the profile: force its exclusion
+     from the fixed mobile dock so it cannot sit on top of the tab hit areas. */
+  .side.app-sidebar .app-sidebar__brand,
+  .side.app-sidebar .app-sidebar__user,
+  .side.app-sidebar .btn-create,
+  .side.app-sidebar .side-foot,
+  .finance-page .side.app-sidebar .side-finance-nav { display: none !important; }
+  .side.app-sidebar .app-nav {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0,1fr));
+    align-items: stretch;
+    width: 100%; height: 100%;
+    gap: 3px;
+    margin: 0;
+    flex: 1 1 auto;
+  }
+  .side.app-sidebar .app-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    gap: 3px;
+    padding: 6px 2px;
+    border-radius: 16px;
+    line-height: 1.05;
+    font-size: 0;
+    text-align: center;
+  }
+  .side.app-sidebar .app-nav .nav__ic { flex: none; width: 23px; height: 23px; display: grid; place-items: center; opacity: 1; }
+  .side.app-sidebar .app-nav .nav__ic svg { width: 21px; height: 21px; }
+  .side.app-sidebar .app-nav .mobile-nav-label {
+    display: block;
+    width: 100%;
+    color: inherit;
+    font-size: clamp(9px, 2.4vw, 11px);
+    line-height: 1.2;
+    font-weight: 650;
+    letter-spacing: -.02em;
+    white-space: nowrap;
+  }
+  .side.app-sidebar .app-nav a.active .mobile-nav-label { font-weight: 800; }
+
+  /* Desktop's second navbar duplicates the mobile bottom navigation. */
+  .app-topbar .topbar-nav { display: none !important; }
+  .app-topbar, .app-topbar--dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 14px;
+    overflow: visible;
+  }
+  .app-topbar .topbar-brand { order: 0; width: auto; flex: 1 1 auto; min-width: 0; }
+  .app-topbar .topbar-actions {
+    order: 1;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+  .app-topbar .topbar-search { flex: 1 1 auto; width: auto; min-width: 0; min-height: 46px; }
+  .app-topbar .topbar-search input { width: 100%; }
+  .app-topbar .icon-btn { flex: 0 0 auto; width: 46px; height: 46px; }
+  .topbar-brand strong { font-size: 16px; }
+  .dash-header, .page-head { gap: 14px; }
+
+  .finance-page .main { padding: 12px 12px calc(var(--mobile-bottom-nav-height) + 30px + env(safe-area-inset-bottom, 0px)); }
+  .finance-page .app-shell { min-height: 100dvh; }
+  .finance-page .app-topbar { min-width: 0; }
+  .finance-page .finance-mobile-nav {
+    position: sticky;
+    top: max(0px, env(safe-area-inset-top, 0px));
+    z-index: 12;
+    max-width: 100%;
+    margin: 10px 0 18px;
+    padding: 5px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    scroll-snap-type: x proximity;
+  }
+  .finance-mobile-nav button {
+    min-height: 44px !important;
+    scroll-snap-align: start;
+    touch-action: manipulation;
+    font-size: 12px !important;
+  }
+  .finance-page .finance-toast { bottom: calc(var(--mobile-bottom-nav-height) + 28px + env(safe-area-inset-bottom,0px)); }
+  .finance-page .finance-loading { z-index: 60; }
+  .finance-loading.hidden { visibility: hidden; }
+}
+
+@media (max-width: 700px) {
+  .dash-header__actions {
+    display: grid;
+    grid-template-columns: 46px 46px minmax(0, 1fr);
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+  }
+  .dash-header__actions > .icon-btn { width: 46px; height: 46px; }
+  .dash-header__actions > .btn { grid-column: auto; min-width: 0; width: 100%; padding-inline: 9px; }
+  .dash-header__actions, .hero-card__actions, .taskmail-tabs-actions,
+  .module-toolbar__right, .finance-topbar__actions,
+  .performance-chart-card__actions { min-width: 0; max-width: 100%; }
+  .dash-main, .finance-view, .taskmail-list, .taskmail-filters,
+  .taskmail-tabs-row, .finance-page .finance-topbar, .dash-bento { min-width: 0; }
+  .dash-header__hello, .page-head__title { overflow-wrap: break-word; }
+  .dash-header__actions .btn, .hero-card__actions .btn,
+  .toolbar .btn, .toolbar a { min-height: 44px; }
+  .taskmail-list.kanban-board { grid-template-columns: minmax(0,1fr); }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
+  .performance-tabs, .tabs, .task-view-switch {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .finance-page .finance-kpis, .finance-page .finance-grid,
+  .finance-page .finance-grid--triple { min-width: 0; }
+  .finance-page .finance-card { min-width: 0; }
+  .finance-page .module-toolbar { gap: 12px; }
+  .finance-page .finance-table, .finance-page table { max-width: none; }
+  .finance-page .finance-card--table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .finance-page .finance-topbar__actions > * { min-width: 0; }
+  .finance-page .dialog-actions button, .app-dialog__actions button { min-height: 46px; }
+}
+
+@media (max-width: 600px) {
+  /* Keep modal save/cancel controls reachable when the iOS keyboard appears. */
+  dialog:not(.finance-dialog), .finance-dialog {
+    max-width: calc(100vw - 12px);
+    max-height: calc(100dvh - 12px);
+    border-radius: 18px;
+  }
+  .finance-dialog .dialog-panel,
+  dialog:not(.finance-dialog) .app-dialog__body,
+  dialog:not(.finance-dialog) .export-dlg__body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+  .finance-dialog .dialog-panel { max-height: calc(100dvh - 12px); }
+  .finance-dialog .dialog-head { z-index: 2; }
+  .finance-dialog .dialog-actions { z-index: 2; padding-bottom: max(16px, env(safe-area-inset-bottom,0px)); }
+  .finance-dialog .dialog-close { min-width: 44px; min-height: 44px; }
+
+  /* Native iOS selection/date sheet instead of an off-viewport JS popover. */
+  select:not(.cui-native), input[type="date"]:not(.cui-native),
+  input[type="datetime-local"], input[type="time"],
+  input[type="text"], input[type="search"], input[type="email"],
+  input[type="number"], input[type="password"], input[type="tel"],
+  textarea {
+    font-size: 16px !important;
+    max-width: 100%;
+  }
+  select:not(.cui-native), input[type="date"]:not(.cui-native) {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    padding: 10px 12px;
+    background-color: var(--panel-solid, #fff);
+    color: var(--ink, #141419);
+    border: 1px solid var(--line, #ddd);
+    border-radius: 13px;
+    -webkit-appearance: auto;
+    appearance: auto;
+    touch-action: manipulation;
+  }
+  /* Preserve finance styling for unenhanced native controls. */
+  .finance-page select:not(.cui-native),
+  .finance-page input[type="date"]:not(.cui-native) {
+    background-color: var(--panel-solid, #fff);
+    color: var(--ink, #141419);
+  }
+  .finance-page .transaction-date-filter { min-width: 0; width: 100%; }
+  .finance-page .transaction-date-filter input[type="date"] { flex: 1 1 auto; width: 100%; }
+  .finance-page .form-field, .finance-page .form-grid { min-width: 0; }
+  .finance-page .form-grid > * { min-width: 0; }
+  .finance-page .dialog-panel input, .finance-page .dialog-panel select { max-width: 100%; }
+  .finance-page .finance-topbar__actions { gap: 8px; }
+  .finance-page .f-btn, .finance-page .icon-action,
+  .finance-page .quick-tx-chip, .finance-page .segmented button,
+  .finance-page .type-picker button { min-height: 44px; }
+  .finance-page .finance-kpi strong { overflow-wrap: anywhere; }
+}
+
+@media (max-width: 400px) {
+  .content { padding: 12px 10px; }
+  .layout { padding-inline: 7px; }
+  .side.app-sidebar { left: 6px; right: 6px; inset-inline: 6px; border-radius: 18px; }
+  .side.app-sidebar .app-nav { gap: 2px; }
+  .side.app-sidebar .app-nav .mobile-nav-label { font-size: 9px; }
+  .finance-page .main { padding-inline: 9px; }
+  .finance-page .finance-card { padding: 14px; }
+  .finance-page .finance-topbar__actions { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side.app-sidebar .app-nav a, .finance-mobile-nav button { transition: none; }
+}
+
+/* Interactive chart enlargement — usable on Safari (no Fullscreen API needed). */
+.performance-chart-card.is-chart-expanded {
+  position: fixed !important;
+  z-index: 200 !important;
+  inset: max(8px, env(safe-area-inset-top, 0px)) 8px max(8px, env(safe-area-inset-bottom, 0px)) !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 16px !important;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--panel-solid, white);
+  box-shadow: 0 0 0 100vmax rgba(10,10,15,.67);
+}
+.performance-chart-card.is-chart-expanded .performance-chart-card__body { flex: 1; min-height: min(55dvh, 320px); }
+.performance-chart-card.is-chart-expanded .chart-stage { min-height: min(55dvh, 320px); }
+body.mobile-chart-open { overflow: hidden; }
+.chart-expand-btn { touch-action: manipulation; min-height: 42px; min-width: 42px; }
+
+/* Actual feedback for notification icons that do not have a backend handler. */
+.mobile-ui-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(94px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: 250;
+  display: block;
+  width: max-content;
+  max-width: calc(100vw - 28px);
+  padding: 13px 16px;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 14px;
+  color: white;
+  background: #21212a;
+  font: 600 13px/1.45 "Plus Jakarta Sans",system-ui,sans-serif;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,.24);
+  pointer-events: none;
+}

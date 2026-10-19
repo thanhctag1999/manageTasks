@@ -454,12 +454,6 @@
         box-shadow: 0 14px 32px rgba(184, 217, 74, 0.32);
       }
 
-      @media (hover: none) {
-        .submit:hover {
-          transform: none;
-        }
-      }
-
       .privacy {
         padding: 13px 15px;
         border: 1px solid var(--line);
@@ -492,6 +486,7 @@
         }
       }
     </style>
+    <link rel="stylesheet" href="mobile-fixes.css" />
   </head>
   <body>
     <main class="login-shell">
@@ -616,5 +611,6 @@
         }
       });
     </script>
+    <script src="mobile-ui.js"></script>
   </body>
 </html>
