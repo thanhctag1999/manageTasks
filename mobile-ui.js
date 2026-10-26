@@ -16,9 +16,12 @@
   const MOBILE_MQ = "(max-width: 900px)";
   const filterSheets = [];
 
+  let navHome = null;
+
   function initializeNav() {
-    const nav = document.querySelector(".app-sidebar .app-nav");
-    if (!nav) return;
+    const side = document.querySelector(".side.app-sidebar");
+    const nav = side?.querySelector(".app-nav");
+    if (!side || !nav) return;
     nav.setAttribute("aria-label", "Điều hướng chính");
 
     nav.querySelectorAll("a[href]").forEach((a) => {
@@ -36,7 +39,57 @@
       if (a.classList.contains("active")) a.setAttribute("aria-current", "page");
     });
 
+    if (!navHome) {
+      navHome = {
+        parent: side.parentNode,
+        next: side.nextSibling,
+      };
+    }
+
     document.body.classList.add("has-mobile-bottom-nav");
+    syncBottomNavDock();
+  }
+
+  function syncBottomNavDock() {
+    const side = document.querySelector(".side.app-sidebar");
+    if (!side || !navHome?.parent) return;
+    const mobile = window.matchMedia(MOBILE_MQ).matches;
+
+    if (mobile) {
+      // iOS Safari can composite scroll layers above position:fixed descendants
+      // of .layout; park the dock on <body> so taps always reach it.
+      if (side.parentElement !== document.body) {
+        document.body.appendChild(side);
+      }
+      pinBottomNav(side);
+    } else {
+      side.style.removeProperty("bottom");
+      if (side.parentElement === document.body) {
+        if (navHome.next && navHome.next.parentNode === navHome.parent) {
+          navHome.parent.insertBefore(side, navHome.next);
+        } else {
+          navHome.parent.appendChild(side);
+        }
+      }
+    }
+  }
+
+  function pinBottomNav(side) {
+    const dock = side || document.querySelector(".side.app-sidebar");
+    if (!dock) return;
+    if (!window.matchMedia(MOBILE_MQ).matches) {
+      dock.style.removeProperty("bottom");
+      return;
+    }
+    const vv = window.visualViewport;
+    const styles = getComputedStyle(document.documentElement);
+    const rawOffset = styles.getPropertyValue("--mobile-bottom-nav-offset").trim();
+    const inset = Number.parseFloat(rawOffset) || 32;
+    // Keep the dock above Safari/Chrome toolbars when the visual viewport shrinks.
+    const gap = vv
+      ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop)
+      : 0;
+    dock.style.setProperty("bottom", `${gap + inset}px`, "important");
   }
 
   let toastTimer;
@@ -331,10 +384,30 @@
     // Wait a tick so app-ui.js can wrap selects before we relocate them.
     requestAnimationFrame(() => {
       initializeFilters();
+      syncBottomNavDock();
     });
-    window.addEventListener("pageshow", clearFloatingPanels);
+    const mq = window.matchMedia(MOBILE_MQ);
+    if (typeof mq.addEventListener === "function") {
+      mq.addEventListener("change", syncBottomNavDock);
+    } else if (typeof mq.addListener === "function") {
+      mq.addListener(syncBottomNavDock);
+    }
+    window.addEventListener("resize", pinBottomNav, { passive: true });
+    window.visualViewport?.addEventListener("resize", pinBottomNav, {
+      passive: true,
+    });
+    window.visualViewport?.addEventListener("scroll", pinBottomNav, {
+      passive: true,
+    });
+    window.addEventListener("pageshow", () => {
+      clearFloatingPanels();
+      syncBottomNavDock();
+    });
     document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") clearFloatingPanels();
+      if (document.visibilityState === "visible") {
+        clearFloatingPanels();
+        syncBottomNavDock();
+      }
     });
   }
 

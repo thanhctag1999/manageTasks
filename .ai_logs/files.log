@@ -5,3 +5,5 @@
 2026-10-26T22:07:59+07:00 modified task.html mobile-fixes.css app-theme.css purpose=redesign mobile taskmail tabs
 2026-10-26T22:10:46+07:00 modified mobile-fixes.css app-theme.css finance.css login.html schedule.html purpose=fix iPhone untappable buttons/links
 2026-10-26T22:16:50+07:00 modified app-ui.js mobile-fixes.css mobile-ui.js purpose=fix iOS tap cancel from active transform and pointerdown
+2026-10-26T22:20:12+07:00 modified mobile-ui.js mobile-fixes.css purpose=fix iOS bottom nav tap by detaching dock to body
+2026-10-26T22:21:36+07:00 modified mobile-fixes.css mobile-ui.js purpose=raise mobile bottom nav above browser chrome

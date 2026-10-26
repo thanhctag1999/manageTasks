@@ -1,5 +1,9 @@
 /* ManageTasks mobile / iOS Safari responsiveness (v2). */
-:root { --mobile-bottom-nav-height: 76px; }
+:root {
+  --mobile-bottom-nav-height: 76px;
+  /* Lift above Safari/Chrome toolbars + home indicator. */
+  --mobile-bottom-nav-offset: 32px;
+}
 .mobile-nav-label { display: none; }
 
 /* Safari can delay taps or zoom fields <16px, shifting targets under overlays. */
@@ -20,7 +24,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   .layout, .dash-main, .content, .page-head, .dash-header,
   .app-topbar, .finance-page .app-shell, .finance-page .main,
   .finance-view, .finance-card, .finance-grid { min-width: 0; }
-  .layout { padding: 10px 10px calc(var(--mobile-bottom-nav-height) + 28px + env(safe-area-inset-bottom, 0px)); gap: 0; }
+  .layout { padding: 10px 10px calc(var(--mobile-bottom-nav-height) + var(--mobile-bottom-nav-offset) + 28px + env(safe-area-inset-bottom, 0px)); gap: 0; }
   .content { min-width: 0; padding: 14px; border-radius: 20px; }
   .content--split, .content--task { width: 100%; }
 
@@ -28,7 +32,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   .side.app-sidebar {
     position: fixed;
     top: auto;
-    bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    bottom: calc(var(--mobile-bottom-nav-offset) + env(safe-area-inset-bottom, 0px));
     left: 10px; right: 10px;
     inset-inline: 10px;
     width: auto;
@@ -73,6 +77,18 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
     line-height: 1.05;
     font-size: 0;
     text-align: center;
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  /* Let the <a> own the hit target — SVG/label children can swallow taps on iOS. */
+  .side.app-sidebar .app-nav a *,
+  .side.app-sidebar .app-nav a .nav__ic,
+  .side.app-sidebar .app-nav a .nav__ic svg,
+  .side.app-sidebar .app-nav a .mobile-nav-label {
+    pointer-events: none !important;
   }
   .side.app-sidebar .app-nav .nav__ic { flex: none; width: 23px; height: 23px; display: grid; place-items: center; opacity: 1; }
   .side.app-sidebar .app-nav .nav__ic svg { width: 21px; height: 21px; }
@@ -113,7 +129,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   .topbar-brand strong { font-size: 16px; }
   .dash-header, .page-head { gap: 14px; }
 
-  .finance-page .main { padding: 12px 12px calc(var(--mobile-bottom-nav-height) + 30px + env(safe-area-inset-bottom, 0px)); }
+  .finance-page .main { padding: 12px 12px calc(var(--mobile-bottom-nav-height) + var(--mobile-bottom-nav-offset) + 30px + env(safe-area-inset-bottom, 0px)); }
   .finance-page .app-shell { min-height: 100dvh; }
   .finance-page .app-topbar { min-width: 0; }
   .finance-page .finance-mobile-nav {
@@ -138,7 +154,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
     touch-action: manipulation;
     font-size: 12px !important;
   }
-  .finance-page .finance-toast { bottom: calc(var(--mobile-bottom-nav-height) + 28px + env(safe-area-inset-bottom,0px)); }
+  .finance-page .finance-toast { bottom: calc(var(--mobile-bottom-nav-height) + var(--mobile-bottom-nav-offset) + 28px + env(safe-area-inset-bottom,0px)); }
   .finance-page .finance-loading { z-index: 60; }
   .finance-loading.hidden { visibility: hidden; }
 }
@@ -288,7 +304,7 @@ body.mobile-chart-open { overflow: hidden; }
 .mobile-ui-toast {
   position: fixed;
   left: 50%;
-  bottom: calc(94px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(var(--mobile-bottom-nav-height) + var(--mobile-bottom-nav-offset) + 18px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
   z-index: 250;
   display: block;
@@ -806,15 +822,16 @@ body.mobile-chart-open { overflow: hidden; }
     max-width: 100%;
   }
 
-  /* Never let the dock stretch into a full-screen blocker on iOS. */
+  /* Keep the dock above scroll layers / composited content on iOS Safari. */
   .side,
   .side.app-sidebar,
   .finance-page .side,
   .finance-page .side.app-sidebar,
-  .finance-page .sidebar {
+  .finance-page .sidebar,
+  body > .side.app-sidebar {
     position: fixed !important;
     top: auto !important;
-    bottom: max(8px, env(safe-area-inset-bottom, 0px)) !important;
+    bottom: calc(var(--mobile-bottom-nav-offset) + env(safe-area-inset-bottom, 0px)) !important;
     left: 10px !important;
     right: 10px !important;
     inset-inline: 10px !important;
@@ -823,19 +840,31 @@ body.mobile-chart-open { overflow: hidden; }
     min-height: var(--mobile-bottom-nav-height) !important;
     max-height: var(--mobile-bottom-nav-height) !important;
     overflow: hidden !important;
-    z-index: 100 !important;
+    z-index: 2147483000 !important;
     pointer-events: auto !important;
+    isolation: isolate;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
 
-  .side.app-sidebar .app-nav,
-  .side.app-sidebar .app-nav a,
-  .side.app-sidebar .app-nav a * {
+  .layout,
+  .content,
+  .dash-main,
+  .finance-page .main {
+    position: relative;
+    z-index: 0;
+  }
+
+  .side.app-sidebar .app-nav {
     pointer-events: auto !important;
   }
 
   .side.app-sidebar .app-nav a {
-    position: relative;
-    z-index: 2;
+    pointer-events: auto !important;
+  }
+
+  .side.app-sidebar .app-nav a * {
+    pointer-events: none !important;
   }
 }
 
