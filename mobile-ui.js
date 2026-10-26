@@ -22,6 +22,7 @@
   let navTouchX = 0;
   let navTouchY = 0;
   let pinNavTimer = 0;
+  let navLeaving = false;
 
   function initializeNav() {
     const side = document.querySelector(".side.app-sidebar");
@@ -69,8 +70,7 @@
         const touch = event.changedTouches?.[0];
         if (!touch) return;
         navTouchLock = true;
-        navTouchLink = event.target.closest("a.mobile-nav-link, a[href]");
-        if (navTouchLink && !side.contains(navTouchLink)) navTouchLink = null;
+        navTouchLink = resolveNavLink(side, event.target, touch.clientX);
         navTouchX = touch.clientX;
         navTouchY = touch.clientY;
       },
@@ -84,8 +84,8 @@
         const touch = event.changedTouches?.[0];
         if (!touch) return;
         if (
-          Math.abs(touch.clientX - navTouchX) > 14 ||
-          Math.abs(touch.clientY - navTouchY) > 14
+          Math.abs(touch.clientX - navTouchX) > 24 ||
+          Math.abs(touch.clientY - navTouchY) > 24
         ) {
           navTouchLink = null;
         }
@@ -100,25 +100,47 @@
         navTouchLock = false;
       }, 450);
       if (!link || !side.contains(link)) return;
-      if (event.type === "touchcancel") return;
 
       const href = link.getAttribute("href");
       if (!isInternalPageLink(href)) return;
       const url = new URL(href, location.href);
       const sameDoc =
         url.pathname === location.pathname && url.search === location.search;
+      if (event.cancelable) event.preventDefault();
       if (sameDoc && !url.hash) {
         link.classList.add("active");
         return;
       }
-
-      event.preventDefault();
+      if (navLeaving) return;
+      navLeaving = true;
       showPageLoading();
       location.assign(url.href);
     };
 
     side.addEventListener("touchend", endTouch, { passive: false });
+    // Safari fires touchcancel when it toggles its toolbar mid-tap; a still
+    // finger on the dock is still a tap.
     side.addEventListener("touchcancel", endTouch, { passive: true });
+  }
+
+  function resolveNavLink(side, target, x) {
+    const direct = target?.closest?.("a[href]");
+    if (direct && side.contains(direct)) return direct;
+    // Touch landed on dock padding / grid gap: pick the column under the finger.
+    const links = Array.from(side.querySelectorAll(".app-nav a[href]")).filter(
+      (a) => a.offsetParent !== null,
+    );
+    let best = null;
+    let bestDist = Infinity;
+    links.forEach((a) => {
+      const r = a.getBoundingClientRect();
+      const dist = x < r.left ? r.left - x : x > r.right ? x - r.right : 0;
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = a;
+      }
+    });
+    return best;
   }
 
   function syncBottomNavDock() {
@@ -150,16 +172,10 @@
     if (navTouchLock) return;
     const dock = side || document.querySelector(".side.app-sidebar");
     if (!dock) return;
-    if (!window.matchMedia(MOBILE_MQ).matches) {
-      dock.style.removeProperty("bottom");
-      return;
-    }
-    const styles = getComputedStyle(document.documentElement);
-    const rawOffset = styles.getPropertyValue("--mobile-bottom-nav-offset").trim();
-    const inset = Number.parseFloat(rawOffset) || 32;
-    // Prefer a stable CSS offset. Avoid chasing visualViewport during taps —
-    // moving the dock under the finger cancels iOS clicks.
-    dock.style.setProperty("bottom", `${inset}px`, "important");
+    // CSS owns the offset (incl. safe-area-inset-bottom). An inline bottom
+    // drops the safe area and parks the dock in the home-indicator gesture
+    // zone, where iOS intermittently swallows taps.
+    dock.style.removeProperty("bottom");
   }
 
   function schedulePinBottomNav() {
@@ -571,6 +587,8 @@
       passive: true,
     });
     window.addEventListener("pageshow", () => {
+      navLeaving = false;
+      navTouchLock = false;
       hidePageLoading();
       clearFloatingPanels();
       syncBottomNavDock();

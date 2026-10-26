@@ -9,3 +9,4 @@
 2026-10-26T22:21:36+07:00 modified mobile-fixes.css mobile-ui.js purpose=raise mobile bottom nav above browser chrome
 2026-10-26T22:27:35+07:00 modified login.html mobile-ui.js mobile-fixes.css purpose=mobile login to task + page transition loading
 2026-10-26T22:32:49+07:00 modified mobile-ui.js mobile-fixes.css purpose=reliable iOS bottom nav via touchend
+2026-10-26T22:35:09+07:00 modified mobile-ui.js purpose=bottom nav: keep safe-area offset, gap hit mapping, touchcancel nav
