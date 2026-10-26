@@ -17,6 +17,11 @@
   const filterSheets = [];
 
   let navHome = null;
+  let navTouchLock = false;
+  let navTouchLink = null;
+  let navTouchX = 0;
+  let navTouchY = 0;
+  let pinNavTimer = 0;
 
   function initializeNav() {
     const side = document.querySelector(".side.app-sidebar");
@@ -36,6 +41,7 @@
         a.appendChild(caption);
       }
       a.setAttribute("aria-label", label);
+      a.classList.add("mobile-nav-link");
       if (a.classList.contains("active")) a.setAttribute("aria-current", "page");
     });
 
@@ -46,8 +52,73 @@
       };
     }
 
+    bindBottomNavTaps(side);
     document.body.classList.add("has-mobile-bottom-nav");
     syncBottomNavDock();
+  }
+
+  function bindBottomNavTaps(side) {
+    if (!side || side.dataset.navTapBound === "1") return;
+    side.dataset.navTapBound = "1";
+
+    // iOS often paints :active then cancels click if the fixed dock moves
+    // (Safari chrome / visualViewport). Navigate on touchend instead.
+    side.addEventListener(
+      "touchstart",
+      (event) => {
+        const touch = event.changedTouches?.[0];
+        if (!touch) return;
+        navTouchLock = true;
+        navTouchLink = event.target.closest("a.mobile-nav-link, a[href]");
+        if (navTouchLink && !side.contains(navTouchLink)) navTouchLink = null;
+        navTouchX = touch.clientX;
+        navTouchY = touch.clientY;
+      },
+      { passive: true },
+    );
+
+    side.addEventListener(
+      "touchmove",
+      (event) => {
+        if (!navTouchLink) return;
+        const touch = event.changedTouches?.[0];
+        if (!touch) return;
+        if (
+          Math.abs(touch.clientX - navTouchX) > 14 ||
+          Math.abs(touch.clientY - navTouchY) > 14
+        ) {
+          navTouchLink = null;
+        }
+      },
+      { passive: true },
+    );
+
+    const endTouch = (event) => {
+      const link = navTouchLink;
+      navTouchLink = null;
+      window.setTimeout(() => {
+        navTouchLock = false;
+      }, 450);
+      if (!link || !side.contains(link)) return;
+      if (event.type === "touchcancel") return;
+
+      const href = link.getAttribute("href");
+      if (!isInternalPageLink(href)) return;
+      const url = new URL(href, location.href);
+      const sameDoc =
+        url.pathname === location.pathname && url.search === location.search;
+      if (sameDoc && !url.hash) {
+        link.classList.add("active");
+        return;
+      }
+
+      event.preventDefault();
+      showPageLoading();
+      location.assign(url.href);
+    };
+
+    side.addEventListener("touchend", endTouch, { passive: false });
+    side.addEventListener("touchcancel", endTouch, { passive: true });
   }
 
   function syncBottomNavDock() {
@@ -61,6 +132,7 @@
       if (side.parentElement !== document.body) {
         document.body.appendChild(side);
       }
+      bindBottomNavTaps(side);
       pinBottomNav(side);
     } else {
       side.style.removeProperty("bottom");
@@ -75,21 +147,25 @@
   }
 
   function pinBottomNav(side) {
+    if (navTouchLock) return;
     const dock = side || document.querySelector(".side.app-sidebar");
     if (!dock) return;
     if (!window.matchMedia(MOBILE_MQ).matches) {
       dock.style.removeProperty("bottom");
       return;
     }
-    const vv = window.visualViewport;
     const styles = getComputedStyle(document.documentElement);
     const rawOffset = styles.getPropertyValue("--mobile-bottom-nav-offset").trim();
     const inset = Number.parseFloat(rawOffset) || 32;
-    // Keep the dock above Safari/Chrome toolbars when the visual viewport shrinks.
-    const gap = vv
-      ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop)
-      : 0;
-    dock.style.setProperty("bottom", `${gap + inset}px`, "important");
+    // Prefer a stable CSS offset. Avoid chasing visualViewport during taps —
+    // moving the dock under the finger cancels iOS clicks.
+    dock.style.setProperty("bottom", `${inset}px`, "important");
+  }
+
+  function schedulePinBottomNav() {
+    if (navTouchLock) return;
+    window.clearTimeout(pinNavTimer);
+    pinNavTimer = window.setTimeout(() => pinBottomNav(), 120);
   }
 
   let toastTimer;
@@ -434,9 +510,7 @@
 
   function navigateWithLoading(href) {
     showPageLoading();
-    window.setTimeout(() => {
-      location.href = href;
-    }, 140);
+    location.assign(href);
   }
 
   function initializePageTransitions() {
@@ -449,6 +523,8 @@
         }
         const link = event.target.closest?.("a[href]");
         if (!link) return;
+        // Bottom dock uses touchend navigation on iOS.
+        if (link.closest(".side.app-sidebar")) return;
         if (link.target && link.target !== "_self") return;
         if (link.hasAttribute("download")) return;
         if (link.dataset.noTransition != null) return;
@@ -490,11 +566,8 @@
     } else if (typeof mq.addListener === "function") {
       mq.addListener(syncBottomNavDock);
     }
-    window.addEventListener("resize", pinBottomNav, { passive: true });
-    window.visualViewport?.addEventListener("resize", pinBottomNav, {
-      passive: true,
-    });
-    window.visualViewport?.addEventListener("scroll", pinBottomNav, {
+    window.addEventListener("resize", schedulePinBottomNav, { passive: true });
+    window.visualViewport?.addEventListener("resize", schedulePinBottomNav, {
       passive: true,
     });
     window.addEventListener("pageshow", () => {

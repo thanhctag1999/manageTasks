@@ -899,8 +899,9 @@ body.page-transition-on {
     z-index: 2147483000 !important;
     pointer-events: auto !important;
     isolation: isolate;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
+    /* Do not use translateZ here: moving a transformed fixed layer under a
+       finger cancels taps on iOS Safari. */
+    transform: none !important;
   }
 
   .layout,
