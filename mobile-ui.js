@@ -1,5 +1,5 @@
 /**
- * ManageTasks mobile enhancements — semantic navigation and Safari-friendly UI.
+ * ManageTasks mobile enhancements — semantic navigation, filter sheet, Safari UI.
  * Never synthesize click/touch events: a single native click avoids double-save.
  */
 (function () {
@@ -13,7 +13,10 @@
     "settings.html": "Cài đặt",
   };
 
-  function initialize() {
+  const MOBILE_MQ = "(max-width: 900px)";
+  const filterSheets = [];
+
+  function initializeNav() {
     const nav = document.querySelector(".app-sidebar .app-nav");
     if (!nav) return;
     nav.setAttribute("aria-label", "Điều hướng chính");
@@ -50,7 +53,9 @@
     toast.textContent = message;
     toast.hidden = false;
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { toast.hidden = true; }, 3500);
+    toastTimer = setTimeout(() => {
+      toast.hidden = true;
+    }, 3500);
   }
 
   function toggleChart(button) {
@@ -59,31 +64,262 @@
     const open = !chart.classList.contains("is-chart-expanded");
     chart.classList.toggle("is-chart-expanded", open);
     document.body.classList.toggle("mobile-chart-open", open);
-    button.setAttribute("aria-label", open ? "Thu nhỏ biểu đồ" : "Phóng to biểu đồ");
+    button.setAttribute(
+      "aria-label",
+      open ? "Thu nhỏ biểu đồ" : "Phóng to biểu đồ",
+    );
     button.setAttribute("aria-expanded", String(open));
     button.textContent = open ? "✕" : "⤢";
     if (open) button.focus({ preventScroll: true });
   }
 
-  // Only handle existing placeholder buttons, leaving real finance notification
-  // and search functionality untouched.
+  function transportNode(node) {
+    if (!node) return null;
+    return node.closest?.(".cui-select") || node;
+  }
+
+  function countActiveFilters(nodes) {
+    let n = 0;
+    nodes.forEach((node) => {
+      if (!node) return;
+      const selects =
+        node.matches?.("select")
+          ? [node]
+          : [...node.querySelectorAll("select")];
+      selects.forEach((select) => {
+        if (String(select.value || "").trim()) n += 1;
+      });
+    });
+    return n;
+  }
+
+  function updateFilterBadge(sheet) {
+    const active = countActiveFilters(
+      [sheet.group, ...sheet.extras.map((item) => item.node)].filter(Boolean),
+    );
+    const badge = sheet.btn.querySelector(".mobile-filter-btn__count");
+    if (!badge) return;
+    if (active > 0) {
+      badge.hidden = false;
+      badge.textContent = String(active);
+      sheet.btn.classList.add("is-active");
+      sheet.btn.setAttribute("aria-label", `Bộ lọc, ${active} đang chọn`);
+    } else {
+      badge.hidden = true;
+      badge.textContent = "";
+      sheet.btn.classList.remove("is-active");
+      sheet.btn.setAttribute("aria-label", "Bộ lọc");
+    }
+  }
+
+  function collectExtras(group) {
+    const extras = [];
+    if (group.id === "filters") {
+      const month = document.getElementById("f_month");
+      if (month && !group.contains(month)) {
+        const carried = transportNode(month);
+        const placeholder = document.createComment("mf-month");
+        carried.parentNode.insertBefore(placeholder, carried);
+        extras.push({ node: month, carried, placeholder });
+      }
+    }
+    return extras;
+  }
+
+  function moveHome(item) {
+    if (!item?.placeholder?.parentNode) return;
+    const carried = transportNode(item.node) || item.carried || item.node;
+    item.placeholder.parentNode.insertBefore(carried, item.placeholder);
+  }
+
+  function createFilterSheet(group) {
+    if (group.dataset.mfBound === "true") return null;
+    if (!group.querySelector("select")) return null;
+    group.dataset.mfBound = "true";
+
+    const placeholder = document.createComment("mf-filters");
+    group.parentNode.insertBefore(placeholder, group);
+
+    const extras = collectExtras(group);
+
+    const host = document.createElement("div");
+    host.className = "mobile-filter-bar";
+    host.hidden = true;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn mobile-filter-btn";
+    btn.setAttribute("aria-haspopup", "dialog");
+    btn.innerHTML =
+      '<span class="mobile-filter-btn__ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg></span><span>Bộ lọc</span><span class="mobile-filter-btn__count" hidden></span>';
+
+    host.appendChild(btn);
+    const inlineHost = group
+      .closest(".taskmail-merge-controls")
+      ?.querySelector(".taskmail-tabs-actions");
+    if (inlineHost) {
+      host.classList.add("mobile-filter-bar--inline");
+      inlineHost.appendChild(host);
+    } else {
+      placeholder.parentNode.insertBefore(host, placeholder);
+    }
+
+    const dlg = document.createElement("dialog");
+    dlg.className = "mobile-filter-dlg";
+    dlg.innerHTML =
+      '<form method="dialog" class="mobile-filter-dlg__panel">' +
+      '<div class="mobile-filter-dlg__head"><b>Bộ lọc</b>' +
+      '<button type="submit" class="icon-btn mobile-filter-dlg__close" value="close" aria-label="Đóng">✕</button></div>' +
+      '<div class="mobile-filter-dlg__body"></div>' +
+      '<div class="mobile-filter-dlg__actions">' +
+      '<button type="button" class="btn mobile-filter-reset">Reset</button>' +
+      '<button type="submit" class="btn primary" value="apply">Áp dụng</button>' +
+      "</div></form>";
+
+    document.body.appendChild(dlg);
+    const body = dlg.querySelector(".mobile-filter-dlg__body");
+    const resetBtn = dlg.querySelector(".mobile-filter-reset");
+
+    const sheet = {
+      group,
+      placeholder,
+      host,
+      btn,
+      dlg,
+      body,
+      extras,
+      mobile: false,
+    };
+
+    btn.addEventListener("click", () => {
+      if (!sheet.mobile) return;
+      if (typeof dlg.showModal === "function") dlg.showModal();
+      else dlg.setAttribute("open", "");
+    });
+
+    dlg.addEventListener("close", () => updateFilterBadge(sheet));
+    dlg.addEventListener("click", (event) => {
+      if (event.target === dlg) dlg.close();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      const pageReset = document.getElementById("f_reset");
+      if (pageReset && pageReset !== resetBtn) {
+        pageReset.click();
+      } else {
+        group.querySelectorAll("select").forEach((select) => {
+          select.value = "";
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+        extras.forEach((item) => {
+          if (item.node.tagName === "SELECT") {
+            item.node.value = "";
+            item.node.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        });
+      }
+      updateFilterBadge(sheet);
+    });
+
+    group.addEventListener("change", () => updateFilterBadge(sheet));
+    extras.forEach((item) => {
+      item.node.addEventListener("change", () => updateFilterBadge(sheet));
+    });
+
+    return sheet;
+  }
+
+  function setFilterMode(sheet, mobile) {
+    if (sheet.mobile === mobile) {
+      updateFilterBadge(sheet);
+      return;
+    }
+    sheet.mobile = mobile;
+    if (mobile) {
+      sheet.host.hidden = false;
+      sheet.extras.forEach((item) => {
+        const wrap = document.createElement("div");
+        wrap.className = "mobile-filter-field";
+        const label = document.createElement("label");
+        label.textContent =
+          item.node.getAttribute("aria-label") ||
+          item.node.options?.[0]?.textContent ||
+          "Lọc";
+        wrap.append(label, transportNode(item.node) || item.node);
+        sheet.body.appendChild(wrap);
+      });
+      sheet.body.appendChild(sheet.group);
+      sheet.group.classList.add("mobile-filter-group");
+    } else {
+      if (sheet.dlg.open) sheet.dlg.close();
+      sheet.host.hidden = true;
+      sheet.placeholder.parentNode.insertBefore(
+        sheet.group,
+        sheet.placeholder.nextSibling,
+      );
+      sheet.group.classList.remove("mobile-filter-group");
+      sheet.extras.forEach(moveHome);
+      sheet.body.replaceChildren();
+    }
+    updateFilterBadge(sheet);
+  }
+
+  function syncFilterSheets() {
+    const mobile = window.matchMedia(MOBILE_MQ).matches;
+    document.documentElement.classList.toggle("mobile-compact", mobile);
+    filterSheets.forEach((sheet) => setFilterMode(sheet, mobile));
+  }
+
+  function initializeFilters() {
+    document
+      .querySelectorAll(".filters, .taskmail-filters")
+      .forEach((group) => {
+        const sheet = createFilterSheet(group);
+        if (sheet) filterSheets.push(sheet);
+      });
+    syncFilterSheets();
+    const mq = window.matchMedia(MOBILE_MQ);
+    if (typeof mq.addEventListener === "function") {
+      mq.addEventListener("change", syncFilterSheets);
+    } else if (typeof mq.addListener === "function") {
+      mq.addListener(syncFilterSheets);
+    }
+  }
+
   document.addEventListener("click", (event) => {
     const chartButton = event.target.closest(".chart-expand-btn");
-    if (chartButton) { toggleChart(chartButton); return; }
-    const notifications = event.target.closest('button[aria-label="Notifications"]');
+    if (chartButton) {
+      toggleChart(chartButton);
+      return;
+    }
+    const notifications = event.target.closest(
+      'button[aria-label="Notifications"]',
+    );
     if (notifications) {
       showFeedback("Thông báo công việc hiện chưa được kích hoạt.");
     }
   });
+
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
-    document.querySelectorAll(".performance-chart-card.is-chart-expanded .chart-expand-btn")
+    document
+      .querySelectorAll(
+        ".performance-chart-card.is-chart-expanded .chart-expand-btn",
+      )
       .forEach(toggleChart);
   });
 
+  function boot() {
+    initializeNav();
+    // Wait a tick so app-ui.js can wrap selects before we relocate them.
+    requestAnimationFrame(() => {
+      initializeFilters();
+    });
+  }
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initialize, { once: true });
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
   } else {
-    initialize();
+    boot();
   }
 })();

@@ -53,10 +53,13 @@
 html,
 body {
   height: 100%;
+  min-height: 100%;
+  min-height: 100dvh;
 }
 
 body {
   margin: 0;
+  width: 100%;
   font-family:
     "Plus Jakarta Sans",
     system-ui,
@@ -77,19 +80,26 @@ a {
 .layout {
   display: grid;
   grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  width: 100%;
+  max-width: none;
   min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
   padding: 16px 20px 24px 16px;
   gap: 20px;
   align-items: stretch;
+  box-sizing: border-box;
 }
 
 .side {
   position: sticky;
   top: 0;
   align-self: start;
-  height: 100vh;
-  min-height: 100vh;
-  max-height: 100vh;
+  height: calc(100vh - 32px);
+  height: calc(100dvh - 32px);
+  min-height: 0;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
   padding: 24px 18px;
   background: var(--sidebar-bg);
   border: none;
@@ -379,9 +389,9 @@ a {
 }
 
 .content--task {
-  max-width: 1520px;
-  margin-left: auto;
-  margin-right: auto;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
   width: 100%;
 }
 
@@ -2825,10 +2835,13 @@ body::after {
 }
 
 .layout {
-  max-width: 1680px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 16px 20px 20px 16px;
   gap: 20px;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .content,
@@ -2847,10 +2860,12 @@ body::after {
 }
 
 .side {
-  top: 20px;
-  height: calc(100vh - 40px);
+  top: 16px;
+  height: calc(100vh - 36px);
+  height: calc(100dvh - 36px);
   min-height: 0;
-  max-height: calc(100vh - 40px);
+  max-height: calc(100vh - 36px);
+  max-height: calc(100dvh - 36px);
   align-items: stretch;
   border-radius: var(--radius-lg);
   padding: 24px 18px;
@@ -3481,6 +3496,10 @@ textarea:focus {
   color: var(--sidebar-ink-active);
   background: var(--accent-lime);
   box-shadow: none;
+}
+
+.taskmail-tab__text-mobile {
+  display: none;
 }
 
 .task-view-switch {
@@ -4552,7 +4571,7 @@ tbody tr:hover,
     border-radius: var(--radius);
     padding: 16px;
     min-height: auto;
-    overflow-x: clip;
+    overflow-x: visible;
   }
 
   .side {
@@ -4639,7 +4658,7 @@ tbody tr:hover,
   .dash-main,
   .layout {
     max-width: 100%;
-    overflow-x: clip;
+    overflow-x: visible;
   }
 }
 
@@ -5448,6 +5467,12 @@ form .inline:has(> .cui-date) > .cui-date {
   overflow: visible;
 }
 
+.cui-select__panel--sheet {
+  border-radius: 22px;
+  padding: 10px;
+  box-shadow: 0 18px 50px rgba(10, 10, 15, 0.22);
+}
+
 .cui-select__option {
   display: flex;
   align-items: center;
@@ -5463,6 +5488,24 @@ form .inline:has(> .cui-date) > .cui-date {
   text-align: left;
   cursor: pointer;
   transition: background 0.12s ease;
+}
+
+@media (max-width: 900px), (pointer: coarse) {
+  .cui-select__trigger,
+  .cui-date__trigger {
+    min-height: 46px;
+    font-size: 16px;
+  }
+
+  .cui-select__option {
+    min-height: 46px;
+    padding: 12px 14px;
+    font-size: 15px;
+  }
+
+  .cui-select__panel--sheet {
+    max-height: min(52dvh, 420px);
+  }
 }
 
 .cui-select__option:hover:not(:disabled) {

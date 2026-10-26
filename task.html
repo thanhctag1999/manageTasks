@@ -212,12 +212,35 @@
             <div class="bd taskmail-center-bd">
               <div class="taskmail-merge-controls">
                 <div class="taskmail-tabs-row">
-                  <div class="tabs taskmail-tabs">
-                    <button type="button" class="active" data-tab="all">
-                      All
+                  <div
+                    class="tabs taskmail-tabs"
+                    role="tablist"
+                    aria-label="Lọc theo trạng thái">
+                    <button
+                      type="button"
+                      class="active"
+                      data-tab="all"
+                      role="tab"
+                      aria-selected="true">
+                      <span class="taskmail-tab__text">All</span>
+                      <span class="taskmail-tab__text-mobile">Tất cả</span>
                     </button>
-                    <button type="button" data-tab="charged">Charged</button>
-                    <button type="button" data-tab="Unpaid">Unpaid</button>
+                    <button
+                      type="button"
+                      data-tab="charged"
+                      role="tab"
+                      aria-selected="false">
+                      <span class="taskmail-tab__text">Charged</span>
+                      <span class="taskmail-tab__text-mobile">Đã thu</span>
+                    </button>
+                    <button
+                      type="button"
+                      data-tab="Unpaid"
+                      role="tab"
+                      aria-selected="false">
+                      <span class="taskmail-tab__text">Unpaid</span>
+                      <span class="taskmail-tab__text-mobile">Chưa thu</span>
+                    </button>
                   </div>
                   <div class="taskmail-tabs-actions">
                     <button type="button" id="f_reset" class="btn">
@@ -1024,10 +1047,12 @@
 
       document.querySelectorAll(".tabs button").forEach((b) => {
         b.addEventListener("click", () => {
-          document
-            .querySelectorAll(".tabs button")
-            .forEach((x) => x.classList.remove("active"));
+          document.querySelectorAll(".tabs button").forEach((x) => {
+            x.classList.remove("active");
+            x.setAttribute("aria-selected", "false");
+          });
           b.classList.add("active");
+          b.setAttribute("aria-selected", "true");
           TAB = b.dataset.tab;
           apply();
         });

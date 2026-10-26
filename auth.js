@@ -3,39 +3,93 @@
 
   const TOKEN_KEY = "mt_session_token";
   const USER_KEY = "mt_session_user";
+  const CRED_KEY = "mt_saved_login";
   const isLoginPage =
     /(?:^|\/)login\.html$/i.test(location.pathname) ||
     document.documentElement.dataset.publicPage === "true";
 
-  if (!isLoginPage) document.documentElement.classList.add("auth-checking");
+  document.documentElement.classList.add("auth-checking");
+
+  function readStored(key) {
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved) return saved;
+      const legacy = sessionStorage.getItem(key);
+      if (!legacy) return "";
+      localStorage.setItem(key, legacy);
+      sessionStorage.removeItem(key);
+      return legacy;
+    } catch {
+      return "";
+    }
+  }
+
+  function writeStored(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch {
+      try {
+        sessionStorage.setItem(key, value);
+      } catch {}
+      return;
+    }
+    try {
+      sessionStorage.removeItem(key);
+    } catch {}
+  }
+
+  function removeStored(key) {
+    try {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    } catch {}
+  }
 
   function readUser() {
     try {
-      return JSON.parse(sessionStorage.getItem(USER_KEY) || "null");
+      return JSON.parse(readStored(USER_KEY) || "null");
     } catch {
       return null;
     }
   }
 
   function readToken() {
+    return readStored(TOKEN_KEY);
+  }
+
+  function readCreds() {
     try {
-      return sessionStorage.getItem(TOKEN_KEY) || "";
+      const creds = JSON.parse(readStored(CRED_KEY) || "null");
+      if (!creds?.username || !creds?.password) return null;
+      return creds;
     } catch {
-      return "";
+      return null;
     }
   }
 
+  function saveCreds(username, password) {
+    writeStored(
+      CRED_KEY,
+      JSON.stringify({
+        username: String(username || "").trim(),
+        password: String(password || ""),
+      }),
+    );
+  }
+
+  function clearCreds() {
+    removeStored(CRED_KEY);
+  }
+
   function saveSession(token, user) {
-    sessionStorage.setItem(TOKEN_KEY, token);
-    sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+    writeStored(TOKEN_KEY, token);
+    writeStored(USER_KEY, JSON.stringify(user));
     attachSessionHeader(token);
   }
 
   function clearSession() {
-    try {
-      sessionStorage.removeItem(TOKEN_KEY);
-      sessionStorage.removeItem(USER_KEY);
-    } catch {}
+    removeStored(TOKEN_KEY);
+    removeStored(USER_KEY);
   }
 
   function attachSessionHeader(token) {
@@ -121,6 +175,7 @@
       expiresAt: row.expires_at,
     };
     saveSession(row.session_token, user);
+    saveCreds(username, password);
     return user;
   }
 
@@ -146,9 +201,18 @@
       };
       saveSession(token, user);
       return user;
-    } catch {
+    } catch (error) {
+      if (isTransient(error)) throw error;
       return null;
     }
+  }
+
+  function isTransient(error) {
+    const message = String(error?.message || error || "");
+    return (
+      error?.name === "AbortError" ||
+      /failed to fetch|network|abort|timeout|load failed|HTTP 5/i.test(message)
+    );
   }
 
   async function logout() {
@@ -156,6 +220,7 @@
     try {
       if (token) await rpc("app_logout", { p_token: token }, true);
     } catch {}
+    clearCreds();
     clearSession();
     location.replace("login.html");
   }
@@ -172,6 +237,7 @@
       },
       true,
     );
+    clearCreds();
     clearSession();
     return true;
   }
@@ -193,33 +259,50 @@
     });
   }
 
-  const ready = isLoginPage
-    ? Promise.resolve(readUser())
-    : (() => {
-        const token = readToken();
-        if (!token) {
-          goLogin();
-          return Promise.resolve(null);
-        }
-        attachSessionHeader(token);
-        return validate().then((user) => {
-          if (!user) {
-            goLogin();
-            return null;
-          }
-          document.documentElement.classList.remove("auth-checking");
-          if (document.readyState === "loading") {
-            document.addEventListener(
-              "DOMContentLoaded",
-              () => bindUserUi(user),
-              { once: true },
-            );
-          } else {
-            bindUserUi(user);
-          }
-          return user;
-        });
-      })();
+  function showApp(user) {
+    if (!(isLoginPage && user)) {
+      document.documentElement.classList.remove("auth-checking");
+    }
+    if (!user || isLoginPage) return;
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => bindUserUi(user), {
+        once: true,
+      });
+    } else {
+      bindUserUi(user);
+    }
+  }
+
+  async function restore() {
+    if (readToken()) {
+      try {
+        const user = await validate();
+        if (user) return user;
+        clearSession();
+      } catch {
+        return readUser();
+      }
+    }
+    const creds = readCreds();
+    if (!creds) return null;
+    try {
+      return await login(creds.username, creds.password);
+    } catch (error) {
+      if (isTransient(error)) return readUser();
+      clearCreds();
+      clearSession();
+      return null;
+    }
+  }
+
+  const ready = restore().then((user) => {
+    if (!user && !isLoginPage) {
+      goLogin();
+      return null;
+    }
+    showApp(user);
+    return user;
+  });
 
   window.AppAuth = {
     ready,

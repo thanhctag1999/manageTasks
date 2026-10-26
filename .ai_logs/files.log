@@ -1,0 +1,6 @@
+2026-10-26T21:52:31+07:00 modified auth.js login.html finance.html purpose=persist login in localStorage
+2026-10-26T21:57:23+07:00 modified login.html app-theme.css finance.css purpose=full-bleed desktop layout across aspect ratios
+2026-10-26T22:03:07+07:00 modified mobile-ui.js mobile-fixes.css purpose=mobile filter sheet + compact summary UI
+2026-10-26T22:04:59+07:00 modified app-ui.js app-theme.css mobile-fixes.css purpose=custom select panels on mobile
+2026-10-26T22:07:59+07:00 modified task.html mobile-fixes.css app-theme.css purpose=redesign mobile taskmail tabs
+2026-10-26T22:10:46+07:00 modified mobile-fixes.css app-theme.css finance.css login.html schedule.html purpose=fix iPhone untappable buttons/links

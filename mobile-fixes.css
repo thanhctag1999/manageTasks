@@ -163,7 +163,12 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   .toolbar .btn, .toolbar a { min-height: 44px; }
   .taskmail-list.kanban-board { grid-template-columns: minmax(0,1fr); }
   .grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
-  .performance-tabs, .tabs, .task-view-switch {
+  .performance-tabs, .task-view-switch {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tabs:not(.taskmail-tabs) {
     max-width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -196,16 +201,18 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   .finance-dialog .dialog-actions { z-index: 2; padding-bottom: max(16px, env(safe-area-inset-bottom,0px)); }
   .finance-dialog .dialog-close { min-width: 44px; min-height: 44px; }
 
-  /* Native iOS selection/date sheet instead of an off-viewport JS popover. */
-  select:not(.cui-native), input[type="date"]:not(.cui-native),
+  /* Avoid iOS zoom on focus; date may stay native, selects use AppUI panels. */
+  input[type="date"]:not(.cui-native),
   input[type="datetime-local"], input[type="time"],
   input[type="text"], input[type="search"], input[type="email"],
   input[type="number"], input[type="password"], input[type="tel"],
-  textarea {
+  textarea,
+  .cui-select__trigger,
+  .cui-date__trigger {
     font-size: 16px !important;
     max-width: 100%;
   }
-  select:not(.cui-native), input[type="date"]:not(.cui-native) {
+  input[type="date"]:not(.cui-native) {
     display: block;
     width: 100%;
     min-width: 0;
@@ -219,11 +226,13 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
     appearance: auto;
     touch-action: manipulation;
   }
-  /* Preserve finance styling for unenhanced native controls. */
-  .finance-page select:not(.cui-native),
   .finance-page input[type="date"]:not(.cui-native) {
     background-color: var(--panel-solid, #fff);
     color: var(--ink, #141419);
+  }
+  .mobile-filter-group .cui-select,
+  .mobile-filter-field .cui-select {
+    width: 100%;
   }
   .finance-page .transaction-date-filter { min-width: 0; width: 100%; }
   .finance-page .transaction-date-filter input[type="date"] { flex: 1 1 auto; width: 100%; }
@@ -294,4 +303,527 @@ body.mobile-chart-open { overflow: hidden; }
   text-align: center;
   box-shadow: 0 12px 40px rgba(0,0,0,.24);
   pointer-events: none;
+}
+.mobile-ui-toast[hidden] { display: none !important; }
+
+/* ----- Mobile filter button + sheet ----- */
+.mobile-filter-bar {
+  display: none;
+  margin: 0 0 12px;
+}
+.mobile-filter-bar--inline {
+  margin: 0;
+  width: auto;
+  flex: 0 0 auto;
+}
+.mobile-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  width: 100%;
+  border-radius: 14px;
+  font-weight: 750;
+}
+.mobile-filter-bar--inline .mobile-filter-btn {
+  width: auto;
+  min-height: 40px;
+  padding-inline: 12px;
+}
+.mobile-filter-btn__ic {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+}
+.mobile-filter-btn__ic svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+}
+.mobile-filter-btn__count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #141419;
+  color: #d1f366;
+  font-size: 11px;
+  font-weight: 800;
+}
+.mobile-filter-btn__count[hidden] { display: none !important; }
+.mobile-filter-btn.is-active {
+  border-color: rgba(163, 230, 53, 0.55);
+  background: rgba(209, 243, 102, 0.18);
+}
+
+.mobile-filter-dlg {
+  width: min(100vw - 16px, 440px);
+  max-width: calc(100vw - 16px);
+  margin: auto 8px 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 22px;
+  background: transparent;
+}
+.mobile-filter-dlg::backdrop {
+  background: rgba(15, 15, 20, 0.48);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.mobile-filter-dlg__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-height: min(78dvh, 640px);
+  overflow: hidden;
+  border: 1px solid var(--line, rgba(20, 20, 25, 0.1));
+  border-radius: 22px;
+  background: var(--panel-solid, #fff);
+  box-shadow: 0 24px 60px rgba(10, 10, 15, 0.22);
+}
+.mobile-filter-dlg__head,
+.mobile-filter-dlg__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+}
+.mobile-filter-dlg__head {
+  border-bottom: 1px solid var(--line, rgba(20, 20, 25, 0.08));
+}
+.mobile-filter-dlg__head b {
+  font-size: 16px;
+  letter-spacing: -0.02em;
+}
+.mobile-filter-dlg__close {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+.mobile-filter-dlg__body {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.mobile-filter-dlg__actions {
+  border-top: 1px solid var(--line, rgba(20, 20, 25, 0.08));
+  padding-bottom: max(14px, env(safe-area-inset-bottom, 0px));
+}
+.mobile-filter-dlg__actions .btn {
+  flex: 1;
+  min-height: 46px;
+  justify-content: center;
+}
+.mobile-filter-field {
+  display: grid;
+  gap: 7px;
+}
+.mobile-filter-field label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted, #737985);
+}
+.mobile-filter-group {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+.mobile-filter-group select,
+.mobile-filter-group .cui-select,
+.mobile-filter-group .btn,
+.mobile-filter-field select,
+.mobile-filter-field .cui-select {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+.mobile-filter-group #f_reset {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .mobile-filter-bar { display: block; }
+
+  /* Hide low-priority chrome so the task list / dashboard breathe. */
+  .announce-banner,
+  .welcome-section__subtitle,
+  .dash-header .breadcrumbs,
+  .page-head .breadcrumbs,
+  .dash-header__center,
+  .dash-header__actions .icon-btn[aria-label="Notifications"],
+  .dash-header__actions .icon-btn[aria-label="Focus search"],
+  .dash-hero-side,
+  .hero-card__spark,
+  .hero-card__sub,
+  .hero-card__visa,
+  .mini-stat__spark,
+  .mini-stat__delta,
+  .chart-legend,
+  .performance-chart-card__head p,
+  .task-kpi__icon,
+  .task-kpi::after,
+  .task-kpi:nth-child(3),
+  .task-kpi:nth-child(5),
+  .taskmail-center > .hd .muted,
+  #btnExportCsv,
+  .task-view-switch,
+  #reload,
+  .filters .muted {
+    display: none !important;
+  }
+
+  .dash-header {
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .dash-header__hello,
+  .page-head__title {
+    font-size: clamp(1.35rem, 7vw, 1.75rem) !important;
+    line-height: 1.15;
+  }
+  .dash-header__actions {
+    display: flex !important;
+    flex-direction: row !important;
+    width: auto;
+    margin-left: auto;
+  }
+  .dash-header__actions .btn {
+    width: auto !important;
+    min-height: 42px;
+    padding-inline: 12px;
+  }
+
+  .hero-card {
+    margin-bottom: 10px;
+  }
+  .hero-card__balance {
+    font-size: clamp(1.45rem, 7vw, 1.9rem);
+  }
+  .hero-card__actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+  .hero-card__actions .btn {
+    width: 100% !important;
+    min-height: 42px;
+    justify-content: center;
+  }
+
+  /* Compact summary grids */
+  .dash-mini-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    margin: 10px 0 12px !important;
+  }
+  .mini-stat {
+    min-height: 0 !important;
+    padding: 10px 10px 9px !important;
+    border-radius: 14px;
+  }
+  .mini-stat__label {
+    font-size: 10px !important;
+    line-height: 1.2;
+  }
+  .mini-stat__val {
+    margin-top: 4px !important;
+    font-size: 15px !important;
+  }
+
+  .task-summary-grid,
+  .task-kpi-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+  }
+  .task-kpi {
+    min-height: 0 !important;
+    padding: 10px 10px 9px !important;
+    border-radius: 14px;
+  }
+  .task-kpi__lbl {
+    margin-bottom: 2px !important;
+    font-size: 10px !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+  }
+  .task-kpi b,
+  #tkValue {
+    margin-top: 2px !important;
+    font-size: 14px !important;
+  }
+
+  .taskmail-tabs-row {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+    width: 100% !important;
+  }
+
+  .taskmail-tabs.tabs {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    flex-wrap: nowrap;
+    width: 100% !important;
+    max-width: none !important;
+    gap: 4px;
+    padding: 5px;
+    border: 0;
+    border-radius: 18px;
+    background: #ececef;
+    box-shadow: inset 0 0 0 1px rgba(20, 20, 25, 0.04);
+    overflow: hidden;
+  }
+
+  .taskmail-tabs.tabs button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    margin: 0;
+    padding: 8px 6px;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    white-space: nowrap;
+    transition:
+      background 0.16s ease,
+      color 0.16s ease,
+      box-shadow 0.16s ease,
+      transform 0.16s ease;
+  }
+
+  .taskmail-tabs.tabs button .taskmail-tab__text {
+    display: none;
+  }
+
+  .taskmail-tabs.tabs button .taskmail-tab__text-mobile {
+    display: inline;
+  }
+
+  .taskmail-tabs.tabs button.active {
+    color: #141419;
+    background: #d1f366;
+    box-shadow:
+      0 8px 18px rgba(163, 230, 53, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+
+  .taskmail-tabs.tabs button:active:not(.active) {
+    background: rgba(255, 255, 255, 0.55);
+  }
+
+  .taskmail-tabs-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    width: 100% !important;
+  }
+
+  .taskmail-tabs-actions #f_reset {
+    display: none !important;
+  }
+
+  .taskmail-tabs-actions .btn,
+  .taskmail-tabs-actions .mobile-filter-bar--inline,
+  .taskmail-tabs-actions .mobile-filter-btn {
+    width: 100% !important;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .taskmail-tabs-actions .mobile-filter-bar--inline {
+    display: block;
+    margin: 0;
+  }
+
+  .taskmail-tabs-actions .btn {
+    padding-inline: 12px;
+    border-radius: 14px;
+  }
+  .toolbar {
+    width: auto !important;
+    flex-direction: row !important;
+  }
+  .toolbar .btn,
+  .toolbar a {
+    width: auto !important;
+  }
+
+  /* Override older stacked full-width filter rules — filters live in the sheet. */
+  #filters:not(.mobile-filter-group),
+  .filters:not(.mobile-filter-group),
+  .taskmail-filters:not(.mobile-filter-group) {
+    display: none !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .dash-bento {
+    display: none !important;
+  }
+  .performance-chart-card {
+    margin-top: 4px;
+  }
+}
+
+/* ===== iPhone / touch tap safety =====
+   Sticky :hover + translateY shifts the target under the finger and cancels the click.
+   overflow-x: clip and invisible backdrop-filter layers also break hit-testing on iOS. */
+@media (hover: none), (pointer: coarse), (max-width: 900px) {
+  a,
+  button,
+  .btn,
+  .btn-create,
+  .shortcut-btn,
+  .icon-btn,
+  .icon-action,
+  .f-btn,
+  .seg button,
+  .tabs button,
+  .taskmail-tabs button,
+  .performance-tabs button,
+  .chart-expand-btn,
+  .cui-select__trigger,
+  .cui-date__trigger,
+  .cui-select__option,
+  .cui-date__day,
+  .taskmail-item.kanban-card,
+  .kanban-card,
+  .mobile-filter-btn,
+  .topbar-brand,
+  .side.app-sidebar .app-nav a,
+  .finance-mobile-nav button,
+  .quick-tx-chip,
+  .type-picker button,
+  .segmented button,
+  label,
+  summary {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  a:hover,
+  button:hover,
+  .btn:hover,
+  .btn-create:hover,
+  .shortcut-btn:hover,
+  .icon-btn:hover,
+  .icon-action:hover,
+  .f-btn:hover,
+  .seg button:hover,
+  .tabs button:hover,
+  .taskmail-tabs button:hover,
+  .performance-tabs button:hover,
+  .chart-expand-btn:hover,
+  .cui-select__trigger:hover,
+  .cui-date__trigger:hover,
+  .cui-select__option:hover,
+  .taskmail-item.kanban-card:hover,
+  .kanban-card:hover,
+  .mobile-filter-btn:hover,
+  .topbar-brand:hover,
+  .side.app-sidebar .app-nav a:hover,
+  .finance-mobile-nav button:hover,
+  .quick-tx-chip:hover,
+  .type-picker button:hover,
+  .segmented button:hover,
+  .submit:hover,
+  .account-card:hover,
+  .finance-card:hover {
+    transform: none !important;
+  }
+}
+
+.layout,
+.content,
+.dash-main,
+.taskmail-shell,
+.taskmail-center,
+.taskmail-center-bd,
+.finance-page .main,
+.finance-page .app-shell {
+  overflow-x: visible;
+}
+
+@media (max-width: 900px) {
+  .layout,
+  .content,
+  .dash-main {
+    overflow-x: visible !important;
+    max-width: 100%;
+  }
+
+  .side.app-sidebar,
+  .side.app-sidebar .app-nav,
+  .side.app-sidebar .app-nav a {
+    pointer-events: auto !important;
+  }
+
+  .side.app-sidebar .app-nav a {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+/* Closed dialogs / hidden loaders must not keep a tappable backdrop layer on iOS. */
+dialog:not([open]) {
+  display: none !important;
+  pointer-events: none !important;
+}
+dialog:not([open])::backdrop {
+  display: none !important;
+  pointer-events: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.loader:not(.show),
+.finance-loading.hidden {
+  visibility: hidden !important;
+  pointer-events: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.cui-select__panel[hidden],
+.cui-date__panel[hidden] {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/* Keep floating option sheets above the bottom dock while open. */
+.cui-select__panel:not([hidden]),
+.cui-date__panel:not([hidden]) {
+  pointer-events: auto;
+  z-index: 12000;
+}
+
+.mobile-filter-dlg[open],
+.mobile-filter-dlg[open] .mobile-filter-dlg__panel,
+.mobile-filter-dlg[open] button,
+.mobile-filter-dlg[open] .cui-select,
+.mobile-filter-dlg[open] .cui-select__trigger {
+  pointer-events: auto;
 }

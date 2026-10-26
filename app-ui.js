@@ -14,14 +14,21 @@
   const OPEN_ATTR = "data-cui-open";
   let openPanel = null;
 
-  // iOS Safari handles its own native picker inside dialogs, with the keyboard
-  // and browser bars accounted for. The floating desktop picker can instead
-  // end up outside the visible/tappable area on touch screens.
-  const useNativeTouchPickers =
+  // Keep native date sheets on phones (keyboard + browser chrome). Selects use
+  // the shared custom panel on every viewport so mobile matches desktop.
+  const useNativeTouchDatePickers =
     (typeof navigator !== "undefined" &&
       (/iPhone|iPad|iPod/i.test(navigator.userAgent) ||
         (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1))) ||
     (window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+
+  function isMobileSelectUi() {
+    return !!(
+      window.matchMedia &&
+      (window.matchMedia("(max-width: 900px)").matches ||
+        window.matchMedia("(pointer: coarse)").matches)
+    );
+  }
 
 
   function $(sel, root) {
@@ -51,14 +58,48 @@
     openPanel = null;
   }
 
+  function mountFloatingHost(anchor, panel) {
+    const host = anchor?.closest?.("dialog") || document.body;
+    if (panel.parentNode !== host) host.appendChild(panel);
+  }
+
   function placeFloating(trigger, panel) {
     const r = trigger.getBoundingClientRect();
     const vw = window.visualViewport?.width || window.innerWidth;
     const vh = window.visualViewport?.height || window.innerHeight;
     const gap = 8;
+    const viewport = window.visualViewport;
+    const offsetTop = viewport?.offsetTop || 0;
+    const offsetLeft = viewport?.offsetLeft || 0;
     panel.hidden = false;
     panel.style.position = "fixed";
     panel.style.zIndex = "10050";
+    panel.classList.toggle("cui-select__panel--sheet", false);
+    panel.style.right = "";
+    panel.style.bottom = "";
+    panel.style.width = "";
+    panel.style.maxHeight = "";
+
+    if (
+      panel.classList.contains("cui-select__panel") &&
+      isMobileSelectUi()
+    ) {
+      panel.classList.add("cui-select__panel--sheet");
+      panel.style.left = Math.round(8 + offsetLeft) + "px";
+      panel.style.right = Math.round(
+        8 + Math.max(0, window.innerWidth - (offsetLeft + vw)),
+      ) + "px";
+      panel.style.width = "auto";
+      panel.style.minWidth = "0";
+      panel.style.maxWidth = "none";
+      panel.style.maxHeight = `min(52dvh, ${Math.max(220, vh - 24)}px)`;
+      panel.style.top = "auto";
+      panel.style.bottom =
+        Math.round(8 + Math.max(0, window.innerHeight - (offsetTop + vh))) +
+        "px";
+      return;
+    }
+
     panel.style.minWidth = Math.max(r.width, 180) + "px";
     panel.style.maxWidth = Math.min(360, vw - 16) + "px";
 
@@ -76,17 +117,17 @@
 
     // visualViewport offsets are significant when Safari has zoomed/focused
     // a field or when a mobile browser bar changes the visible viewport.
-    const viewport = window.visualViewport;
-    panel.style.top = Math.round(top + (viewport?.offsetTop || 0)) + "px";
-    panel.style.left = Math.round(left + (viewport?.offsetLeft || 0)) + "px";
+    panel.style.top = Math.round(top + offsetTop) + "px";
+    panel.style.left = Math.round(left + offsetLeft) + "px";
   }
 
-  function openFor(wrap, trigger, floating) {
+  function openFor(wrap, trigger, floating, anchor) {
     if (wrap.getAttribute(OPEN_ATTR) === "true") {
       closeOpen();
       return;
     }
     closeOpen();
+    mountFloatingHost(anchor || trigger, floating);
     wrap.setAttribute(OPEN_ATTR, "true");
     wrap._cuiFloating = floating;
     placeFloating(trigger, floating);
@@ -164,9 +205,6 @@
   }
 
   function enhanceSelect(select) {
-    // Do not hide native controls on iPhone/iPad/Android. Native controls
-    // retain the original change/input events used by every screen.
-    if (useNativeTouchPickers) return;
     if (select.dataset.cuiEnhanced === "1") return;
     if (select.closest("[data-cui-skip]")) return;
     select.dataset.cuiEnhanced = "1";
@@ -193,7 +231,7 @@
     panel.setAttribute("role", "listbox");
     // A native <dialog> lives in the browser top layer. Floating controls must
     // be mounted inside it or they render below the modal and cannot be clicked.
-    (select.closest("dialog") || document.body).appendChild(panel);
+    mountFloatingHost(select, panel);
 
     const labelEl = $(".cui-select__label", trigger);
 
@@ -240,7 +278,7 @@
       if (select.disabled) return;
       rebuildOptions();
       syncFromNative();
-      openFor(wrap, trigger, panel);
+      openFor(wrap, trigger, panel, select);
       const active = $(".cui-select__option.is-active", panel);
       if (active) {
         active.scrollIntoView({ block: "nearest" });
@@ -280,7 +318,7 @@
       trigger.focus();
       rebuildOptions();
       syncFromNative();
-      openFor(wrap, trigger, panel);
+      openFor(wrap, trigger, panel, select);
     });
   }
 
@@ -328,7 +366,7 @@
   }
 
   function enhanceDate(input) {
-    if (useNativeTouchPickers) return;
+    if (useNativeTouchDatePickers) return;
     if (input.dataset.cuiEnhanced === "1") return;
     if (input.type !== "date") return;
     input.dataset.cuiEnhanced = "1";

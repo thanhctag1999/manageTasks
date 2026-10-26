@@ -9,8 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+      rel="stylesheet" />
     <script src="setting.js"></script>
     <script src="auth.js"></script>
     <style>
@@ -24,14 +23,24 @@
         --card: rgba(255, 255, 255, 0.83);
         --line: rgba(67, 50, 110, 0.12);
         font-family:
-          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
       }
       * {
         box-sizing: border-box;
       }
+      html,
+      body {
+        height: 100%;
+      }
       body {
         min-height: 100vh;
+        min-height: 100dvh;
         margin: 0;
         display: grid;
         place-items: center;
@@ -92,7 +101,11 @@
         flex-direction: column;
         justify-content: space-between;
         background:
-          linear-gradient(145deg, rgba(92, 66, 211, 0.95), rgba(135, 92, 235, 0.88)),
+          linear-gradient(
+            145deg,
+            rgba(92, 66, 211, 0.95),
+            rgba(135, 92, 235, 0.88)
+          ),
           #7457ef;
         color: #fff;
         isolation: isolate;
@@ -106,7 +119,9 @@
         background-image:
           radial-gradient(circle at 75% 20%, #ffbad5 0 2px, transparent 3px),
           radial-gradient(circle at 24% 78%, #a9ffe9 0 2px, transparent 3px);
-        background-size: 43px 43px, 61px 61px;
+        background-size:
+          43px 43px,
+          61px 61px;
       }
       .brand {
         display: flex;
@@ -257,6 +272,12 @@
         transform: translateY(-2px);
         box-shadow: 0 19px 38px rgba(116, 87, 239, 0.34);
       }
+      @media (hover: none), (pointer: coarse) {
+        .submit:hover {
+          transform: none;
+          box-shadow: 0 15px 34px rgba(116, 87, 239, 0.3);
+        }
+      }
       .submit:disabled {
         opacity: 0.65;
         cursor: wait;
@@ -275,6 +296,9 @@
         font-size: 11px;
         line-height: 1.55;
         text-align: center;
+      }
+      html.auth-checking body {
+        visibility: hidden;
       }
       @media (max-width: 760px) {
         body {
@@ -330,7 +354,12 @@
       }
 
       body {
-        padding: 24px;
+        padding: 0;
+        place-items: stretch;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 100vh;
+        min-height: 100dvh;
         background: #f5f5f7;
       }
 
@@ -340,17 +369,21 @@
       }
 
       .login-shell {
-        width: min(1120px, 100%);
-        min-height: 660px;
-        border: 1px solid var(--line);
-        border-radius: 32px;
+        width: 100%;
+        height: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
+        border: 0;
+        border-radius: 0;
         background: #fff;
-        box-shadow: 0 22px 70px rgba(20, 20, 25, 0.11);
+        box-shadow: none;
         backdrop-filter: none;
+        grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
       }
 
       .story {
-        padding: 52px;
+        min-height: 0;
+        padding: clamp(28px, 5.5vh, 56px) clamp(28px, 4.5vw, 64px);
         background:
           radial-gradient(
             circle at 85% 18%,
@@ -387,11 +420,12 @@
       }
 
       .story-copy h1 {
-        max-width: 520px;
-        font-size: clamp(40px, 5vw, 66px);
+        max-width: min(560px, 100%);
+        font-size: clamp(34px, 4.4vw + 1vh, 68px);
       }
 
       .story-copy p {
+        max-width: min(460px, 100%);
         color: rgba(255, 255, 255, 0.63);
       }
 
@@ -400,7 +434,7 @@
       }
 
       .story-stat {
-        padding: 18px;
+        padding: clamp(12px, 2vh, 18px);
         border-color: rgba(255, 255, 255, 0.09);
         background: rgba(255, 255, 255, 0.055);
       }
@@ -410,7 +444,13 @@
       }
 
       .form-side {
-        padding: 68px 66px;
+        min-height: 0;
+        padding: clamp(28px, 6vh, 72px) clamp(24px, 5vw, 80px);
+      }
+
+      .form-side > * {
+        width: min(420px, 100%);
+        margin-inline: auto;
       }
 
       .eyebrow {
@@ -418,7 +458,7 @@
       }
 
       h2 {
-        font-size: 36px;
+        font-size: clamp(28px, 2.4vw + 1vh, 36px);
       }
 
       .sub {
@@ -463,12 +503,23 @@
 
       @media (max-width: 760px) {
         body {
+          height: auto;
+          min-height: 100vh;
+          min-height: 100dvh;
           padding: 12px;
+          place-items: center;
+          display: block;
         }
 
         .login-shell {
+          width: 100%;
+          height: auto;
           min-height: calc(100vh - 24px);
+          min-height: calc(100dvh - 24px);
+          border: 1px solid var(--line);
           border-radius: 26px;
+          box-shadow: 0 18px 48px rgba(20, 20, 25, 0.1);
+          grid-template-columns: 1fr;
         }
 
         .story {
@@ -483,6 +534,31 @@
 
         .form-side {
           padding: 38px 26px 42px;
+        }
+
+        .form-side > * {
+          width: 100%;
+          margin-inline: 0;
+        }
+      }
+
+      @media (min-width: 761px) and (max-height: 720px) {
+        .story-copy p {
+          display: none;
+        }
+
+        .story-stat span {
+          font-size: 10px;
+        }
+
+        .form-side {
+          padding-block: 24px;
+        }
+      }
+
+      @media (min-width: 761px) and (max-height: 580px) {
+        .story-stats {
+          display: none;
         }
       }
     </style>
@@ -501,7 +577,7 @@
           ManageTasks Finance
         </div>
         <div class="story-copy">
-          <h1>Làm chủ công việc. Giữ vững dòng tiền.</h1>
+          <h1>Mỗi task rõ ràng. Mỗi đồng được kiểm soát.</h1>
           <p>
             Một không gian riêng để theo dõi task, thu nhập, chi phí định kỳ,
             ngân sách và mọi mục tiêu phía trước.
@@ -509,7 +585,9 @@
         </div>
         <div class="story-stats">
           <div class="story-stat"><b>01</b><span>Task & thu nhập</span></div>
-          <div class="story-stat"><b>02</b><span>Ngân sách thông minh</span></div>
+          <div class="story-stat">
+            <b>02</b><span>Ngân sách thông minh</span>
+          </div>
           <div class="story-stat"><b>03</b><span>Mục tiêu rõ ràng</span></div>
         </div>
       </section>
@@ -532,8 +610,7 @@
               autocomplete="username"
               placeholder="Nhập tên đăng nhập"
               required
-              autofocus
-            />
+              autofocus />
           </div>
           <div class="field">
             <label for="password">Mật khẩu</label>
@@ -547,25 +624,21 @@
               type="password"
               autocomplete="current-password"
               placeholder="Nhập mật khẩu"
-              required
-            />
+              required />
             <button
               class="toggle-pass"
               id="togglePass"
               type="button"
-              aria-label="Hiện hoặc ẩn mật khẩu"
-            >
+              aria-label="Hiện hoặc ẩn mật khẩu">
               ◉
             </button>
           </div>
-          <button class="submit" id="submitBtn" type="submit">
-            Đăng nhập
-          </button>
+          <button class="submit" id="submitBtn" type="submit">Đăng nhập</button>
           <p class="message" id="message" role="alert"></p>
         </form>
         <p class="privacy">
-          Phiên đăng nhập chỉ được lưu trong tab hiện tại và tự hết hạn sau 12
-          giờ.
+          Thông tin đăng nhập được lưu trên trình duyệt này. Lần sau mở web sẽ
+          vào thẳng, đến khi bạn bấm Logout.
         </p>
       </section>
     </main>
@@ -579,6 +652,17 @@
 
       document.getElementById("togglePass").addEventListener("click", () => {
         password.type = password.type === "password" ? "text" : "password";
+      });
+
+      AppAuth.ready.then((user) => {
+        if (!user) return;
+        const params = new URLSearchParams(location.search);
+        const next = params.get("next") || "index.html";
+        location.replace(
+          /^(?:[a-z0-9_-]+\.html)(?:[?#].*)?$/i.test(next)
+            ? next
+            : "index.html",
+        );
       });
 
       form.addEventListener("submit", async (event) => {
