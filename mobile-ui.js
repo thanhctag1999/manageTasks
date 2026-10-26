@@ -378,9 +378,107 @@
       });
   }
 
+  function showPageLoading(label) {
+    let el = document.getElementById("pageTransition");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "pageTransition";
+      el.className = "page-transition";
+      el.setAttribute("role", "status");
+      el.setAttribute("aria-live", "polite");
+      el.innerHTML =
+        '<div class="page-transition__card">' +
+        '<span class="page-transition__spinner" aria-hidden="true"></span>' +
+        '<b class="page-transition__label">Đang chuyển trang…</b>' +
+        "</div>";
+      document.body.appendChild(el);
+    }
+    const text = el.querySelector(".page-transition__label");
+    if (text) text.textContent = label || "Đang chuyển trang…";
+    el.hidden = false;
+    document.body.classList.add("page-transition-on");
+    requestAnimationFrame(() => el.classList.add("is-on"));
+    return el;
+  }
+
+  function hidePageLoading() {
+    const el = document.getElementById("pageTransition");
+    if (el) {
+      el.classList.remove("is-on");
+      el.hidden = true;
+    }
+    document.body.classList.remove("page-transition-on");
+  }
+
+  function isInternalPageLink(href) {
+    if (!href) return false;
+    const raw = String(href).trim();
+    if (
+      !raw ||
+      raw.startsWith("#") ||
+      raw.startsWith("mailto:") ||
+      raw.startsWith("tel:") ||
+      raw.startsWith("javascript:")
+    ) {
+      return false;
+    }
+    try {
+      const url = new URL(raw, location.href);
+      if (url.origin !== location.origin) return false;
+      const file = url.pathname.split("/").pop() || "";
+      return /\.html$/i.test(file) || file === "";
+    } catch {
+      return false;
+    }
+  }
+
+  function navigateWithLoading(href) {
+    showPageLoading();
+    window.setTimeout(() => {
+      location.href = href;
+    }, 140);
+  }
+
+  function initializePageTransitions() {
+    document.addEventListener(
+      "click",
+      (event) => {
+        if (event.defaultPrevented) return;
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+          return;
+        }
+        const link = event.target.closest?.("a[href]");
+        if (!link) return;
+        if (link.target && link.target !== "_self") return;
+        if (link.hasAttribute("download")) return;
+        if (link.dataset.noTransition != null) return;
+        if (link.dataset.authLogout != null) {
+          showPageLoading("Đang đăng xuất…");
+          return;
+        }
+        const href = link.getAttribute("href");
+        if (!isInternalPageLink(href)) return;
+
+        const url = new URL(href, location.href);
+        const samePage =
+          url.pathname === location.pathname &&
+          url.search === location.search &&
+          !!url.hash;
+        if (samePage) return;
+        if (url.href === location.href) return;
+
+        event.preventDefault();
+        navigateWithLoading(url.href);
+      },
+      true,
+    );
+  }
+
   function boot() {
     initializeNav();
+    initializePageTransitions();
     clearFloatingPanels();
+    hidePageLoading();
     // Wait a tick so app-ui.js can wrap selects before we relocate them.
     requestAnimationFrame(() => {
       initializeFilters();
@@ -400,16 +498,24 @@
       passive: true,
     });
     window.addEventListener("pageshow", () => {
+      hidePageLoading();
       clearFloatingPanels();
       syncBottomNavDock();
     });
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
+        hidePageLoading();
         clearFloatingPanels();
         syncBottomNavDock();
       }
     });
   }
+
+  window.MobileUI = {
+    showPageLoading,
+    hidePageLoading,
+    navigateWithLoading,
+  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", boot, { once: true });

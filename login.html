@@ -643,6 +643,7 @@
       </section>
     </main>
 
+    <script src="mobile-ui.js"></script>
     <script>
       const form = document.getElementById("loginForm");
       const username = document.getElementById("username");
@@ -654,15 +655,40 @@
         password.type = password.type === "password" ? "text" : "password";
       });
 
+      function isMobileApp() {
+        return window.matchMedia("(max-width: 900px)").matches;
+      }
+
+      function defaultHomePage() {
+        return isMobileApp() ? "task.html" : "index.html";
+      }
+
+      function resolveNextPage() {
+        const params = new URLSearchParams(location.search);
+        const next = params.get("next");
+        if (next && /^(?:[a-z0-9_-]+\.html)(?:[?#].*)?$/i.test(next)) {
+          // Mobile default landing is Tasks, even if next points at dashboard.
+          if (
+            isMobileApp() &&
+            /^(?:index\.html)(?:[?#].*)?$/i.test(next.split("/").pop())
+          ) {
+            return "task.html";
+          }
+          return next;
+        }
+        return defaultHomePage();
+      }
+
+      function goAfterLogin(url) {
+        if (window.MobileUI?.showPageLoading) {
+          window.MobileUI.showPageLoading("Đang vào ứng dụng…");
+        }
+        location.replace(url);
+      }
+
       AppAuth.ready.then((user) => {
         if (!user) return;
-        const params = new URLSearchParams(location.search);
-        const next = params.get("next") || "index.html";
-        location.replace(
-          /^(?:[a-z0-9_-]+\.html)(?:[?#].*)?$/i.test(next)
-            ? next
-            : "index.html",
-        );
+        goAfterLogin(resolveNextPage());
       });
 
       form.addEventListener("submit", async (event) => {
@@ -676,25 +702,17 @@
         submitBtn.textContent = "Đang xác thực…";
         try {
           await AppAuth.login(username.value, password.value);
-          const params = new URLSearchParams(location.search);
-          const next = params.get("next") || "index.html";
-          location.replace(
-            /^(?:[a-z0-9_-]+\.html)(?:[?#].*)?$/i.test(next)
-              ? next
-              : "index.html",
-          );
+          goAfterLogin(resolveNextPage());
         } catch (error) {
           const raw = String(error?.message || error);
           message.textContent = raw.includes("INVALID_CREDENTIALS")
             ? "Tên đăng nhập hoặc mật khẩu không đúng."
             : raw;
           password.select();
-        } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = "Đăng nhập";
         }
       });
     </script>
-    <script src="mobile-ui.js"></script>
   </body>
 </html>

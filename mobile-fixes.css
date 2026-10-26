@@ -322,6 +322,62 @@ body.mobile-chart-open { overflow: hidden; }
 }
 .mobile-ui-toast[hidden] { display: none !important; }
 
+/* ----- Page transition loading ----- */
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483600;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(20, 20, 25, 0.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+.page-transition.is-on {
+  opacity: 1;
+  pointer-events: auto;
+}
+.page-transition[hidden] {
+  display: none !important;
+}
+.page-transition__card {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  min-width: min(280px, 100%);
+  padding: 22px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 22px;
+  background: rgba(20, 20, 25, 0.92);
+  box-shadow: 0 22px 60px rgba(10, 10, 15, 0.28);
+  color: #fff;
+  text-align: center;
+}
+.page-transition__spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgba(209, 243, 102, 0.22);
+  border-top-color: #d1f366;
+  border-radius: 50%;
+  animation: pageTransitionSpin 0.75s linear infinite;
+}
+.page-transition__label {
+  font: 700 14px/1.35 "Plus Jakarta Sans", system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+body.page-transition-on {
+  cursor: progress;
+}
+@keyframes pageTransitionSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ----- Mobile filter button + sheet ----- */
 .mobile-filter-bar {
   display: none;
