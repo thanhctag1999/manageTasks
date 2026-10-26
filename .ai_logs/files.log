@@ -4,3 +4,4 @@
 2026-10-26T22:04:59+07:00 modified app-ui.js app-theme.css mobile-fixes.css purpose=custom select panels on mobile
 2026-10-26T22:07:59+07:00 modified task.html mobile-fixes.css app-theme.css purpose=redesign mobile taskmail tabs
 2026-10-26T22:10:46+07:00 modified mobile-fixes.css app-theme.css finance.css login.html schedule.html purpose=fix iPhone untappable buttons/links
+2026-10-26T22:16:50+07:00 modified app-ui.js mobile-fixes.css mobile-ui.js purpose=fix iOS tap cancel from active transform and pointerdown

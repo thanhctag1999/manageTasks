@@ -39,7 +39,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
     padding: 7px 8px;
     border-radius: 22px;
     display: flex;
-    overflow: visible;
+    overflow: hidden;
     z-index: 100;
     box-shadow: 0 12px 36px rgba(10,10,15,.25);
   }
@@ -689,9 +689,10 @@ body.mobile-chart-open { overflow: hidden; }
 }
 
 /* ===== iPhone / touch tap safety =====
-   Sticky :hover + translateY shifts the target under the finger and cancels the click.
-   overflow-x: clip and invisible backdrop-filter layers also break hit-testing on iOS. */
-@media (hover: none), (pointer: coarse), (max-width: 900px) {
+   :hover/:active transform moves the target under the finger and cancels the click.
+   Closing popovers on pointerdown also eats the same-gesture click on iOS.
+   overflow-x: clip and invisible backdrop-filter layers break hit-testing. */
+@media (hover: none), (pointer: coarse), (max-width: 1024px) {
   a,
   button,
   .btn,
@@ -718,38 +719,68 @@ body.mobile-chart-open { overflow: hidden; }
   .quick-tx-chip,
   .type-picker button,
   .segmented button,
+  .submit,
   label,
   summary {
     touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    cursor: pointer;
+    transition-property: background, background-color, color, border-color,
+      box-shadow, opacity !important;
   }
 
   a:hover,
+  a:active,
   button:hover,
+  button:active,
   .btn:hover,
+  .btn:active,
   .btn-create:hover,
+  .btn-create:active,
   .shortcut-btn:hover,
+  .shortcut-btn:active,
   .icon-btn:hover,
+  .icon-btn:active,
   .icon-action:hover,
+  .icon-action:active,
   .f-btn:hover,
+  .f-btn:active,
   .seg button:hover,
+  .seg button:active,
   .tabs button:hover,
+  .tabs button:active,
   .taskmail-tabs button:hover,
+  .taskmail-tabs button:active,
   .performance-tabs button:hover,
+  .performance-tabs button:active,
   .chart-expand-btn:hover,
+  .chart-expand-btn:active,
   .cui-select__trigger:hover,
+  .cui-select__trigger:active,
   .cui-date__trigger:hover,
+  .cui-date__trigger:active,
   .cui-select__option:hover,
+  .cui-select__option:active,
   .taskmail-item.kanban-card:hover,
+  .taskmail-item.kanban-card:active,
   .kanban-card:hover,
+  .kanban-card:active,
   .mobile-filter-btn:hover,
+  .mobile-filter-btn:active,
   .topbar-brand:hover,
+  .topbar-brand:active,
   .side.app-sidebar .app-nav a:hover,
+  .side.app-sidebar .app-nav a:active,
   .finance-mobile-nav button:hover,
+  .finance-mobile-nav button:active,
   .quick-tx-chip:hover,
+  .quick-tx-chip:active,
   .type-picker button:hover,
+  .type-picker button:active,
   .segmented button:hover,
+  .segmented button:active,
   .submit:hover,
+  .submit:active,
   .account-card:hover,
   .finance-card:hover {
     transform: none !important;
@@ -775,9 +806,30 @@ body.mobile-chart-open { overflow: hidden; }
     max-width: 100%;
   }
 
+  /* Never let the dock stretch into a full-screen blocker on iOS. */
+  .side,
   .side.app-sidebar,
+  .finance-page .side,
+  .finance-page .side.app-sidebar,
+  .finance-page .sidebar {
+    position: fixed !important;
+    top: auto !important;
+    bottom: max(8px, env(safe-area-inset-bottom, 0px)) !important;
+    left: 10px !important;
+    right: 10px !important;
+    inset-inline: 10px !important;
+    width: auto !important;
+    height: var(--mobile-bottom-nav-height) !important;
+    min-height: var(--mobile-bottom-nav-height) !important;
+    max-height: var(--mobile-bottom-nav-height) !important;
+    overflow: hidden !important;
+    z-index: 100 !important;
+    pointer-events: auto !important;
+  }
+
   .side.app-sidebar .app-nav,
-  .side.app-sidebar .app-nav a {
+  .side.app-sidebar .app-nav a,
+  .side.app-sidebar .app-nav a * {
     pointer-events: auto !important;
   }
 

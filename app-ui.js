@@ -134,14 +134,17 @@
     openPanel = wrap;
   }
 
+  // Use click (not pointerdown) to dismiss. On iOS, mutating the DOM during
+  // pointerdown cancels the same-gesture click on the control underneath.
   document.addEventListener(
-    "pointerdown",
+    "click",
     (e) => {
       if (!openPanel) return;
       const t = e.target;
       if (openPanel.contains(t)) return;
       if (openPanel._cuiFloating && openPanel._cuiFloating.contains(t)) return;
-      closeOpen();
+      // Defer so the current tap still reaches its real target first.
+      setTimeout(() => closeOpen(), 0);
     },
     true,
   );

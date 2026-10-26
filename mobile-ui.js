@@ -197,7 +197,12 @@
       else dlg.setAttribute("open", "");
     });
 
-    dlg.addEventListener("close", () => updateFilterBadge(sheet));
+    dlg.addEventListener("close", () => {
+      updateFilterBadge(sheet);
+      try {
+        window.AppUI?.closeOpen?.();
+      } catch {}
+    });
     dlg.addEventListener("click", (event) => {
       if (event.target === dlg) dlg.close();
     });
@@ -309,11 +314,27 @@
       .forEach(toggleChart);
   });
 
+  function clearFloatingPanels() {
+    try {
+      window.AppUI?.closeOpen?.();
+    } catch {}
+    document
+      .querySelectorAll(".cui-select__panel, .cui-date__panel")
+      .forEach((panel) => {
+        panel.hidden = true;
+      });
+  }
+
   function boot() {
     initializeNav();
+    clearFloatingPanels();
     // Wait a tick so app-ui.js can wrap selects before we relocate them.
     requestAnimationFrame(() => {
       initializeFilters();
+    });
+    window.addEventListener("pageshow", clearFloatingPanels);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") clearFloatingPanels();
     });
   }
 
